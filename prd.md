@@ -229,276 +229,12 @@ Catatan:
 
 ## 7. Design System
 
-### 7.1 Design Direction
+Spesifikasi desain visual (design direction, color palette, typography, UI component rules, logo usage, dan anti "AI slop" rules) dipindahkan ke dokumen terpisah **`design-system.md`** agar PRD ini tetap fokus pada business requirement dan functional logic.
 
-Website menggunakan arah desain:
-
-**Modern Outdoor Minimalist**
-
-Karakter desain:
-
-- Modern
-- Clean
-- Professional
-- Natural
-- Eye-catching tanpa terlalu ramai
-- Mobile-first
-- Tidak terlihat seperti template AI/generic SaaS
-
-Desain harus terasa seperti platform rental outdoor yang rapi, terpercaya, dan mudah digunakan.
-
-### 7.2 Design Principles
-
-- Gunakan whitespace yang cukup.
-- Gunakan warna brand secara konsisten.
-- Hindari dekorasi berlebihan.
-- Gunakan foto produk asli.
-- Gunakan video produk asli hanya jika membantu customer memahami kondisi, ukuran, atau penggunaan barang.
-- Gunakan komponen reusable.
-- Prioritaskan keterbacaan dan kemudahan booking.
-- Customer side harus mobile-first.
-- Admin dashboard harus fungsional, tidak dekoratif.
+Dokumen tersebut adalah bagian tidak terpisahkan dari PRD ini — perubahan pada `design-system.md` tunduk pada aturan perubahan yang sama seperti Section 0.
 
 ---
 
-## 8. Colour Palette
-
-Palette mengikuti logo ANNAPURNA yang dominan hijau dan hitam.
-
-### Primary Colors
-
-| Token | Hex | Usage |
-|---|---|---|
-| Primary Green | `#16624B` | CTA utama, active state, highlight |
-| Dark Green | `#0F4F3C` | Hover button, dark brand section |
-| Deep Green | `#0B3E2F` | Background gelap terbatas |
-| Soft Green | `#E7F3EE` | Background lembut, badge, info card |
-
-### Neutral Colors
-
-| Token | Hex | Usage |
-|---|---|---|
-| Text Primary | `#111827` | Judul dan teks utama |
-| Text Secondary | `#6B7280` | Deskripsi, meta text |
-| Border | `#E5E7EB` | Border card, input, table |
-| Background | `#F9FAFB` | Background halaman |
-| Surface | `#FFFFFF` | Card, modal, form |
-
-### Status Colors
-
-| Status | Hex | Usage |
-|---|---|---|
-| Success | `#16A34A` | Available, success state |
-| Warning | `#D97706` | Pending, maintenance |
-| Danger | `#DC2626` | Damaged, lost, failed |
-| Info | `#2563EB` | Rented, informational state |
-| Muted | `#6B7280` | Returned, inactive |
-
-### Color Usage Ratio
-
-```text
-70% neutral / white space
-20% gray / layout / border
-10% green / accent / status
-```
-
----
-
-## 9. Typography
-
-### Font Decision
-
-Primary font:
-
-```text
-Manrope
-```
-
-Fallback font:
-
-```text
-Inter, system-ui, sans-serif
-```
-
-Plus Jakarta Sans tidak digunakan.
-
-### Font Usage
-
-| Element    | Font    | Weight  |
-| ---------- | ------- | ------- |
-| Heading    | Manrope | 600–700 |
-| Body       | Manrope | 400–500 |
-| Button     | Manrope | 600     |
-| Table      | Manrope | 400–500 |
-| Form Label | Manrope | 500–600 |
-
-### Font Size Guide
-
-```text
-H1: 36–48px
-H2: 28–32px
-H3: 22–24px
-Body: 16px
-Caption: 14px
-Small: 12px
-```
-
-### Tailwind Font Config
-
-```ts
-fontFamily: {
-  sans: ["Manrope", "Inter", "system-ui", "sans-serif"],
-}
-```
-
----
-
-## 10. UI Component Rules
-
-### Button
-
-Primary button:
-
-```text
-Background: #16624B
-Text: #FFFFFF
-Hover: #0F4F3C
-Radius: 10–12px
-```
-
-Digunakan untuk:
-
-* Booking Sekarang
-* Bayar DP
-* Simpan
-* Konfirmasi
-* Checkout
-
-Secondary button:
-
-```text
-Background: #FFFFFF
-Border: #16624B
-Text: #16624B
-Hover Background: #E7F3EE
-```
-
-Digunakan untuk:
-
-* Lihat Detail
-* Filter
-* Kembali
-* Batal
-
-### Card
-
-Card digunakan untuk produk, paket, transaksi, laporan, dan dashboard.
-
-Style:
-
-```text
-Background: #FFFFFF
-Border: #E5E7EB
-Radius: 14–16px
-Shadow: subtle
-Padding: 16–24px
-```
-
-Product card maksimal menampilkan:
-
-* Foto produk
-* Nama produk
-* Harga mulai dari
-* Durasi/harga singkat
-* Status ketersediaan
-* CTA detail/booking
-
-### Badge / Status
-
-Status harus menggunakan warna dan teks, tidak boleh hanya warna.
-
-| Status      | Style          |
-| ----------- | -------------- |
-| Available   | Green badge    |
-| Reserved    | Amber badge    |
-| Rented      | Blue badge     |
-| Returned    | Gray badge     |
-| Maintenance | Amber badge    |
-| Damaged     | Red badge      |
-| Lost        | Red/Dark badge |
-| Inactive    | Gray badge     |
-
-### Rental Date Selector
-
-Komponen pemilihan tanggal sewa pada detail produk, detail paket, cart edit, dan checkout menggunakan tiga informasi yang saling terkait:
-
-```text
-Tgl Ambil | Durasi | Maks. Pengembalian
-```
-
-Rules:
-
-* `Tgl Ambil` menggunakan date picker dan tidak menerima tanggal masa lalu.
-* `Durasi` menggunakan pilihan Permalam, Perkegiatan I, atau Perkegiatan II.
-* `Maks. Pengembalian` bersifat read-only dan dihitung otomatis setelah tanggal ambil serta durasi valid.
-* Perubahan tanggal ambil atau durasi langsung memperbarui tanggal maksimal pengembalian dan memicu availability check ulang.
-* Sebelum kedua input valid, field maksimal pengembalian menampilkan placeholder yang jelas.
-* Desktop menggunakan satu container tiga kolom dengan separator; mobile menggunakan susunan vertikal tanpa horizontal scroll.
-* Setiap field memiliki label visible, icon konsisten, focus state, dan tap target minimal 44px.
-* Perubahan tanggal maksimal diumumkan melalui `aria-live="polite"` untuk screen reader.
-
-### Product and Package Media Gallery
-
-* Detail produk dan paket menggunakan satu media utama dengan daftar thumbnail atau carousel media.
-* Galeri mendukung beberapa foto dan video.
-* Foto menggunakan aspect ratio konsisten dan tidak berubah ukuran ketika media berpindah.
-* Video menggunakan native controls, tidak autoplay dengan suara, dan memiliki poster/thumbnail.
-* Carousel mendukung swipe pada mobile serta tombol previous/next yang keyboard-accessible.
-* Media di bawah fold dan video di-lazy-load untuk mengurangi initial load.
-* Media utama wajib memiliki alt text atau label yang menjelaskan produk/paket.
-
----
-
-## 11. Logo Usage
-
-Logo ANNAPURNA digunakan sebagai identitas utama website.
-
-Rules:
-
-* Logo full color digunakan di background terang.
-* Logo versi putih digunakan di background gelap/hijau.
-* Logo tidak boleh di-stretch.
-* Logo tidak boleh diberi shadow berlebihan.
-* Warna logo tidak boleh diubah sembarangan.
-* Logo navbar memiliki tinggi sekitar `32–40px`.
-* Logo hero boleh lebih besar selama tetap proporsional.
-
----
-
-## 12. Anti “AI Slop” Design Rules
-
-Untuk mencegah tampilan terlihat seperti hasil template AI yang generic, sistem harus mengikuti aturan berikut:
-
-* Gunakan design system secara konsisten.
-* Jangan membuat warna baru tanpa kebutuhan.
-* Jangan menggunakan gradient berlebihan.
-* Jangan menggunakan shadow tebal.
-* Jangan menggunakan terlalu banyak icon style.
-* Jangan menggunakan random illustration.
-* Gunakan foto produk asli.
-* Gunakan spacing konsisten.
-* Gunakan komponen reusable.
-* Customer UI harus clean, spacious, dan professional.
-* Admin UI harus utilitarian dan fokus pada aksi.
-* Hindari layout yang terlalu penuh.
-* Hindari card yang terlalu banyak teks.
-* Hindari penggunaan animasi berlebihan.
-
-Design goal:
-
-```text
-Simple, clean, trustworthy, outdoor-friendly, dan mudah digunakan.
-```
 
 ---
 
@@ -513,6 +249,7 @@ Project menggunakan pendekatan MVP-friendly. Implementasi harus rapi, aman, resp
 * Jangan menempatkan business logic di UI component atau Route Handler.
 * Gunakan shared TypeScript types dan Zod schemas untuk kontrak lintas layer.
 * Semua input API wajib divalidasi dengan Zod sebelum masuk ke service.
+* **Fakta Terkonfirmasi:** validasi input hanya dilakukan di backend. Frontend tidak boleh mengimplementasikan validasi apa pun (termasuk required-field check atau format check sederhana) — frontend hanya bertanggung jawab menampilkan state loading dan menerjemahkan error dari API secara jelas ke pengguna.
 * Gunakan database transaction untuk booking, unit assignment, update pembayaran, dan proses pengembalian.
 * Webhook Midtrans wajib diverifikasi dan diproses secara idempotent.
 * Customer hanya dapat mengakses data miliknya sendiri.
@@ -533,7 +270,10 @@ Project menggunakan pendekatan MVP-friendly. Implementasi harus rapi, aman, resp
 * Local UI state digunakan untuk modal, dropdown, tab, dan state kecil.
 * Zustand digunakan untuk global state ringan seperti cart booking, selected product, selected variant, selected duration, dan checkout state.
 * TanStack Query digunakan untuk server-state seperti katalog, detail produk, availability, transaksi, laporan, dan status pesanan.
-* React Hook Form dan Zod digunakan untuk validasi form.
+* React Hook Form digunakan untuk manajemen state form (field value, dirty state, submit state), **bukan** untuk validasi.
+* **Frontend tidak menjalankan validasi Zod atau validasi manual apa pun.** Backend adalah satu-satunya sumber kebenaran untuk validitas input (lihat 13.0). Frontend hanya mengirim data ke API dan menampilkan hasilnya.
+* Setiap submit form wajib menampilkan state "sedang diproses" (tombol disabled, spinner/skeleton, atau progress indicator) segera setelah submit ditekan, agar interaksi tetap terasa responsif meskipun validasi backend membutuhkan waktu.
+* Error validasi ditampilkan berdasarkan `fieldErrors` yang dikembalikan API (lihat kontrak `ApiError` pada Section 28), dipetakan ke field form terkait — bukan dihasilkan ulang di frontend.
 * Lazy loading diterapkan hanya untuk komponen berat seperti chatbot, chart dashboard, tabel laporan besar, dan export PDF/Excel.
 * Redux tidak digunakan pada MVP.
 * Business rule dan perhitungan biaya tidak boleh berada di UI component.
