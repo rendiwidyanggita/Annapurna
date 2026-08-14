@@ -90,7 +90,7 @@ flowchart LR
 | `date-fns` | Perhitungan tanggal modular (addDays, format), locale Indonesia, tree-shakeable. Lebih ringan dari moment.js. |
 | `react-day-picker` | Date picker accessible melalui shadcn/ui Calendar. Mendukung disabled dates dan locale. |
 | `embla-carousel-react` | Carousel ringan melalui shadcn/ui. Swipe mobile, keyboard accessible, SSR compatible. |
-| `lucide-react` | Icon set konsisten, tree-shakeable. Digunakan melalui shadcn/ui. |
+| `hugeicons-react` | Icon set modern dan konsisten, tree-shakeable. |
 | `sonner` | Toast notification minimal dan accessible. Tidak mengambil alih fokus pengguna. |
 | `motion` | Micro-interaction bermakna. Optional, hanya untuk elemen penting, dengan reduced-motion fallback. |
 | `recharts` | Chart sederhana untuk dashboard. Optional, hanya jika chart benar-benar dibutuhkan. |

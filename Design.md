@@ -591,7 +591,7 @@ Sesuai PRD, responsive testing dilakukan minimal pada:
 - Background sidebar: `Surface (#FFFFFF)` dengan border kanan.
 - Active item: `Soft Green (#E7F3EE)` background + `Primary Green (#16624B)` text.
 - Hover: `Soft Green (#E7F3EE)` background.
-- Icon di setiap menu item (Lucide icons).
+- Icon di setiap menu item (Hugeicons).
 - Menu items dikelompokkan: Operasional, Konten, Administrasi.
 - Mobile: hamburger trigger, sidebar muncul sebagai drawer.
 
@@ -716,7 +716,7 @@ Rules:
 - Selalu sertakan tindakan yang bisa dilakukan user.
 - Contoh: "Belum ada pesanan" + CTA "Lihat Katalog".
 - Contoh admin: "Belum ada produk" + CTA "Tambah Produk".
-- Gunakan Lucide icon yang relevan, bukan ilustrasi random.
+- Gunakan Hugeicons yang relevan, bukan ilustrasi random.
 
 ### Error States
 
@@ -764,7 +764,7 @@ Rules:
 
 ### Icon Library
 
-Sistem menggunakan **Lucide React** sebagai satu-satunya icon library, digunakan melalui shadcn/ui.
+Sistem menggunakan **Hugeicons React** sebagai satu-satunya icon library.
 
 ### Icon Sizing
 
@@ -778,7 +778,7 @@ Sistem menggunakan **Lucide React** sebagai satu-satunya icon library, digunakan
 
 ### Icon Usage Rules
 
-- Gunakan **satu style** secara konsisten — default Lucide stroke style.
+- Gunakan **satu style** secara konsisten — default Hugeicons stroke style (stroke/outline).
 - Jangan mix icon dari library berbeda.
 - Icon selalu memiliki `aria-hidden="true"` jika ada teks label yang menyertainya.
 - Icon tanpa teks label harus memiliki `aria-label` yang deskriptif.
@@ -787,33 +787,33 @@ Sistem menggunakan **Lucide React** sebagai satu-satunya icon library, digunakan
 
 ### Common Icon Mapping
 
-| Usage | Icon (Lucide) |
+| Usage | Icon (Hugeicons) |
 |---|---|
-| Calendar/tanggal | `Calendar` |
-| Duration/clock | `Clock` |
-| Cart | `ShoppingCart` |
-| Search | `Search` |
-| Filter | `SlidersHorizontal` |
-| Close/dismiss | `X` |
-| Menu/hamburger | `Menu` |
-| Check/success | `Check` atau `CheckCircle` |
-| Warning | `AlertTriangle` |
-| Error | `AlertCircle` |
-| Info | `Info` |
-| Edit | `Pencil` |
-| Delete | `Trash2` |
-| Add/create | `Plus` |
-| Upload | `Upload` |
-| Download/export | `Download` |
-| User/profile | `User` |
-| Logout | `LogOut` |
-| Settings | `Settings` |
-| Eye/view | `Eye` |
-| ChevronDown | `ChevronDown` |
-| ChevronRight | `ChevronRight` |
-| ArrowLeft/back | `ArrowLeft` |
-| Package | `Package` |
-| Home | `Home` |
+| Calendar/tanggal | `Calendar01Icon` |
+| Duration/clock | `Clock01Icon` |
+| Cart | `ShoppingCart01Icon` |
+| Search | `Search01Icon` |
+| Filter | `SlidersIcon` |
+| Close/dismiss | `Cancel01Icon` |
+| Menu/hamburger | `Menu01Icon` |
+| Check/success | `CheckmarkCircle02Icon` |
+| Warning | `AlertTriangleIcon` |
+| Error | `AlertCircleIcon` |
+| Info | `InformationCircle02Icon` |
+| Edit | `PencilEdit01Icon` |
+| Delete | `Trash02Icon` |
+| Add/create | `PlusSignIcon` |
+| Upload | `Upload01Icon` |
+| Download/export | `Download01Icon` |
+| User/profile | `UserIcon` |
+| Logout | `Logout01Icon` |
+| Settings | `Settings01Icon` |
+| Eye/view | `EyeIcon` |
+| ChevronDown | `ChevronDownIcon` |
+| ChevronRight | `ChevronRightIcon` |
+| ArrowLeft/back | `ArrowLeftIcon` |
+| Package | `PackageIcon` |
+| Home | `Home01Icon` |
 
 ---
 

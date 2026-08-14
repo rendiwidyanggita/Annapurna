@@ -183,7 +183,7 @@ Library berikut digunakan secara selektif; jangan menambahkan library jika kemam
 | `date-fns` | Required | Perhitungan tanggal maksimal pengembalian, perbandingan tanggal, dan format tanggal locale Indonesia |
 | `react-day-picker` | Required melalui shadcn/ui Calendar | Date picker tanggal ambil yang accessible dan dapat dikustomisasi |
 | `embla-carousel-react` | Required melalui shadcn/ui Carousel | Galeri beberapa foto/video produk dan paket, swipe mobile, serta kontrol previous/next |
-| `lucide-react` | Required melalui shadcn/ui | Icon konsisten untuk kalender, navigasi, status, dan action |
+| `hugeicons-react` | Required | Icon set modern dan konsisten untuk kalender, navigasi, status, dan action |
 | `sonner` | Recommended | Toast feedback untuk aksi async tanpa mengambil alih fokus pengguna |
 | `motion` | Optional | Micro-interaction yang bermakna; gunakan hanya pada elemen penting dan hormati reduced motion |
 | `recharts` | Optional | Visualisasi ringkas pada dashboard/laporan jika chart benar-benar dibutuhkan |
