@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import type { ReactNode } from "react";
+import { Toaster } from "sonner";
+import { ReactQueryProvider } from "@/providers/query-provider";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -23,7 +25,10 @@ export default function RootLayout({
   return (
     <html lang="id" className={`${manrope.variable} h-full antialiased font-sans`}>
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        {children}
+        <ReactQueryProvider>
+          {children}
+          <Toaster position="top-right" richColors />
+        </ReactQueryProvider>
       </body>
     </html>
   );

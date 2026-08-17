@@ -1,0 +1,445 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ==============================================================================
+// Enums
+// ==============================================================================
+enum TransactionStatus {
+  Pending
+  Menunggu_Pembayaran_DP
+  DP_Dibayar
+  Dikonfirmasi
+  Siap_Diambil
+  Sedang_Disewa
+  Terlambat
+  Dikembalikan
+  Selesai
+  Dibatalkan
+  Ditolak
+  Expired
+}
+
+enum PaymentStatus {
+  Unpaid
+  Pending
+  DP_Paid
+  Failed
+  Expired
+  Refunded
+  Remaining_Paid
+  Fully_Paid
+}
+
+enum UnitStatus {
+  Available
+  Reserved
+  Rented
+  Returned
+  Maintenance
+  Damaged
+  Lost
+  Inactive
+}
+
+enum GuaranteeStatus {
+  Not_Received
+  Received
+  Returned
+}
+
+enum ItemType {
+  rental_unit
+  consumable
+}
+
+enum MediaType {
+  image
+  video
+}
+
+enum PenaltyType {
+  Late_Return
+  Damage
+  Lost_Item
+  Incomplete_Item
+  Other
+}
+
+// ==============================================================================
+// Auth & Users
+// ==============================================================================
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  users User[]
+
+  @@map("roles")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  roleId       String   @map("role_id")
+  email        String   @unique
+  authProvider String   @map("auth_provider")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  role         Role                 @relation(fields: [roleId], references: [id])
+  profile      Profile?
+  transactions RentalTransaction[]
+  chatSessions ChatSession[]
+  activityLogs ActivityLog[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Profile {
+  id                String   @id @default(uuid())
+  userId            String   @unique @map("user_id")
+  fullName          String?  @map("full_name")
+  phoneNumber       String?  @map("phone_number")
+  address           String?
+  isProfileComplete Boolean  @default(false) @map("is_profile_complete")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("profiles")
+}
+
+// ==============================================================================
+// Products & Inventory
+// ==============================================================================
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id                String    @id @default(uuid())
+  categoryId        String    @map("category_id")
+  name              String
+  description       String?
+  itemType          ItemType  @map("item_type")
+  pricePermalam     Int       @map("price_permalam")
+  pricePerkegiatan1 Int       @map("price_perkegiatan_1")
+  pricePerkegiatan2 Int       @map("price_perkegiatan_2")
+  consumableStock   Int       @default(0) @map("consumable_stock")
+  isActive          Boolean   @default(true) @map("is_active")
+  deletedAt         DateTime? @map("deleted_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  category     Category         @relation(fields: [categoryId], references: [id])
+  variants     ProductVariant[]
+  media        ProductMedia[]
+  packageItems PackageItem[]
+
+  @@map("products")
+}
+
+model ProductVariant {
+  id          String    @id @default(uuid())
+  productId   String    @map("product_id")
+  variantName String    @map("variant_name")
+  size        String?
+  color       String?
+  brand       String?
+  isActive    Boolean   @default(true) @map("is_active")
+  deletedAt   DateTime? @map("deleted_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  product Product         @relation(fields: [productId], references: [id])
+  units   InventoryUnit[]
+
+  @@map("product_variants")
+}
+
+model ProductMedia {
+  id           String    @id @default(uuid())
+  productId    String    @map("product_id")
+  mediaType    MediaType @map("media_type")
+  mediaUrl     String    @map("media_url")
+  storagePath  String    @map("storage_path")
+  thumbnailUrl String?   @map("thumbnail_url")
+  altText      String?   @map("alt_text")
+  sortOrder    Int       @default(0) @map("sort_order")
+  isPrimary    Boolean   @default(false) @map("is_primary")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("product_media")
+}
+
+model InventoryUnit {
+  id             String     @id @default(uuid())
+  variantId      String     @map("variant_id")
+  inventoryCode  String     @unique @map("inventory_code")
+  unitStatus     UnitStatus @default(Available) @map("unit_status")
+  conditionNotes String?    @map("condition_notes")
+  isActive       Boolean    @default(true) @map("is_active")
+  deletedAt      DateTime?  @map("deleted_at")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+
+  variant          ProductVariant          @relation(fields: [variantId], references: [id])
+  transactionItems RentalTransactionItem[]
+  returnItems      ReturnItem[]
+
+  @@index([variantId, unitStatus, isActive])
+  @@map("inventory_units")
+}
+
+// ==============================================================================
+// Packages
+// ==============================================================================
+model Package {
+  id           String    @id @default(uuid())
+  name         String    @unique
+  description  String?
+  bannerUrl    String?   @map("banner_url")
+  packagePrice Int       @map("package_price")
+  isActive     Boolean   @default(true) @map("is_active")
+  deletedAt    DateTime? @map("deleted_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  items PackageItem[]
+
+  @@map("packages")
+}
+
+model PackageItem {
+  id        String @id @default(uuid())
+  packageId String @map("package_id")
+  productId String @map("product_id")
+  quantity  Int    @default(1)
+
+  package Package @relation(fields: [packageId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("package_items")
+}
+
+// ==============================================================================
+// Transactions & Payments
+// ==============================================================================
+model RentalTransaction {
+  id                String            @id @default(uuid())
+  transactionCode   String            @unique @map("transaction_code")
+  userId            String            @map("user_id")
+  termsConditionId  String            @map("terms_condition_id")
+  startDate         DateTime          @map("start_date")
+  endDate           DateTime          @map("end_date")
+  totalDurationDays Int               @map("total_duration_days")
+  pricingScheme     String            @map("pricing_scheme")
+  totalAmount       Int               @map("total_amount")
+  dpAmount          Int               @map("dp_amount")
+  remainingAmount   Int               @map("remaining_amount")
+  transactionStatus TransactionStatus @default(Pending) @map("transaction_status")
+  paymentStatus     PaymentStatus     @default(Unpaid) @map("payment_status")
+  guaranteeStatus   GuaranteeStatus   @default(Not_Received) @map("guarantee_status")
+  guaranteeDocType  String?           @map("guarantee_doc_type")
+  notes             String?
+  cancelledReason   String?           @map("cancelled_reason")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  user           User                    @relation(fields: [userId], references: [id])
+  termsCondition TermsCondition          @relation(fields: [termsConditionId], references: [id])
+  items          RentalTransactionItem[]
+  payments       Payment[]
+  returns        ReturnTransaction[]
+  penalties      Penalty[]
+
+  @@index([userId])
+  @@index([transactionStatus, paymentStatus])
+  @@index([transactionCode])
+  @@map("rental_transactions")
+}
+
+model RentalTransactionItem {
+  id              String   @id @default(uuid())
+  transactionId   String   @map("transaction_id")
+  unitId          String?  @map("unit_id")
+  productId       String   @map("product_id")
+  productNameSnap String   @map("product_name_snap")
+  unitCodeSnap    String?  @map("unit_code_snap")
+  priceSnap       Int      @map("price_snap")
+  quantity        Int      @default(1)
+  subtotal        Int
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  transaction RentalTransaction @relation(fields: [transactionId], references: [id])
+  unit        InventoryUnit?    @relation(fields: [unitId], references: [id])
+
+  @@index([transactionId, unitId])
+  @@map("rental_transaction_items")
+}
+
+model Payment {
+  id                    String        @id @default(uuid())
+  transactionId         String        @map("transaction_id")
+  midtransOrderId       String        @unique @map("midtrans_order_id")
+  midtransTransactionId String?       @map("midtrans_transaction_id")
+  paymentType           String?       @map("payment_type")
+  grossAmount           Int           @map("gross_amount")
+  paymentStatus         PaymentStatus @default(Pending) @map("payment_status")
+  snapToken             String?       @map("snap_token")
+  snapRedirectUrl       String?       @map("snap_redirect_url")
+  paidAt                DateTime?     @map("paid_at")
+  rawResponse           String?       @map("raw_response")
+  createdAt             DateTime      @default(now()) @map("created_at")
+  updatedAt             DateTime      @updatedAt @map("updated_at")
+
+  transaction RentalTransaction @relation(fields: [transactionId], references: [id])
+
+  @@index([midtransOrderId, midtransTransactionId])
+  @@map("payments")
+}
+
+model ReturnTransaction {
+  id                    String          @id @default(uuid())
+  transactionId         String          @map("transaction_id")
+  staffUserId           String          @map("staff_user_id")
+  returnDate            DateTime        @default(now()) @map("return_date")
+  lateDays              Int             @default(0) @map("late_days")
+  guaranteeReturnStatus GuaranteeStatus @default(Returned) @map("guarantee_return_status")
+  notes                 String?
+  createdAt             DateTime        @default(now()) @map("created_at")
+
+  transaction RentalTransaction @relation(fields: [transactionId], references: [id])
+  items       ReturnItem[]
+
+  @@map("return_transactions")
+}
+
+model ReturnItem {
+  id                  String     @id @default(uuid())
+  returnTransactionId String     @map("return_transaction_id")
+  unitId              String     @map("unit_id")
+  returnedCondition   UnitStatus @map("returned_condition")
+  notes               String?
+  createdAt           DateTime   @default(now()) @map("created_at")
+
+  returnTransaction ReturnTransaction @relation(fields: [returnTransactionId], references: [id])
+  unit              InventoryUnit     @relation(fields: [unitId], references: [id])
+
+  @@map("return_items")
+}
+
+model Penalty {
+  id            String      @id @default(uuid())
+  transactionId String      @map("transaction_id")
+  penaltyType   PenaltyType @map("penalty_type")
+  amount        Int
+  reason        String
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  transaction RentalTransaction @relation(fields: [transactionId], references: [id])
+
+  @@map("penalties")
+}
+
+// ==============================================================================
+// Terms & Conditions
+// ==============================================================================
+model TermsCondition {
+  id        String   @id @default(uuid())
+  version   String   @unique
+  content   String
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  transactions RentalTransaction[]
+
+  @@map("terms_conditions")
+}
+
+// ==============================================================================
+// Chatbot
+// ==============================================================================
+model ChatSession {
+  id            String    @id @default(uuid())
+  userId        String?   @map("user_id")
+  sessionStatus String    @default("Active") @map("session_status")
+  startedAt     DateTime  @default(now()) @map("started_at")
+  endedAt       DateTime? @map("ended_at")
+
+  user     User?         @relation(fields: [userId], references: [id])
+  messages ChatMessage[]
+
+  @@map("chat_sessions")
+}
+
+model ChatMessage {
+  id              String   @id @default(uuid())
+  chatSessionId   String   @map("chat_session_id")
+  knowledgeBaseId String?  @map("knowledge_base_id")
+  sender          String
+  message         String
+  isOutOfScope    Boolean  @default(false) @map("is_out_of_scope")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  chatSession   ChatSession           @relation(fields: [chatSessionId], references: [id])
+  knowledgeBase ChatbotKnowledgeBase? @relation(fields: [knowledgeBaseId], references: [id])
+
+  @@map("chat_messages")
+}
+
+model ChatbotKnowledgeBase {
+  id              String   @id @default(uuid())
+  topic           String
+  questionPattern String?  @map("question_pattern")
+  answer          String
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  messages ChatMessage[]
+
+  @@map("chatbot_knowledge_base")
+}
+
+// ==============================================================================
+// Audit Logs
+// ==============================================================================
+model ActivityLog {
+  id          String   @id @default(uuid())
+  userId      String?  @map("user_id")
+  action      String
+  entityName  String   @map("entity_name")
+  entityId    String?  @map("entity_id")
+  oldValue    String?  @map("old_value")
+  newValue    String?  @map("new_value")
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("activity_logs")
+}
