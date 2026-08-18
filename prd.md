@@ -589,7 +589,7 @@ Sistem menyediakan halaman Syarat & Ketentuan yang dapat dibaca customer sebelum
 * Customer wajib meninggalkan jaminan berupa kartu identitas asli yang masih berlaku.
 * Contoh jaminan: KTP, SIM, kartu pelajar, kartu mahasiswa, dan identitas lain yang masih berlaku.
 * Identitas harus mencantumkan alamat yang jelas.
-* Customer melakukan pembayaran uang muka atau pelunasan ketika pengambilan barang.
+* Customer wajib membayar DP (uang muka) secara online melalui Midtrans saat booking; sisa pembayaran (pelunasan) dilakukan saat pengambilan barang di toko.
 * Perhitungan sewa aktif sejak barang diambil dari ANNAPURNA Adventure.
 * Keterlambatan pengembalian dianggap sebagai penambahan durasi sewa.
 * Barang yang sudah diambil tetap dihitung sewa meskipun tidak digunakan.
@@ -1555,8 +1555,9 @@ Target berikut adalah **Asumsi MVP** untuk membuat pengujian dan evaluasi teruku
 
 ### 21.1 Rental Transaction Status
 
+**Fakta Terkonfirmasi (OQ-04):** status `Pending` dihapus. `Menunggu Pembayaran DP` adalah satu-satunya status transaksi baru yang menunggu pembayaran pertama.
+
 ```text
-Pending
 Menunggu Pembayaran DP
 DP Dibayar
 Dikonfirmasi
@@ -2549,28 +2550,28 @@ flowchart LR
 
 ---
 
-## 34. Pertanyaan Terbuka dan Keputusan yang Dibutuhkan
+## 34. Keputusan Final atas Pertanyaan Terbuka
 
-Item berikut belum memiliki sumber kebenaran yang cukup. Implementer atau AI mentor tidak boleh memilih jawaban secara diam-diam.
+Seluruh item berikut sebelumnya berstatus Pertanyaan Terbuka dan sudah diputuskan secara eksplisit. Implementer wajib mengikuti keputusan ini, bukan memilih jawaban lain secara diam-diam. Perubahan atas keputusan ini di masa depan harus didokumentasikan ulang di sini beserta alasannya.
 
-| ID | Pertanyaan Terbuka | Dampak Keputusan | Rekomendasi untuk Dibahas |
-|---|---|---|---|
-| OQ-01 | Kapan unit spesifik ditentukan, ditahan, dan berubah menjadi `Reserved`: saat checkout sebelum DP atau setelah DP valid? | Pencegahan overbooking, expiry, dan data model transaction item | Definisikan satu lifecycle reservasi dan transaction boundary |
-| OQ-02 | Apakah status global `Reserved` cukup untuk unit yang dapat memiliki booking pada tanggal berbeda? | Availability lintas tanggal | Tentukan hubungan status unit dengan reservation berdasarkan rentang tanggal |
-| OQ-03 | Kapan stok consumable dikurangi, dan apakah stok dikembalikan saat booking/payment expired atau dibatalkan? | Integritas stok dan expiry flow | Definisikan lifecycle stok consumable |
-| OQ-04 | Apa perbedaan business meaning antara `Pending` dan `Menunggu Pembayaran DP`? | Enum, transition, UI badge, report | Normalisasi atau dokumentasikan perbedaan eksplisit |
-| OQ-05 | Bagaimana inventory unit direpresentasikan untuk produk `rental_unit` yang tidak memiliki variant? | Relasi `INVENTORY_UNITS.variant_id` | Tentukan variant default atau relasi langsung ke product |
-| OQ-06 | Bagaimana satu transaction item merepresentasikan quantity lebih dari satu unit unik? | ERD dan assignment unit | Tentukan satu row per unit atau tabel assignment terpisah |
-| OQ-07 | Apakah admin dapat melihat semua laporan, activity log, mengelola S.K, user, dan role, atau sebagian hanya owner? | Authorization matrix | Finalisasi permission matrix admin vs owner |
-| OQ-08 | Apakah partial return dan partial item issue didukung pada MVP? | Return model dan status transaksi | Konfirmasi tetap out-of-scope atau definisikan flow |
-| OQ-09 | Apa kebijakan refund dan pembatalan setelah DP dibayar? | Payment status, Midtrans flow, laporan | Tetapkan aturan bisnis dan otorisasi |
-| OQ-10 | Bagaimana menangani webhook yang terlambat, gagal berulang, atau datang setelah booking expired? | Payment reconciliation dan unit reservation | Definisikan reconciliation rule |
-| OQ-11 | Zona waktu operasional dan batas waktu expiry booking menggunakan zona waktu apa? | Date calculation, expiry, report | Gunakan zona waktu toko setelah lokasi dikonfirmasi |
-| OQ-12 | Berapa retensi chat history, server log, activity log, dan data customer? | Privacy, biaya, audit | Tetapkan retensi berdasarkan kebutuhan akademik dan operasional |
-| OQ-13 | Berapa durasi booking sebelum `Expired`? | Payment UX dan availability | Konfirmasi dengan owner dan Midtrans configuration |
-| OQ-14 | Paket menggunakan harga paket penuh atau dapat dipengaruhi perubahan harga item penyusun? | Snapshot dan perhitungan subtotal | Tegaskan bahwa harga paket menjadi sumber harga checkout jika itu kebijakan toko |
-| OQ-15 | S.K menyebut pembayaran uang muka atau pelunasan saat pengambilan, sedangkan flow sistem mewajibkan DP Midtrans sebelum transaksi diproses. Aturan mana yang berlaku? | Konsistensi S.K, checkout, pickup, dan payment flow | Selaraskan S.K operasional dengan flow pembayaran MVP |
-| OQ-16 | Apakah tanggal maksimal pengembalian cukup dihitung dengan penambahan hari kalender, atau dipengaruhi jam operasional/cutoff toko? | Formula tanggal, contoh UI, availability, dan keterlambatan | Konfirmasi contoh tanggal nyata dengan owner sebelum formula dianggap final |
+| ID | Keputusan Final | Detail |
+|---|---|---|
+| OQ-01 | **Soft-hold saat checkout, sebelum DP.** | Unit/stok langsung dikunci begitu customer checkout (status transaksi `Menunggu Pembayaran DP`), sebelum uang benar-benar masuk. Kalau `expires_at` (60 menit, lihat OQ-13) terlampaui tanpa DP masuk, sistem otomatis membatalkan transaksi dan melepas kunci. |
+| OQ-02 | **`unit_status` hanya kondisi fisik; ketersediaan dihitung per rentang tanggal.** | `unit_status` (Available/Maintenance/Damaged/Lost/Inactive) tidak dipakai untuk menentukan ketersediaan booking. Ketersediaan dihitung on-the-fly dari overlap tanggal terhadap transaksi aktif — satu unit bisa "Reserved" untuk tanggal X tapi tetap available untuk tanggal Y yang tidak overlap. |
+| OQ-03 | **Field `is_reusable` pada produk consumable.** | `is_reusable = true`: stok dikembalikan saat return (matras massal, dsb). `is_reusable = false`: stok berkurang permanen, tidak dikembalikan (gas kaleng sekali pakai, dsb), item ini dihitung sebagai retail/jual putus di laporan, terpisah dari data rental. |
+| OQ-04 | **`Pending` dihapus.** | `Menunggu Pembayaran DP` adalah satu-satunya status transaksi baru yang menunggu pembayaran pertama (lihat Section 21.1). |
+| OQ-05 | **Default variant untuk produk tanpa variasi eksplisit.** | Produk `rental_unit` tanpa pilihan ukuran/warna tetap dipetakan ke satu `product_variants` default, supaya `inventory_units.variant_id` konsisten selalu terisi. |
+| OQ-06 | **1 row per unit unik di `rental_transaction_items`.** | Untuk `rental_unit`: quantity > 1 direpresentasikan sebagai beberapa row terpisah, masing-masing terhubung ke satu `unit_id` spesifik (assignment ditentukan saat checkout, baris yang sama diikuti sampai return). Untuk `consumable`: satu row dengan `quantity` > 1, `unit_id` NULL. |
+| OQ-07 | **Owner-only:** S.K, manajemen user/role, laporan finansial ringkasan bisnis. **Admin:** produk, stok, transaksi, pembayaran, pickup/return, denda — tidak bisa ubah S.K atau kelola akun admin lain. |
+| OQ-08 | **Partial return didukung via checkbox per item.** | Admin mencentang tiap item saat proses return (`rental_transaction_items.is_returned`). Transaksi baru boleh berubah ke `Dikembalikan`/`Selesai` setelah seluruh item terkait tercentang. |
+| OQ-09 | **DP hangus jika customer membatalkan sendiri.** Refund penuh hanya jika toko yang membatalkan (barang rusak/tidak tersedia mendadak). |
+| OQ-10 | **Webhook telat setelah booking expired: tidak re-reserve otomatis.** Transaksi ditandai butuh review manual, refund otomatis via Midtrans, admin mendapat notifikasi untuk follow-up ke customer. |
+| OQ-11 | **Zona waktu operasional: WIB (Asia/Jakarta).** Database tetap menyimpan `TIMESTAMPTZ` (UTC), perhitungan cutoff/expiry dilakukan di application layer dalam WIB. |
+| OQ-12 | **Retensi:** chat history dan activity log 12 bulan lalu di-archive; data customer disimpan selama akun aktif + 24 bulan setelah non-aktif. Automated purging job didokumentasikan sebagai future work jika belum sempat diimplementasikan penuh pada MVP. |
+| OQ-13 | **Durasi sebelum `Expired`: 60 menit** sejak checkout. |
+| OQ-14 | **Harga paket adalah snapshot tetap.** Tidak terpengaruh perubahan harga item penyusun setelah paket dibuat atau setelah checkout. |
+| OQ-15 | **DP Midtrans tetap wajib.** Teks S.K disesuaikan agar konsisten: "DP wajib dibayar online saat booking, sisa dilunasi saat pengambilan barang di toko." (lihat pembaruan Section 16.1). |
+| OQ-16 | **Kalender murni:** tanggal maksimal pengembalian = tanggal ambil + durasi hari, tidak dipengaruhi jam operasional/cutoff. Jam operasional hanya membatasi jam fisik pickup/return di toko. |
 
 ---
 

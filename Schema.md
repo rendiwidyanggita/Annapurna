@@ -22,7 +22,7 @@ Berikut adalah tipe Enum yang mendefinisikan batas nilai (domain) yang diizinkan
 
 | Enum Name | Values |
 |---|---|
-| `transaction_status` | `Pending`, `Menunggu Pembayaran DP`, `DP Dibayar`, `Dikonfirmasi`, `Siap Diambil`, `Sedang Disewa`, `Terlambat`, `Dikembalikan`, `Selesai`, `Dibatalkan`, `Ditolak`, `Expired` |
+| `transaction_status` | `Menunggu Pembayaran DP`, `DP Dibayar`, `Dikonfirmasi`, `Siap Diambil`, `Sedang Disewa`, `Terlambat`, `Dikembalikan`, `Selesai`, `Dibatalkan`, `Ditolak`, `Expired` |
 | `payment_status` | `Unpaid`, `Pending`, `DP Paid`, `Failed`, `Expired`, `Refunded`, `Remaining Paid`, `Fully Paid` |
 | `unit_status` | `Available`, `Reserved`, `Rented`, `Returned`, `Maintenance`, `Damaged`, `Lost`, `Inactive` |
 | `guarantee_status`| `Not Received`, `Received`, `Returned` |
@@ -97,6 +97,7 @@ Entitas produk utama yang ditawarkan untuk disewa.
 | `name` | `VARCHAR` (`String`) | NOT NULL | Nama produk |
 | `description` | `TEXT` (`String`) | | Deskripsi produk |
 | `item_type` | `item_type` (`Enum`) | NOT NULL | `rental_unit` / `consumable` |
+| `is_reusable` | `BOOLEAN` (`Boolean`) | NOT NULL, DEFAULT true | Hanya relevan untuk `item_type = consumable`. `true` = stok dikembalikan saat return (e.g. matras massal). `false` = stok berkurang permanen, tidak dikembalikan (e.g. gas kaleng sekali pakai); item ini dihitung sebagai retail/jual putus dalam laporan, bukan rental. |
 | `price_permalam` | `INTEGER` (`Int`) | NOT NULL | Harga per malam |
 | `price_perkegiatan_1`| `INTEGER` (`Int`) | NOT NULL | Harga 3 hari 3 malam |
 | `price_perkegiatan_2`| `INTEGER` (`Int`) | NOT NULL | Harga 5 hari 5 malam |
@@ -140,6 +141,8 @@ Galeri foto/video dari produk.
 
 ### 4.5 `inventory_units`
 Unit barang aktual dengan kode pelacakan. Diwajibkan untuk item tipe `rental_unit`.
+
+**Fakta Terkonfirmasi (OQ-02):** `unit_status` di tabel ini merepresentasikan **kondisi fisik unit saja** (Available/Maintenance/Damaged/Lost/Inactive), bukan ketersediaan untuk tanggal tertentu. `Reserved`/`Rented` tidak boleh dijadikan penentu ketersediaan lintas tanggal — satu unit fisik yang sedang dalam transaksi aktif pada rentang tanggal X tetap harus muncul available untuk booking di rentang tanggal Y yang tidak overlap. Ketersediaan per tanggal **dihitung on-the-fly** via query overlap antara `rental_start_date`/`rental_end_date` pada `rental_transactions` berstatus aktif terhadap `unit_id` yang diminta — bukan dibaca langsung dari kolom `unit_status`.
 
 | Kolom | Tipe PostgreSQL (Prisma) | Constraint | Deskripsi |
 |---|---|---|---|
@@ -262,8 +265,11 @@ Rincian item unit fisik yang disewa. Item adalah snapshot produk.
 | `package_snapshot`| `VARCHAR` (`String`) | | Jika dibooking dari paket, rekam nama paketnya |
 | `duration_snapshot`| `VARCHAR` (`String`) | NOT NULL | 'Permalam' / dll |
 | `rental_price_snapshot`| `INTEGER` (`Int`) | NOT NULL | Harga per unit per durasi |
-| `quantity` | `INTEGER` (`Int`) | NOT NULL, DEFAULT 1 | Biasanya 1 untuk unit unik, bisa > 1 untuk consumable |
+| `quantity` | `INTEGER` (`Int`) | NOT NULL, DEFAULT 1 | Biasanya 1 untuk unit unik (1 row = 1 unit fisik, lihat OQ-06), bisa > 1 untuk consumable |
 | `subtotal` | `INTEGER` (`Int`) | NOT NULL | subtotal qty * price |
+| `is_returned` | `BOOLEAN` (`Boolean`) | NOT NULL, DEFAULT false | Partial return per item (OQ-08). Transaksi baru boleh berubah ke `Dikembalikan`/`Selesai` setelah seluruh item terkait `is_returned = true` |
+| `returned_at` | `TIMESTAMPTZ` (`DateTime?`) | NULLABLE | Waktu item ini dicentang kembali oleh admin |
+| `item_condition_notes`| `TEXT` (`String`) | | Catatan kondisi khusus item ini saat dikembalikan (jika berbeda dari catatan umum di `returns`) |
 | `created_at` | `TIMESTAMPTZ` (`DateTime`) | DEFAULT NOW() | |
 
 ### 6.3 `payments`
@@ -408,8 +414,29 @@ Sesuai section 26 `prd.md`, relasi digambarkan sebagai berikut:
 
 ---
 
-## 12. Catatan & Open Questions
+## 12. Catatan & Keputusan Final (dahulu Open Questions)
 
 1. Snapshot field di `rental_transaction_items` dan `rental_transactions` WAJIB disimpan saat checkout commit. Database normalization relax pada snapshot untuk tujuan rekam jejak history keuangan yang immutable.
 2. `unit_id` pada transaksi adalah opsional pada schema level untuk support Item tipe consumable.
 3. Sejalan dengan PRD OQ-06: 1 unit unik = 1 Row di tabel `rental_transaction_items` (karena qty fixed 1 dan untuk memegang `unit_id` FK). Untuk Consumable `unit_id` NULL, qty bisa lebih dari 1. Ini menjawab struktur di schema.
+
+Seluruh 16 Pertanyaan Terbuka pada PRD Section 34 telah diputuskan. Ringkasan dampak terhadap schema:
+
+| ID | Keputusan Final | Dampak Schema |
+|---|---|---|
+| OQ-01 | Soft-hold saat checkout (sebelum DP), auto-release jika `expires_at` terlampaui | `rental_transactions.expires_at` sudah ada; job cleanup diperlukan di service layer |
+| OQ-02 | `unit_status` = kondisi fisik saja; ketersediaan per tanggal dihitung via overlap query | Lihat catatan di Section 4.5 |
+| OQ-03 | `is_reusable` pada `products`: `true` = stok kembali saat return, `false` = stok berkurang permanen (dihitung retail) | Kolom baru `products.is_reusable` |
+| OQ-04 | `Pending` dihapus dari `transaction_status`, disatukan jadi `Menunggu Pembayaran DP` | Enum `transaction_status` diperbarui (Section 2) |
+| OQ-05 | Produk tanpa variasi eksplisit dipetakan ke satu default variant | Sudah sesuai schema (`inventory_units.variant_id` NOT NULL) |
+| OQ-06 | 1 unit unik = 1 row di `rental_transaction_items`; consumable pakai `quantity` tanpa `unit_id` | Sudah sesuai schema |
+| OQ-07 | Owner-only: S.K, user/role, laporan finansial ringkasan. Admin: sisanya | Permission matrix di service layer, bukan schema |
+| OQ-08 | Partial return didukung via checkbox per item | Kolom baru `rental_transaction_items.is_returned`, `returned_at`, `item_condition_notes` |
+| OQ-09 | DP hangus jika customer batalkan sendiri; refund penuh jika toko batalkan | Aturan bisnis di service layer, memakai `payment_status = Refunded` yang sudah ada |
+| OQ-10 | Webhook telat setelah expired: tidak re-reserve otomatis, refund otomatis, notifikasi admin | Business rule di webhook handler |
+| OQ-11 | Zona waktu operasional: WIB (Asia/Jakarta). Simpan `TIMESTAMPTZ` (UTC) di DB, hitung di application layer | Tidak ada perubahan tipe kolom (`TIMESTAMPTZ` sudah tepat) |
+| OQ-12 | Retensi: chat/activity log 12 bulan lalu archive; data customer 24 bulan setelah non-aktif | Job archival, di luar scope MVP awal (dokumentasikan sebagai future work jika belum sempat) |
+| OQ-13 | Durasi sebelum `Expired`: **60 menit** sejak checkout | Nilai konfigurasi di service layer, memakai `rental_transactions.expires_at` |
+| OQ-14 | Harga paket adalah snapshot tetap, tidak terpengaruh perubahan harga item penyusun | Sudah sesuai schema (`rental_packages` punya field harga sendiri, terpisah dari `products`) |
+| OQ-15 | DP Midtrans tetap wajib; teks S.K disesuaikan agar konsisten | Perubahan konten `terms_conditions`, bukan schema |
+| OQ-16 | Tanggal maksimal pengembalian = kalender murni (tanggal ambil + durasi hari), tidak dipengaruhi jam operasional | Formula di service layer saat mengisi `rental_end_date` |
