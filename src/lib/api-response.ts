@@ -4,7 +4,7 @@ import type { ApiResponse } from "@/types";
 export function successResponse<T>(data: T, message?: string, status: number = 200) {
   const body: ApiResponse<T> = {
     success: true,
-    ...(message && { message }),
+    ...(message ? { message } : {}),
     data,
   };
   return NextResponse.json(body, { status });
@@ -21,7 +21,7 @@ export function errorResponse(
     error: {
       code,
       message,
-      ...(details && { details }),
+      ...(details !== undefined ? { details } : {}),
     },
   };
   return NextResponse.json(body, { status });
