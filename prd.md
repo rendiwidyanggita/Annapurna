@@ -1513,7 +1513,7 @@ UX requirements lintas flow:
 | NFR-02 | Security             | Akses dibatasi berdasarkan role                                   |
 | NFR-03 | Privacy              | Customer hanya dapat melihat data miliknya                        |
 | NFR-04 | Data Integrity       | Data unit, transaksi, dan pembayaran konsisten                    |
-| NFR-05 | Usability            | Sistem dievaluasi menggunakan SUS                                 |
+| NFR-05 | Usability            | Sistem dievaluasi menggunakan UAT (satisfaction score, task success rate, error rate) |
 | NFR-06 | Maintainability      | Kode menggunakan TypeScript, Prisma, dan struktur layered         |
 | NFR-07 | Performance          | Katalog dan dashboard dimuat cepat                                |
 | NFR-08 | Compatibility        | Sistem berjalan di browser modern                                 |
@@ -1547,7 +1547,7 @@ Target berikut adalah **Asumsi MVP** untuk membuat pengujian dan evaluasi teruku
 | Security | Seluruh endpoint protected menerapkan auth, role, ownership, validasi input, dan tidak mengekspos secret | Security test dan review |
 | Recovery | Database production memiliki backup managed; prosedur restore diuji sebelum digunakan sebagai production final | Bukti konfigurasi dan restore drill |
 | Observability | Error penting, perubahan status, webhook, dan aktivitas privileged dapat ditelusuri menggunakan correlation/request ID | Review log dan activity log |
-| Usability | Evaluasi SUS dilakukan pada skenario customer dan admin utama | Hasil pengujian SUS |
+| Usability | Evaluasi UAT dilakukan pada skenario customer dan admin utama, mengukur satisfaction score, task success rate, dan error rate | Hasil pengujian UAT (kuesioner skala Likert + skenario tugas) |
 
 ---
 
@@ -1750,7 +1750,7 @@ Estimasi: belum ditetapkan.
 * Chat history
 * Responsive testing
 * Black Box Testing
-* Evaluasi SUS
+* Evaluasi UAT
 * Perbaikan akhir
 
 ---
