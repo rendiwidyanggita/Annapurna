@@ -1,8 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema } from "@/schemas/auth";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export type ActionState = {
   error?: string;
@@ -10,9 +12,28 @@ export type ActionState = {
 };
 
 // ============================================================
+// Helper: ambil IP dari Server Action context
+// ============================================================
+async function getRequestIp(): Promise<string> {
+  const headersList = await headers();
+  const forwarded = headersList.get("x-forwarded-for");
+  if (forwarded) return forwarded.split(",")[0].trim();
+  const realIp = headersList.get("x-real-ip");
+  if (realIp) return realIp.trim();
+  return "anonymous";
+}
+
+// ============================================================
 // Register
 // ============================================================
 export async function register(formData: FormData): Promise<ActionState> {
+  // AA-118: Rate limit — 5 request/menit per IP
+  const ip = await getRequestIp();
+  const rl = await checkRateLimit(ip, "auth");
+  if (!rl.allowed) {
+    return { error: "Terlalu banyak percobaan. Silakan coba lagi dalam 1 menit." };
+  }
+
   const raw = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
@@ -48,6 +69,13 @@ export async function register(formData: FormData): Promise<ActionState> {
 // Login
 // ============================================================
 export async function login(formData: FormData): Promise<ActionState> {
+  // AA-118: Rate limit — 5 request/menit per IP
+  const ip = await getRequestIp();
+  const rl = await checkRateLimit(ip, "auth");
+  if (!rl.allowed) {
+    return { error: "Terlalu banyak percobaan login. Silakan coba lagi dalam 1 menit." };
+  }
+
   const raw = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
@@ -115,6 +143,13 @@ export async function logout() {
 // Forgot Password
 // ============================================================
 export async function forgotPassword(formData: FormData): Promise<ActionState> {
+  // AA-118: Rate limit — 5 request/menit per IP
+  const ip = await getRequestIp();
+  const rl = await checkRateLimit(ip, "auth");
+  if (!rl.allowed) {
+    return { error: "Terlalu banyak permintaan. Silakan coba lagi dalam 1 menit." };
+  }
+
   const raw = { email: formData.get("email") as string };
 
   const result = forgotPasswordSchema.safeParse(raw);

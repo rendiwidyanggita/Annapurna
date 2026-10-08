@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { validateCsrf } from "@/lib/csrf";
 
 /**
  * Merefresh session Auth user dan meneruskannya ke Server Components & browser.
@@ -7,6 +8,26 @@ import { NextResponse, type NextRequest } from "next/server";
  * Di Next.js 16, file ini dipanggil sebagai proxy.ts (bukan middleware.ts).
  */
 export async function updateSession(request: NextRequest) {
+  // ============================================================
+  // AA-119: CSRF Protection — Origin/Referer Check
+  // Validasi dilakukan sebelum session refresh untuk efisiensi.
+  // ============================================================
+  if (!validateCsrf(request)) {
+    return new NextResponse(
+      JSON.stringify({
+        success: false,
+        error: {
+          code: "FORBIDDEN",
+          message: "Request origin tidak dikenali. Akses ditolak.",
+        },
+      }),
+      {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
