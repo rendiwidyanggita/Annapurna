@@ -1,9 +1,23 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, startTransition } from "react";
 import Link from "next/link";
 import { forgotPassword, type ActionState } from "../actions";
 import { Loader2, CheckCircle } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { forgotPasswordSchema, type ForgotPasswordInput } from "@/schemas/auth";
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const initialState: ActionState = {};
 
@@ -15,6 +29,11 @@ export default function ForgotPasswordPage() {
     },
     initialState
   );
+
+  const form = useForm<ForgotPasswordInput>({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: { email: "" },
+  });
 
   // Jika sukses, tampilkan pesan sukses
   if (state?.success) {
@@ -44,41 +63,55 @@ export default function ForgotPasswordPage() {
         </p>
       </div>
 
-      {/* Error global */}
       {state?.error && (
         <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
           {state.error}
         </div>
       )}
 
-      <form action={formAction} className="space-y-4">
-        {/* Email */}
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-[#111827] mb-1.5">
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            placeholder="nama@email.com"
-            className="w-full rounded-lg border border-[#e5e7eb] bg-white px-3.5 py-2.5 text-sm text-[#111827] placeholder-[#9ca3af] outline-none transition focus:border-[#16624b] focus:ring-2 focus:ring-[#16624b]/20 disabled:opacity-50"
-            disabled={isPending}
-          />
-        </div>
-
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={isPending}
-          className="w-full rounded-lg bg-[#16624b] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0f4f3c] focus:outline-none focus:ring-2 focus:ring-[#16624b]/40 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
+      <Form {...form}>
+        <form
+          action={formAction}
+          onSubmit={form.handleSubmit((data) => {
+            startTransition(() => {
+              const formData = new FormData();
+              formData.append("email", data.email);
+              formAction(formData);
+            });
+          })}
+          className="space-y-4"
         >
-          {isPending && <Loader2 size={16} className="animate-spin" />}
-          {isPending ? "Mengirim Link..." : "Kirim Link Reset"}
-        </button>
-      </form>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-[#111827]">Email</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="nama@email.com"
+                    autoComplete="email"
+                    disabled={isPending}
+                    className="focus-visible:ring-[#16624b]/20 focus-visible:border-[#16624b]"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button
+            type="submit"
+            disabled={isPending}
+            className="w-full bg-[#16624b] hover:bg-[#0f4f3c] text-white focus-visible:ring-[#16624b]/40 mt-2"
+          >
+            {isPending && <Loader2 size={16} className="animate-spin mr-2" />}
+            {isPending ? "Mengirim Link..." : "Kirim Link Reset"}
+          </Button>
+        </form>
+      </Form>
 
       <p className="mt-6 text-center text-sm text-[#6b7280]">
         Ingat password Anda?{" "}

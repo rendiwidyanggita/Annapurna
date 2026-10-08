@@ -1,13 +1,31 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, Suspense, startTransition } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { login, signInWithGoogle, type ActionState } from "../actions";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginInput } from "@/schemas/auth";
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const initialState: ActionState = {};
 
-export default function LoginPage() {
+function LoginForm() {
+  const searchParams = useSearchParams();
+  const urlError = searchParams.get("error");
+
   const [state, formAction, isPending] = useActionState(
     async (_prev: ActionState, formData: FormData) => {
       const result = await login(formData);
@@ -19,10 +37,23 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isGooglePending, setIsGooglePending] = useState(false);
 
+  const form = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
   async function handleGoogleLogin() {
     setIsGooglePending(true);
     await signInWithGoogle();
   }
+
+  const rawErrorMessage = state?.error || urlError;
+  const displayError = rawErrorMessage?.includes("provider is not enabled")
+    ? "Login Google belum diaktifkan di pengaturan Supabase. Silakan login menggunakan email & password."
+    : rawErrorMessage;
 
   return (
     <div>
@@ -36,77 +67,96 @@ export default function LoginPage() {
         </p>
       </div>
 
-      {/* Error global */}
-      {state?.error && (
+      {displayError && (
         <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-          {state.error}
+          {displayError}
         </div>
       )}
 
-      <form action={formAction} className="space-y-4">
-        {/* Email */}
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-[#111827] mb-1.5">
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            placeholder="nama@email.com"
-            className="w-full rounded-lg border border-[#e5e7eb] bg-white px-3.5 py-2.5 text-sm text-[#111827] placeholder-[#9ca3af] outline-none transition focus:border-[#16624b] focus:ring-2 focus:ring-[#16624b]/20 disabled:opacity-50"
-            disabled={isPending}
-          />
-        </div>
-
-        {/* Password */}
-        <div>
-          <div className="flex items-center justify-between mb-1.5">
-            <label htmlFor="password" className="block text-sm font-medium text-[#111827]">
-              Password
-            </label>
-            <Link
-              href="/forgot-password"
-              className="text-xs text-[#16624b] hover:underline"
-            >
-              Lupa password?
-            </Link>
-          </div>
-          <div className="relative">
-            <input
-              id="password"
-              name="password"
-              type={showPassword ? "text" : "password"}
-              autoComplete="current-password"
-              required
-              placeholder="••••••••"
-              className="w-full rounded-lg border border-[#e5e7eb] bg-white px-3.5 py-2.5 pr-10 text-sm text-[#111827] placeholder-[#9ca3af] outline-none transition focus:border-[#16624b] focus:ring-2 focus:ring-[#16624b]/20 disabled:opacity-50"
-              disabled={isPending}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6b7280] hover:text-[#111827]"
-              tabIndex={-1}
-              aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
-            >
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-            </button>
-          </div>
-        </div>
-
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={isPending}
-          className="w-full rounded-lg bg-[#16624b] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0f4f3c] focus:outline-none focus:ring-2 focus:ring-[#16624b]/40 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+      <Form {...form}>
+        <form 
+          action={formAction} 
+          onSubmit={form.handleSubmit((data) => {
+            startTransition(() => {
+              const formData = new FormData();
+              formData.append("email", data.email);
+              formData.append("password", data.password);
+              formAction(formData);
+            });
+          })}
+          className="space-y-4"
         >
-          {isPending && <Loader2 size={16} className="animate-spin" />}
-          {isPending ? "Memproses..." : "Masuk"}
-        </button>
-      </form>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-[#111827]">Email</FormLabel>
+                <FormControl>
+                  <Input 
+                    type="email" 
+                    placeholder="nama@email.com" 
+                    autoComplete="email"
+                    disabled={isPending}
+                    className="focus-visible:ring-[#16624b]/20 focus-visible:border-[#16624b]"
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex items-center justify-between mb-1.5">
+                  <FormLabel className="text-[#111827] mb-0">Password</FormLabel>
+                  <Link
+                    href="/forgot-password"
+                    className="text-xs text-[#16624b] hover:underline"
+                  >
+                    Lupa password?
+                  </Link>
+                </div>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      autoComplete="current-password"
+                      disabled={isPending}
+                      className="pr-10 focus-visible:ring-[#16624b]/20 focus-visible:border-[#16624b]"
+                      {...field}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6b7280] hover:text-[#111827]"
+                      tabIndex={-1}
+                      aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button
+            type="submit"
+            disabled={isPending}
+            className="w-full bg-[#16624b] hover:bg-[#0f4f3c] text-white focus-visible:ring-[#16624b]/40 mt-6"
+          >
+            {isPending && <Loader2 size={16} className="animate-spin mr-2" />}
+            {isPending ? "Memproses..." : "Masuk"}
+          </Button>
+        </form>
+      </Form>
 
       {/* Divider */}
       <div className="my-5 flex items-center gap-3">
@@ -116,11 +166,12 @@ export default function LoginPage() {
       </div>
 
       {/* Google Login */}
-      <button
+      <Button
         type="button"
+        variant="outline"
         onClick={handleGoogleLogin}
         disabled={isGooglePending || isPending}
-        className="w-full rounded-lg border border-[#e5e7eb] bg-white px-4 py-2.5 text-sm font-medium text-[#111827] transition hover:bg-[#f9fafb] focus:outline-none focus:ring-2 focus:ring-[#16624b]/20 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2.5"
+        className="w-full text-[#111827] hover:bg-[#f9fafb] focus-visible:ring-[#16624b]/20 gap-2.5"
       >
         {isGooglePending ? (
           <Loader2 size={16} className="animate-spin" />
@@ -133,7 +184,16 @@ export default function LoginPage() {
           </svg>
         )}
         {isGooglePending ? "Menghubungkan..." : "Lanjutkan dengan Google"}
-      </button>
+      </Button>
     </div>
   );
 }
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="p-4 text-center text-sm text-gray-500">Memuat...</div>}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
