@@ -4,3 +4,6 @@
  */
 
 export { HeroSection } from "./hero-section";
+export { CategoryGrid } from "./category-grid";
+export { ProductTabs } from "./product-tabs";
+export { HowItWorksSection } from "./how-it-works-section";
