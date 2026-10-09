@@ -1,31 +1,105 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* ─── Typography ─── */
+  --font-sans: var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
 
-  /* Brand Colors */
-  --color-primary-green: #16624b;
-  --color-dark-green: #0f4f3c;
-  --color-deep-green: #0b3e2f;
-  --color-soft-green: #e7f3ee;
+  /* Font size scale (Design.md: 12/14/16/18/24/32/40/48px) */
+  --text-xs: 0.75rem;     /* 12px */
+  --text-sm: 0.875rem;    /* 14px */
+  --text-base: 1rem;      /* 16px */
+  --text-lg: 1.125rem;    /* 18px */
+  --text-2xl: 1.5rem;     /* 24px */
+  --text-3xl: 2rem;       /* 32px */
+  --text-4xl: 2.5rem;     /* 40px */
+  --text-5xl: 3rem;       /* 48px */
 
-  /* Neutrals & Surfaces */
+  /* ─── Brand Colors ─── */
+  --color-primary: #16624b;       /* Primary green — CTA, interactive */
+  --color-primary-hover: #0f4f3c; /* Darker green — hover state */
+  --color-primary-dark: #0b3e2f;  /* Deepest green — active state */
+  --color-primary-soft: #e7f3ee;  /* Soft green — background hint */
+
+  /* ─── Neutrals & Surfaces ─── */
   --color-background: #f9fafb;
   --color-surface: #ffffff;
   --color-foreground: #111827;
-  --color-text-secondary: #6b7280;
+  --color-muted: #6b7280;         /* Text secondary / neutral */
   --color-border: #e5e7eb;
+  --color-border-soft: #f3f4f6;
 
-  /* Status Colors */
-  --color-status-success: #16a34a;
-  --color-status-warning: #d97706;
-  --color-status-danger: #dc2626;
-  --color-status-info: #2563eb;
-  --color-status-muted: #6b7280;
+  /* ─── Semantic / Status Colors ─── */
+  --color-success: #16a34a;       /* Success badge — unit available */
+  --color-success-soft: #dcfce7;
+  --color-warning: #f59e0b;       /* Warning — unit reserved */
+  --color-warning-soft: #fef3c7;
+  --color-error: #dc2626;         /* Error / destructive */
+  --color-error-soft: #fee2e2;
+  --color-info: #2563eb;          /* Info — unit rented */
+  --color-info-soft: #dbeafe;
+
+  /* Unit status colors */
+  --color-unit-available: #16a34a;
+  --color-unit-reserved: #f59e0b;
+  --color-unit-rented: #2563eb;
+  --color-unit-returned: #6b7280;
+  --color-unit-maintenance: #ea580c;
+  --color-unit-damaged: #dc2626;
+  --color-unit-lost: #7f1d1d;
+
+  /* ─── Shadows (Design.md two-level card system) ─── */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.10),
+    0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-modal: 0 8px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
+
+  /* ─── Border Radius ─── */
+  --radius-sm: 6px;       /* inputs, small elements */
+  --radius-md: 10px;      /* buttons */
+  --radius-lg: 12px;      /* cards */
+  --radius-xl: 16px;      /* modals, panels */
+  --radius-full: 9999px;  /* badges, pills */
+
+  /* ─── Spacing (4px increment base — Design.md) ─── */
+  --spacing-1: 0.25rem;   /* 4px */
+  --spacing-2: 0.5rem;    /* 8px */
+  --spacing-3: 0.75rem;   /* 12px */
+  --spacing-4: 1rem;      /* 16px */
+  --spacing-6: 1.5rem;    /* 24px */
+  --spacing-8: 2rem;      /* 32px */
+  --spacing-10: 2.5rem;   /* 40px */
+  --spacing-12: 3rem;     /* 48px */
+  --spacing-16: 4rem;     /* 64px */
+  --spacing-20: 5rem;     /* 80px */
+  --spacing-24: 6rem;     /* 96px */
 }
 
+/* ─── Base styles ─── */
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Utility: container max-width ─── */
+.container-page {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 1rem; /* 16px */
+}
+
+@media (min-width: 640px) {
+  .container-page {
+    padding-inline: 1.5rem; /* 24px */
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-page {
+    padding-inline: 2rem; /* 32px */
+  }
 }
