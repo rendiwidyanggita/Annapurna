@@ -1,10 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
+import type { User, Role, Profile } from "@prisma/client";
 
 export type ProfileCheckResult = {
   isAuthenticated: boolean;
-  user: any | null;
-  profile: any | null;
+  user: (User & { role?: Role | null }) | null;
+  profile: Profile | null;
   isProfileComplete: boolean;
 };
 

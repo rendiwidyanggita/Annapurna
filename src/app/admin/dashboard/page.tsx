@@ -8,7 +8,6 @@ import {
   ShoppingBagIcon,
   Tag01Icon,
   TransactionIcon,
-  UserIcon,
   TrendingUpIcon,
   CalendarIcon,
   MoneyBag02Icon,

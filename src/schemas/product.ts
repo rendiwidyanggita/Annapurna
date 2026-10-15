@@ -64,6 +64,10 @@ export const createProductSchema = z.object({
     .optional()
     .default(0),
   isActive: z.boolean().default(true),
+  imageUrl: z
+    .string()
+    .optional()
+    .or(z.literal("")),
   // Inline variants - array of variant objects
   variants: z
     .array(productVariantSchema)
@@ -90,6 +94,7 @@ export const productFormSchema = z.object({
   pricePerkegiatan2: z.string(),
   consumableStock: z.string().optional(),
   isActive: z.string().optional(),
+  imageUrl: z.string().optional(),
   // Variants as JSON string from form
   variants: z.string().optional(),
 });
@@ -106,6 +111,7 @@ export function transformProductFormData(formData: FormData) {
     pricePerkegiatan2: formData.get("pricePerkegiatan2") as string,
     consumableStock: formData.get("consumableStock") as string,
     isActive: formData.get("isActive") as string,
+    imageUrl: formData.get("imageUrl") as string,
     variants: formData.get("variants") as string,
   };
 
@@ -129,6 +135,7 @@ export function transformProductFormData(formData: FormData) {
     pricePerkegiatan2: parseInt(raw.pricePerkegiatan2) || 0,
     consumableStock: parseInt(raw.consumableStock) || 0,
     isActive: raw.isActive === "on" || raw.isActive === "true",
+    imageUrl: raw.imageUrl?.trim() || undefined,
     variants,
   };
 }
