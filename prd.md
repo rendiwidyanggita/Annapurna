@@ -1651,116 +1651,92 @@ video
 
 ## 23. Milestones & Sequencing
 
-**Pertanyaan Terbuka:** durasi setiap sprint belum ditetapkan. Estimasi harus disesuaikan dengan kapasitas pengembang, kalender akademik, dan hasil checkpoint tahap sebelumnya.
+**Fakta Terkonfirmasi**: dipangkas dari 6 sprint menjadi 3 sprint agar seluruh implementasi selesai sebelum jadwal sidang Tugas Akhir Batch 3 (target 1 Januari 2027). Total waktu tersedia dari awal Oktober 2026 sampai sidang adalah 90 hari (~12,9 minggu).
 
-### Sprint 1 — Foundation, Design System & Authentication
+Batas administratif penting yang memengaruhi jadwal ini (dari Pengumuman Jadwal Sidang Nomor 2840AKD11/AKA-000/IX/2026, Periode 3): pendaftaran sidang maksimal 23 Desember 2026 pukul 13.00 WIB, dengan pelaksanaan sidang resmi pada 4–15 Januari 2027. Tanggal 1 Januari dipakai sebagai internal deadline agar seluruh laporan, PPT, dan materi sidang selesai sebelum masa pendaftaran ditutup.
 
-Estimasi: belum ditetapkan.
 
-- Setup Next.js App Router
-- Setup TypeScript
-- Setup Tailwind CSS dan shadcn/ui
-- Setup Manrope font
+
+### Sprint 1 — Foundation, Authentication & Master Data Management
+5 – 25 Oktober 2026 (3 minggu)
+
+Menggabungkan cakupan Sprint 1+2 pada rencana 6-sprint sebelumnya. Juga mencakup fondasi keamanan (rate limiting, CSRF, provisioning admin) yang dibutuhkan sejak endpoint auth pertama dibangun.
+
+- Setup Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui
 - Setup design tokens warna, typography, button, card, badge
-- Setup Supabase PostgreSQL
-- Setup Supabase Auth
-- Setup Prisma
+- Setup Supabase PostgreSQL, Supabase Auth, Prisma
 - Setup struktur folder frontend dan backend
-- Register customer
-- Login customer/admin
-- Google Login untuk customer
-- Forgot Password
-- Reset Password via Email
-- Profile completion gate
-- Role-based access
-- Responsive layout dasar
-
-### Sprint 2 — Product, Variant, Unit, Item Type & Package
-
-Estimasi: belum ditetapkan.
-
-- CRUD kategori
-- CRUD produk
-- CRUD item type
-- CRUD variasi produk
-- CRUD unit barang unik
-- CRUD status unit
-- CRUD stok consumable
-- CRUD paket
-- CRUD isi paket
-- Upload dan pengelolaan beberapa foto/video produk/paket via storage abstraction
-- Harga berdasarkan durasi
-- Halaman katalog
-- Detail produk dan paket
+- Autentikasi: register/login customer, login admin/owner, Google Login (customer), Forgot Password, Reset Password via Email
+- Profile Completion Gate
+- Role-based access (customer/admin/owner)
+- CRUD Kategori
+- CRUD Produk (termasuk field is_reusable untuk consumable, OQ-03)
+- CRUD Item Type (rental_unit/consumable)
+- CRUD Variasi Produk (dengan default variant untuk produk tanpa variasi, OQ-05)
+- CRUD Unit Barang Unik (status kondisi fisik saja, OQ-02)
+- CRUD Stok Consumable
+- CRUD Paket Sewa dan isi paket (harga snapshot tetap, OQ-14)
+- Harga berdasarkan durasi sewa per produk/paket
+- Upload dan pengelolaan multi-foto/video produk/paket via storage abstraction
+- Validasi upload server-side (magic byte check, bukan hanya ekstensi)
+- Halaman katalog produk (filter, search, pagination)
+- Halaman detail produk dan paket
 - Homepage highlight Produk Terlaris dan Produk Terbaru
+- Responsive layout dasar
+- Setup rate limiting (Upstash Redis) untuk endpoint auth, chatbot, checkout, payment (OQ-18)
+- CSRF protection: origin/referer check middleware (OQ-19)
+- Provisioning akun admin/owner awal via Supabase dashboard (manual, OQ-20)
 
-### Sprint 3 — Booking, S.K & Availability
+## Sprint 2 — Core Rental Logic, Availability Check, Midtrans & Operasional Toko
+26 Oktober – 15 November 2026 (3 minggu)
 
-Estimasi: belum ditetapkan.
+Menggabungkan cakupan Sprint 3+4 pada rencana 6-sprint sebelumnya. Sprint terberat — seluruh fondasi anti-overbooking dan pembayaran ada di sini.
 
-- Halaman S.K penyewaan
-- Persetujuan S.K sebelum checkout
-- Snapshot S.K pada transaksi
-- Pilih durasi sewa
-- Auto-calculate tanggal kembali
-- UI Tgl Ambil, Durasi, dan Maks. Pengembalian
-- Availability check produk satuan
-- Availability check paket
+- Halaman S.K penyewaan, persetujuan S.K sebelum checkout, snapshot S.K pada transaksi (teks disesuaikan OQ-15: DP wajib online, pelunasan saat pengambilan)
+- Pemilihan durasi sewa (Permalam/Perkegiatan I/Perkegiatan II)
+- UI grup input Tgl Ambil, Durasi, dan Maks. Pengembalian dalam satu komponen ringkas
+- Auto-calculate tanggal maksimal pengembalian (kalender murni, OQ-16)
+- Keranjang belanja (cart rental)
+- Availability check produk satuan dan paket (date-range overlap, bukan status unit global — OQ-02)
 - Consumable stock check
-- Cart rental
-- Checkout
-- Invoice booking
-- Expired booking rule
-
-### Sprint 4 — Midtrans Payment & Transaction
-
-Estimasi: belum ditetapkan.
-
-- Integrasi Midtrans
-- Webhook Midtrans
-- Idempotency webhook
-- Update status DP
-- Status transaksi
-- Catat jaminan identitas
-- Pelunasan sisa pembayaran
-- Pengambilan barang
-- Pengembalian barang
+- Checkout dengan locking eksplisit (SELECT ... FOR UPDATE, ordered locking untuk paket — OQ-17), soft-hold sebelum DP (OQ-01)
+- Test concurrency: dua checkout bersaing untuk unit yang sama
+- Invoice booking (pre-payment summary)
+- Expired booking rule (60 menit — OQ-13)
+- Integrasi Midtrans (create payment DP 50%)
+- Webhook Midtrans dengan signature verification dan idempotency
+- State machine status transaksi sesuai Section 21 (tanpa status Pending — OQ-04)
+- Pencatatan jaminan identitas saat pickup
+- Pelunasan sisa pembayaran in-store
+- Proses pengambilan barang (pickup)
+- Proses pengembalian barang (return) dengan checkbox per item (OQ-08)
 - Input denda manual
-- Unit status transition
+- Log transisi status unit (audit trail unit_status_logs)
+- Refund flow (DP hangus jika customer batalkan sendiri — OQ-09)
+- Reconciliation job untuk webhook terlambat/gagal setelah expired (OQ-10)
 
-### Sprint 5 — Dashboard, Report & Export
+## Sprint 3 — Dashboard Admin, AI Chatbot Customer NLP, & Deployment/UAT
+16 – 29 November 2026 (2 minggu)
 
-Estimasi: belum ditetapkan.
+Menggabungkan cakupan Sprint 5+6 pada rencana 6-sprint sebelumnya.
 
-- Dashboard admin
+- Dashboard admin (ringkasan booking, revenue, stok)
 - Filter transaksi
-- Laporan transaksi rental
-- Laporan DP
-- Laporan sisa pembayaran
-- Laporan denda
-- Laporan unit maintenance/damaged/lost
-- Laporan consumable usage
-- Produk/paket terlaris
-- Export PDF
-- Export Excel
-- Manajemen user
-- Manajemen role
-- Activity log sederhana
-
-### Sprint 6 — Chatbot, Responsive Testing & Evaluation
-
-Estimasi: belum ditetapkan.
-
-- Knowledge base chatbot
-- Integrasi OpenRouter
-- Scope classification
-- Conversation boundaries
-- Cek status pesanan via chatbot
-- Chat history
-- Responsive testing
-- Black Box Testing
-- Evaluasi UAT
-- Perbaikan akhir
+- Laporan transaksi rental, DP, sisa pembayaran, denda, unit maintenance/damaged/lost, consumable usage, produk/paket terlaris
+- Export laporan PDF dan Excel
+- Manajemen user dan role (owner-only, OQ-07)
+- Activity log
+- Knowledge base chatbot dan integrasi OpenRouter
+- Scope classification dan conversation boundaries
+- Cek status pesanan via chatbot (ownership-scoped)
+- Chat history (retensi 12 bulan, OQ-12)
+- Automated purging job untuk chat history, activity log, dan data customer non-aktif (implementasi keputusan OQ-12)
+- Responsive testing lintas device dan browser
+- Black Box Testing final — seluruh fitur kritis dari Sprint 1-3
+- Security audit (secret, RLS, ownership, upload, webhook)
+- Rilis/Deployment ke Vercel + Supabase production
+- Evaluasi UAT (satisfaction score, task success rate, error rate)
+- Perbaikan akhir berdasarkan hasil testing dan evaluasi
 
 ---
 
