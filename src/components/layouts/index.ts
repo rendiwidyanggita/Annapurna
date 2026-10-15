@@ -7,3 +7,4 @@ export { Navbar } from "./navbar";
 export { NavLinks } from "./nav-links";
 export { MobileMenu } from "./mobile-menu";
 export { Footer } from "./footer";
+export { AdminSidebar } from "./admin-sidebar";
