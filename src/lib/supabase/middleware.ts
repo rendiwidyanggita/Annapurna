@@ -4,8 +4,15 @@ import { validateCsrf } from "@/lib/csrf";
 
 /**
  * Merefresh session Auth user dan meneruskannya ke Server Components & browser.
+ *
  * PENTING: Jangan letakkan kode apapun antara createServerClient dan getClaims().
  * Di Next.js 16, file ini dipanggil sebagai proxy.ts (bukan middleware.ts).
+ *
+ * Route Protection Strategy (Supabase docs / context7):
+ * - BUKAN whitelist (mendaftarkan semua public route) — tidak scalable dan bug-prone
+ * - MELAINKAN blocklist (hanya protect route yang benar-benar butuh auth)
+ * - Default: semua route PUBLIK → katalog, paket, S&K, detail produk bisa diakses tanpa login
+ * - Login dipaksa hanya untuk: cart, checkout, pesanan, profil, complete-profile, admin
  */
 export async function updateSession(request: NextRequest) {
   // ============================================================
@@ -59,27 +66,31 @@ export async function updateSession(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   // ============================================================
-  // Route Protection Logic
+  // Route Protection Logic — BLOCKLIST pattern (bukan whitelist)
+  //
+  // Semua route PUBLIK secara default.
+  // Hanya route di bawah ini yang membutuhkan autentikasi:
   // ============================================================
-
-  // Daftar route publik yang tidak memerlukan autentikasi
-  const publicRoutes = [
-    "/",
-    "/login",
-    "/register",
-    "/forgot-password",
-    "/reset-password",
-    "/auth/callback",
+  const protectedPrefixes = [
+    "/cart",
+    "/checkout",
+    "/pesanan",
+    "/profil",
+    "/complete-profile",
+    "/admin",
   ];
 
-  const isPublicRoute =
-    publicRoutes.some((route) => pathname === route) ||
-    pathname.startsWith("/auth/");
+  const isProtectedRoute = protectedPrefixes.some(
+    (prefix) =>
+      pathname === prefix || pathname.startsWith(prefix + "/")
+  );
 
-  // Redirect ke login jika belum login & bukan route publik
-  if (!user && !isPublicRoute) {
+  // Redirect ke login jika belum login & mengakses protected route
+  if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
+    // Simpan intended destination untuk redirect balik setelah login
+    url.searchParams.set("redirect", pathname);
     return NextResponse.redirect(url);
   }
 
@@ -92,6 +103,23 @@ export async function updateSession(request: NextRequest) {
     url.pathname = "/";
     return NextResponse.redirect(url);
   }
+
+  // Admin route role check: Removed from middleware
+  // ===================================================================
+  // PENTING: Role check dilakukan sepenuhnya di (admin)/layout.tsx via DB query.
+  // 
+  // Mengapa tidak di middleware?
+  // - getClaims() mengembalikan Supabase JWT standard claims saja
+  // - Role custom dari database TIDAK tersimpan otomatis di JWT claims
+  // - Checking role di middleware via getClaims() selalu gagal (undefined !== "admin")
+  // - Ini menyebabkan semua admin user ter-redirect ke / — BUG yang sulit dilacak
+  //
+  // Solusi: Serahkan sepenuhnya ke (admin)/layout.tsx yang sudah melakukan:
+  // 1. Query getCurrentUserProfile() → fetch user + role dari DB via Prisma
+  // 2. Check role.name === "ADMIN" || role.name === "OWNER"
+  // 3. Double-guard: authoritative, terpercaya, dan queryable via DB
+  //
+  // Middleware hanya memastikan user sudah terautentikasi (sudah handled di atas).
 
   // PENTING: Harus return supabaseResponse apa adanya.
   return supabaseResponse;

@@ -59,9 +59,16 @@ export function validateCsrf(request: NextRequest): boolean {
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
   if (!appUrl) {
-    // Jika env var tidak di-set, fail open agar tidak memblokir development
-    // tapi log warning
-    console.warn("[CSRF] NEXT_PUBLIC_APP_URL tidak di-set, CSRF check dilewati.");
+    if (process.env.NODE_ENV === "production") {
+      console.error(
+        "[CSRF] NEXT_PUBLIC_APP_URL WAJIB di-set di production. Request diblokir."
+      );
+      return false; // FAIL CLOSED — blokir request di production
+    }
+    // Development: izinkan tapi tetap warn
+    console.warn(
+      "[CSRF] NEXT_PUBLIC_APP_URL tidak di-set, CSRF check dilewati (development only)."
+    );
     return true;
   }
 
