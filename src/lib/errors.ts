@@ -40,3 +40,9 @@ export class ValidationError extends AppError {
     super(message, "VALIDATION_ERROR", 422, details);
   }
 }
+
+export class ConflictError extends AppError {
+  constructor(message: string = "Unit sudah tidak tersedia untuk tanggal tersebut", details?: unknown) {
+    super(message, "CONFLICT", 409, details);
+  }
+}
