@@ -148,6 +148,7 @@ export default async function ProductDetailPage({
           <ProductInteractivePanel
             productId={product.id}
             productName={product.name}
+            imageUrl={product.media.find((m) => m.isPrimary)?.mediaUrl || product.media[0]?.mediaUrl || null}
             itemType={product.itemType as "rental_unit" | "consumable"}
             pricePermalam={product.pricePermalam}
             pricePerkegiatan1={product.pricePerkegiatan1}
