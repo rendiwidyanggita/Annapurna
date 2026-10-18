@@ -390,17 +390,17 @@ Layout shell yang membungkus seluruh halaman customer-facing.
 | 8 | Halaman Reset Password | AA-39 | ✅ Done |
 | 9 | Profile Completion Gate | AA-40 | ✅ Done |
 | 10 | Route Guard / RBAC + RLS | AA-41 | ✅ Done |
-| 11 | Responsive Layout (Navbar, Footer) | AA-42 | 🔄 In Progress |
-| 12 | CRUD Kategori Produk | AA-43 | 🔄 In Progress |
-| 13 | CRUD Produk (List + Form + Tipe) | AA-44, 45, 46 | 🔄 In Progress / 📋 To Do |
-| 14 | CRUD Unit Fisik Inventaris | AA-47, 48 | 📋 To Do |
-| 15 | CRUD Stok Consumable | AA-49 | 📋 To Do |
-| 16 | CRUD Paket Sewa + Isi Paket | AA-50, 51 | 📋 To Do |
-| 17 | MediaUploader (Upload Foto/Video) | AA-52, 53 | 📋 To Do |
-| 18 | Harga per Durasi Sewa | AA-54 | 📋 To Do |
-| 19 | Homepage (Hero + Kategori + Produk) | AA-57 | 🔄 In Progress |
-| 20 | Halaman Katalog Produk | AA-55 | 🔄 In Progress |
-| 21 | Halaman Detail Produk & Paket | AA-56 | 🔄 In Progress |
+| 11 | Responsive Layout (Navbar, Footer) | AA-42 | ✅ Done |
+| 12 | CRUD Kategori Produk | AA-43 | ✅ Done |
+| 13 | CRUD Produk (List + Form + Tipe) | AA-44, 45, 46 | ✅ Done |
+| 14 | CRUD Unit Fisik Inventaris | AA-47, 48 | ✅ Done |
+| 15 | CRUD Stok Consumable | AA-49 | ✅ Done |
+| 16 | CRUD Paket Sewa + Isi Paket | AA-50, 51 | ✅ Done |
+| 17 | MediaUploader (Upload Foto/Video) | AA-52, 53 | ✅ Done |
+| 18 | Harga per Durasi Sewa | AA-54 | ✅ Done |
+| 19 | Homepage (Hero + Kategori + Produk) | AA-57 | ✅ Done |
+| 20 | Halaman Katalog Produk | AA-55 | ✅ Done |
+| 21 | Halaman Detail Produk & Paket | AA-56 | ✅ Done |
 
 ---
 
@@ -414,7 +414,7 @@ Layout shell yang membungkus seluruh halaman customer-facing.
 
 #### 1. Halaman S&K Publik + Checkout Gate
 **Issues:** AA-58 · AA-59 · AA-60  
-**Status:** 📋 To Do
+**Status:** ✅ Done
 
 **Yang harus dibuat:**
 - **AA-58** — `src/app/(main)/syarat-ketentuan/page.tsx`: Halaman S&K statis yang dapat diakses publik, konten dikelola admin
@@ -427,7 +427,7 @@ Layout shell yang membungkus seluruh halaman customer-facing.
 
 #### 2. UI Pilih Durasi & Tanggal Sewa
 **Issues:** AA-61 · AA-62 · AA-63  
-**Status:** 📋 To Do
+**Status:** ✅ Done
 
 **Yang harus dibuat:**
 - **AA-61** — Komponen selector durasi: Permalam / Perkegiatan I (3 hari 3 malam) / Perkegiatan II (5 hari 5 malam)
@@ -440,7 +440,7 @@ Layout shell yang membungkus seluruh halaman customer-facing.
 
 #### 3. Cek Ketersediaan Anti-Overbooking
 **Issues:** AA-64 · AA-65 · AA-66  
-**Status:** 📋 To Do
+**Status:** ✅ Done
 
 **Yang harus dibuat:**
 - **AA-64** — Availability check pre-checkout (UI realtime): indikator "Tersedia / Stok Terbatas / Tidak Tersedia" di halaman detail produk (OQ-02)
@@ -453,7 +453,7 @@ Layout shell yang membungkus seluruh halaman customer-facing.
 
 #### 4. Cart Rental
 **Issue:** AA-67  
-**Status:** 📋 To Do  
+**Status:** ✅ Done  
 **Route:** `/cart`
 
 **Yang harus dibuat — `src/app/(main)/cart/page.tsx`:**
@@ -466,7 +466,7 @@ Layout shell yang membungkus seluruh halaman customer-facing.
 
 #### 5. Checkout + Soft-Hold
 **Issue:** AA-68  
-**Status:** 📋 To Do  
+**Status:** ✅ Done  
 **Route:** `/checkout`
 
 **Yang harus dibuat — `src/app/(main)/checkout/page.tsx`:**
@@ -480,7 +480,7 @@ Layout shell yang membungkus seluruh halaman customer-facing.
 
 #### 6. Test Concurrency
 **Issue:** AA-69  
-**Status:** 📋 To Do
+**Status:** ✅ Done
 
 - Pengujian skenario overbooking: 2 user checkout unit yang sama secara bersamaan
 - Tidak ada halaman UI tersendiri; ini adalah test backend dengan UI error state yang ditampilkan di checkout
@@ -556,13 +556,13 @@ Layout shell yang membungkus seluruh halaman customer-facing.
 
 | # | UI / Halaman | Issues | Status |
 |---|---|---|---|
-| 1 | Halaman S&K Publik | AA-58 | 📋 To Do |
-| 2 | Persetujuan S&K + Snapshot Transaksi | AA-59, 60 | 📋 To Do |
-| 3 | UI Pilih Durasi Sewa | AA-61, 62, 63 | 📋 To Do |
-| 4 | Availability Check (Pre & Post Checkout) | AA-64, 65, 66 | 📋 To Do |
-| 5 | Halaman Cart Rental | AA-67 | 📋 To Do |
-| 6 | Halaman Checkout + Soft-Hold | AA-68 | 📋 To Do |
-| 7 | Test Concurrency (Overbooking Prevention) | AA-69 | 📋 To Do |
+| 1 | Halaman S&K Publik | AA-58 | ✅ Done |
+| 2 | Persetujuan S&K + Snapshot Transaksi | AA-59, 60 | ✅ Done |
+| 3 | UI Pilih Durasi Sewa | AA-61, 62, 63 | ✅ Done |
+| 4 | Availability Check (Pre & Post Checkout) | AA-64, 65, 66 | ✅ Done |
+| 5 | Halaman Cart Rental | AA-67 | ✅ Done |
+| 6 | Halaman Checkout + Soft-Hold | AA-68 | ✅ Done |
+| 7 | Test Concurrency (Overbooking Prevention) | AA-69 | ✅ Done |
 | 8 | Invoice Booking + Expired Rule | AA-70, 71 | 📋 To Do |
 | 9 | Integrasi Midtrans Snap (DP) | AA-72 | 📋 To Do |
 | 10 | Webhook Midtrans + Idempotency | AA-73, 74, 75 | 📋 To Do |
