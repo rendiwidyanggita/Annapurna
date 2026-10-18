@@ -100,6 +100,7 @@ model User {
   transactions RentalTransaction[]
   chatSessions ChatSession[]
   activityLogs ActivityLog[]
+  unitStatusLogs UnitStatusLog[]
 
   @@index([email])
   @@map("users")
@@ -146,6 +147,7 @@ model Product {
   pricePerkegiatan1 Int       @map("price_perkegiatan_1")
   pricePerkegiatan2 Int       @map("price_perkegiatan_2")
   consumableStock   Int       @default(0) @map("consumable_stock")
+  isReusable        Boolean   @default(true) @map("is_reusable")
   isActive          Boolean   @default(true) @map("is_active")
   deletedAt         DateTime? @map("deleted_at")
   createdAt         DateTime  @default(now()) @map("created_at")
@@ -208,28 +210,66 @@ model InventoryUnit {
   variant          ProductVariant          @relation(fields: [variantId], references: [id])
   transactionItems RentalTransactionItem[]
   returnItems      ReturnItem[]
+  statusLogs       UnitStatusLog[]
 
   @@index([variantId, unitStatus, isActive])
   @@map("inventory_units")
+}
+
+model UnitStatusLog {
+  id             String        @id @default(uuid())
+  unitId         String        @map("unit_id")
+  previousStatus UnitStatus    @map("previous_status")
+  newStatus      UnitStatus    @map("new_status")
+  notes          String
+  changedBy      String        @map("changed_by")
+  createdAt      DateTime      @default(now()) @map("created_at")
+
+  unit           InventoryUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  changedByUser  User          @relation(fields: [changedBy], references: [id])
+
+  @@index([unitId])
+  @@map("unit_status_logs")
 }
 
 // ==============================================================================
 // Packages
 // ==============================================================================
 model Package {
-  id           String    @id @default(uuid())
-  name         String    @unique
-  description  String?
-  bannerUrl    String?   @map("banner_url")
-  packagePrice Int       @map("package_price")
-  isActive     Boolean   @default(true) @map("is_active")
-  deletedAt    DateTime? @map("deleted_at")
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
+  id                String         @id @default(uuid())
+  name              String         @unique
+  description       String?
+  bannerUrl         String?        @map("banner_url")
+  pricePermalam     Int            @default(0) @map("price_permalam")
+  pricePerkegiatan1 Int            @default(0) @map("price_perkegiatan_1")
+  pricePerkegiatan2 Int            @default(0) @map("price_perkegiatan_2")
+  isActive          Boolean        @default(true) @map("is_active")
+  deletedAt         DateTime?      @map("deleted_at")
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
 
-  items PackageItem[]
+  items             PackageItem[]
+  media             PackageMedia[]
 
   @@map("packages")
+}
+
+model PackageMedia {
+  id           String    @id @default(uuid())
+  packageId    String    @map("package_id")
+  mediaType    MediaType @map("media_type")
+  mediaUrl     String    @map("media_url")
+  storagePath  String    @map("storage_path")
+  thumbnailUrl String?   @map("thumbnail_url")
+  altText      String?   @map("alt_text")
+  sortOrder    Int       @default(0) @map("sort_order")
+  isPrimary    Boolean   @default(false) @map("is_primary")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  package      Package   @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@index([packageId])
+  @@map("package_media")
 }
 
 model PackageItem {

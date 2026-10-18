@@ -147,18 +147,30 @@ export default async function PackageDetailPage({
             </p>
           </div>
 
-          {/* Pricing Box */}
-          <div className="p-5 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)]">
+          {/* Pricing Box with 3 Durations */}
+          <div className="p-5 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] space-y-3">
             <span className="text-xs text-[var(--color-muted)] font-medium block">
-              Tarif Paket Sewa
+              Tarif Paket Sewa (Snapshot Durasi)
             </span>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-3xl font-extrabold text-[var(--color-primary)]">
-                {formatRupiah(pkg.packagePrice)}
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl sm:text-3xl font-extrabold text-[var(--color-primary)]">
+                {formatRupiah(pkg.pricePermalam)}
               </span>
-              <span className="text-xs text-gray-500 font-medium">/ paket sewa</span>
+              <span className="text-xs text-gray-500 font-medium">/ malam</span>
             </div>
-            <p className="text-[11px] text-emerald-700 font-medium mt-1">
+
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[var(--color-border-soft)] text-xs">
+              <div className="p-2 rounded-lg bg-white border border-[var(--color-border-soft)]">
+                <span className="text-[10px] text-gray-500 block">3 Hari 3 Malam</span>
+                <span className="font-bold text-gray-800">{formatRupiah(pkg.pricePerkegiatan1)}</span>
+              </div>
+              <div className="p-2 rounded-lg bg-white border border-[var(--color-border-soft)]">
+                <span className="text-[10px] text-gray-500 block">5 Hari 5 Malam</span>
+                <span className="font-bold text-gray-800">{formatRupiah(pkg.pricePerkegiatan2)}</span>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-emerald-700 font-medium">
               Lebih hemat dibanding sewa perlengkapan satu per satu.
             </p>
           </div>

@@ -67,6 +67,7 @@ export async function createProduct(
       pricePerkegiatan1,
       pricePerkegiatan2,
       consumableStock,
+      isReusable,
       isActive,
       imageUrl,
       variants,
@@ -104,6 +105,7 @@ export async function createProduct(
           pricePerkegiatan1,
           pricePerkegiatan2,
           consumableStock: itemType === "consumable" ? consumableStock : 0,
+          isReusable: itemType === "consumable" ? isReusable : true,
           isActive,
         },
       });
@@ -200,6 +202,7 @@ export async function updateProduct(
       pricePerkegiatan1,
       pricePerkegiatan2,
       consumableStock,
+      isReusable,
       isActive,
       imageUrl,
       variants,
@@ -241,6 +244,7 @@ export async function updateProduct(
           pricePerkegiatan1,
           pricePerkegiatan2,
           consumableStock: itemType === "consumable" ? consumableStock : 0,
+          isReusable: itemType === "consumable" ? isReusable : true,
           isActive,
         },
       });

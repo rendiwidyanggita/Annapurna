@@ -14,8 +14,6 @@ export interface UploadResult {
 }
 
 const BUCKET_NAME = "products";
-const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
-const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/webm"];
 
 // Max file sizes (PRD 15.3)
 export const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2 MB
@@ -35,22 +33,19 @@ function getSupabaseAdmin() {
   return adminClient;
 }
 
-/**
- * Upload a media file (image/video) adhering to PRD 15 Storage Abstraction.
- * Supports Supabase Storage as primary provider with guarded local storage fallback for offline dev.
- */
-export async function uploadProductMedia(file: File): Promise<UploadResult> {
-  const mimeType = file.type.toLowerCase();
-  const isImage = ALLOWED_IMAGE_TYPES.includes(mimeType);
-  const isVideo = ALLOWED_VIDEO_TYPES.includes(mimeType);
+import { validateMediaBuffer } from "./magic-bytes";
 
-  if (!isImage && !isVideo) {
-    throw new Error(
-      "Format file tidak didukung. Format yang diperbolehkan: JPG, PNG, WEBP, MP4, WEBM."
-    );
-  }
+export async function uploadMedia(
+  file: File,
+  folder: "products" | "packages" = "products"
+): Promise<UploadResult> {
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
 
-  const mediaType: "image" | "video" = isImage ? "image" : "video";
+  // Magic byte validation (AA-53) — extension & mime derived strictly from binary signature
+  const { mimeType, extension, mediaType } = validateMediaBuffer(buffer);
+
+  const isImage = mediaType === "image";
   const maxSize = isImage ? MAX_IMAGE_SIZE : MAX_VIDEO_SIZE;
 
   if (file.size > maxSize) {
@@ -59,13 +54,9 @@ export async function uploadProductMedia(file: File): Promise<UploadResult> {
     );
   }
 
-  // Randomize filename (PRD 15.3)
-  const extension = file.name.split(".").pop()?.toLowerCase() || (isImage ? "jpg" : "mp4");
+  // Derive random filename strictly using detected extension, never client filename
   const randomName = `${crypto.randomUUID()}.${extension}`;
-  const storagePath = `products/${randomName}`;
-
-  const arrayBuffer = await file.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
+  const storagePath = `${folder}/${randomName}`;
 
   const supabase = getSupabaseAdmin();
 
@@ -81,10 +72,11 @@ export async function uploadProductMedia(file: File): Promise<UploadResult> {
         });
       }
 
-      // Upload to Supabase Storage
+      // Upload to Supabase Storage under folder
+      const objectPath = `${folder}/${randomName}`;
       const { error: uploadError } = await supabase.storage
         .from(BUCKET_NAME)
-        .upload(randomName, buffer, {
+        .upload(objectPath, buffer, {
           contentType: mimeType,
           upsert: true,
         });
@@ -92,7 +84,7 @@ export async function uploadProductMedia(file: File): Promise<UploadResult> {
       if (!uploadError) {
         const { data: publicUrlData } = supabase.storage
           .from(BUCKET_NAME)
-          .getPublicUrl(randomName);
+          .getPublicUrl(objectPath);
 
         if (publicUrlData?.publicUrl) {
           return {
@@ -136,17 +128,31 @@ export async function uploadProductMedia(file: File): Promise<UploadResult> {
     );
   }
 
-  // Fallback to public/uploads/products exclusively for offline local development
-  const localDir = path.join(process.cwd(), "public", "uploads", "products");
+  // Fallback to public/uploads/[folder] exclusively for offline local development
+  const localDir = path.join(process.cwd(), "public", "uploads", folder);
   await fs.mkdir(localDir, { recursive: true });
   const localFilePath = path.join(localDir, randomName);
   await fs.writeFile(localFilePath, buffer);
 
   return {
-    url: `/uploads/products/${randomName}`,
-    storagePath: `local://uploads/products/${randomName}`,
+    url: `/uploads/${folder}/${randomName}`,
+    storagePath: `local://uploads/${folder}/${randomName}`,
     mediaType,
   };
+}
+
+/**
+ * Upload product media file (delegates to uploadMedia with folder 'products')
+ */
+export async function uploadProductMedia(file: File): Promise<UploadResult> {
+  return uploadMedia(file, "products");
+}
+
+/**
+ * Upload package media file (delegates to uploadMedia with folder 'packages')
+ */
+export async function uploadPackageMedia(file: File): Promise<UploadResult> {
+  return uploadMedia(file, "packages");
 }
 
 /**
@@ -228,3 +234,6 @@ export async function replaceProductMedia(
 
   return uploadResult;
 }
+
+export const deleteMedia = deleteProductMedia;
+

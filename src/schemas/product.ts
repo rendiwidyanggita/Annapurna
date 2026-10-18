@@ -63,6 +63,7 @@ export const createProductSchema = z.object({
     .max(9999, "Stok maksimal 9999")
     .optional()
     .default(0),
+  isReusable: z.boolean().default(true),
   isActive: z.boolean().default(true),
   imageUrl: z
     .string()
@@ -136,6 +137,7 @@ export function transformProductFormData(formData: FormData) {
     consumableStock: parseInt(raw.consumableStock) || 0,
     isActive: raw.isActive === "on" || raw.isActive === "true",
     imageUrl: raw.imageUrl?.trim() || undefined,
+    isReusable: formData.get("isReusable") !== "false",
     variants,
   };
 }

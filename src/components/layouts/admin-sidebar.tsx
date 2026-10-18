@@ -67,13 +67,11 @@ const NAV_ITEMS: NavItem[] = [
     label: "Unit Inventaris",
     href: ROUTES.ADMIN.UNITS,
     icon: ListViewIcon,
-    disabled: true,
   },
   {
     label: "Paket Sewa",
     href: ROUTES.ADMIN.PACKAGES,
     icon: Package01Icon,
-    disabled: true,
   },
   {
     label: "Laporan",

@@ -183,7 +183,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
   const savingsK2 = calculateSavings(5, pricePerkegiatan2);
 
   return (
-    <form action={formAction} encType="multipart/form-data" className="space-y-8 max-w-4xl pb-16">
+    <form action={formAction} className="space-y-8 max-w-4xl pb-16">
       {/* Top Navigation & Actions */}
       <div className="flex items-center justify-between pb-4 border-b border-[var(--color-border)]">
         <Link
@@ -307,25 +307,67 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
           </div>
 
           {/* Kondisional: Stok Consumable */}
+          {/* Kondisional: Stok Consumable & Karakteristik Reusable */}
           {itemType === "consumable" && (
-            <div className="space-y-1.5 md:col-span-2 p-4 rounded-md bg-amber-50 border border-amber-200">
-              <Label htmlFor="consumableStock" className="text-sm font-semibold text-amber-900">
-                Stok Awal Barang Habis Pakai <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="consumableStock"
-                name="consumableStock"
-                type="number"
-                min="0"
-                max="9999"
-                defaultValue={initialData?.consumableStock || 0}
-                required={itemType === "consumable"}
-                placeholder="0"
-                className="bg-white max-w-xs mt-1"
-              />
-              <p className="text-xs text-amber-700 mt-1">
-                Contoh: tabung gas camping, spirtus, baterai cadangan. Stok akan berkurang saat disewa/dibeli.
-              </p>
+            <div className="space-y-4 md:col-span-2 p-4 rounded-xl bg-amber-50 border border-amber-200">
+              <div className="space-y-1.5">
+                <Label htmlFor="consumableStock" className="text-sm font-semibold text-amber-900">
+                  Stok Awal Barang Habis Pakai <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="consumableStock"
+                  name="consumableStock"
+                  type="number"
+                  min="0"
+                  max="9999"
+                  defaultValue={initialData?.consumableStock || 0}
+                  required={itemType === "consumable"}
+                  placeholder="0"
+                  className="bg-white max-w-xs mt-1"
+                />
+              </div>
+
+              <div className="space-y-1.5 pt-2 border-t border-amber-200">
+                <Label className="text-xs font-semibold text-amber-900 block">
+                  Karakteristik Pengembalian (is_reusable) <span className="text-red-500">*</span>
+                </Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+                  <label className="flex items-start gap-2.5 p-3 rounded-lg bg-white border border-amber-300 cursor-pointer hover:bg-amber-50/50">
+                    <input
+                      type="radio"
+                      name="isReusable"
+                      value="true"
+                      defaultChecked={true}
+                      className="mt-0.5"
+                    />
+                    <div>
+                      <span className="text-xs font-bold text-neutral-800 block">
+                        Dapat Digunakan Kembali (Returnable)
+                      </span>
+                      <span className="text-[11px] text-neutral-500 block leading-tight mt-0.5">
+                        Stok dikembalikan saat pengembalian barang (contoh: matras busa sewaan, jas hujan).
+                      </span>
+                    </div>
+                  </label>
+
+                  <label className="flex items-start gap-2.5 p-3 rounded-lg bg-white border border-amber-300 cursor-pointer hover:bg-amber-50/50">
+                    <input
+                      type="radio"
+                      name="isReusable"
+                      value="false"
+                      className="mt-0.5"
+                    />
+                    <div>
+                      <span className="text-xs font-bold text-neutral-800 block">
+                        Sekali Pakai (Retail / Jual Putus)
+                      </span>
+                      <span className="text-[11px] text-neutral-500 block leading-tight mt-0.5">
+                        Stok berkurang permanen & tidak dikembalikan (contoh: gas kaleng, spirtus).
+                      </span>
+                    </div>
+                  </label>
+                </div>
+              </div>
             </div>
           )}
 
