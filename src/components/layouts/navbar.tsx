@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart01Icon, User02Icon } from "@hugeicons/core-free-icons";
+import { User02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { getCurrentUserProfile } from "@/lib/auth/profile";
 import { ROUTES } from "@/config/routes";
 import { cn } from "@/lib/utils";
+import { CartButton } from "./cart-button";
 import { NavLinks } from "./nav-links";
 import { MobileMenu } from "./mobile-menu";
 
@@ -63,24 +64,8 @@ export async function Navbar() {
 
         {/* ── Desktop Auth CTA (right) ── */}
         <div className="hidden md:flex items-center gap-2 shrink-0">
-          {/* Cart icon — visible always */}
-          <Link
-            href={ROUTES.CART}
-            className={cn(
-              "flex items-center justify-center w-9 h-9 rounded-[var(--radius-md)]",
-              "text-[var(--color-muted)] hover:text-[var(--color-foreground)]",
-              "hover:bg-[var(--color-border-soft)] transition-colors duration-150",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]",
-            )}
-            aria-label="Keranjang sewa"
-          >
-            <HugeiconsIcon
-              icon={ShoppingCart01Icon}
-              size={20}
-              strokeWidth={1.5}
-              color="currentColor"
-            />
-          </Link>
+          {/* Cart icon with real-time badge */}
+          <CartButton />
 
           {isAuthenticated ? (
             /* Logged-in: avatar button → profile */
@@ -145,22 +130,7 @@ export async function Navbar() {
 
         {/* ── Mobile: Cart + Hamburger ── */}
         <div className="md:hidden flex items-center gap-2">
-          <Link
-            href={ROUTES.CART}
-            className={cn(
-              "flex items-center justify-center w-9 h-9 rounded-[var(--radius-md)]",
-              "text-[var(--color-muted)] hover:text-[var(--color-foreground)]",
-              "hover:bg-[var(--color-border-soft)] transition-colors duration-150",
-            )}
-            aria-label="Keranjang sewa"
-          >
-            <HugeiconsIcon
-              icon={ShoppingCart01Icon}
-              size={20}
-              strokeWidth={1.5}
-              color="currentColor"
-            />
-          </Link>
+          <CartButton />
 
           {/* MobileMenu is Client Component */}
           <MobileMenu
