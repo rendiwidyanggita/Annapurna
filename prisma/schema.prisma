@@ -305,6 +305,8 @@ model RentalTransaction {
   guaranteeDocType  String?           @map("guarantee_doc_type")
   notes             String?
   cancelledReason   String?           @map("cancelled_reason")
+  termsAgreedAt     DateTime?         @map("terms_agreed_at")
+  termsSnapshot     String?           @map("terms_snapshot")
   createdAt         DateTime          @default(now()) @map("created_at")
   updatedAt         DateTime          @updatedAt @map("updated_at")
 
