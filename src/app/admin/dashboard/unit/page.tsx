@@ -99,6 +99,14 @@ export default async function InventoryPage() {
     })),
   }));
 
+  // Calculate unit health metrics
+  const totalUnits = units.length;
+  const availableCount = units.filter((u) => u.unitStatus === "Available").length;
+  const rentedCount = units.filter((u) => u.unitStatus === "Rented").length;
+  const maintenanceCount = units.filter(
+    (u) => u.unitStatus !== "Available" && u.unitStatus !== "Rented"
+  ).length;
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -109,6 +117,30 @@ export default async function InventoryPage() {
         <p className="text-xs text-[var(--color-muted)] mt-1">
           Kelola unit fisik peralatan camping sewaan, riwayat status teknisi, dan stok barang habis pakai (consumable).
         </p>
+      </div>
+
+      {/* Inventory Health & Summary Metrics */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="p-3.5 rounded-xl border border-[var(--color-border)] bg-white shadow-xs">
+          <div className="text-[11px] font-medium text-[var(--color-muted)]">Total Aset Fisik</div>
+          <div className="text-xl font-bold text-gray-900 mt-1">{totalUnits}</div>
+          <div className="text-[10px] text-gray-500 mt-0.5">Unit terdaftar di sistem</div>
+        </div>
+        <div className="p-3.5 rounded-xl border border-emerald-200 bg-emerald-50/50 shadow-xs">
+          <div className="text-[11px] font-medium text-emerald-800">Siap Disewa</div>
+          <div className="text-xl font-bold text-emerald-700 mt-1">{availableCount}</div>
+          <div className="text-[10px] text-emerald-600 mt-0.5">Kondisi sehat di toko</div>
+        </div>
+        <div className="p-3.5 rounded-xl border border-blue-200 bg-blue-50/50 shadow-xs">
+          <div className="text-[11px] font-medium text-blue-800">Sedang Disewa</div>
+          <div className="text-xl font-bold text-blue-700 mt-1">{rentedCount}</div>
+          <div className="text-[10px] text-blue-600 mt-0.5">Unit di tangan penyewa</div>
+        </div>
+        <div className="p-3.5 rounded-xl border border-amber-200 bg-amber-50/50 shadow-xs">
+          <div className="text-[11px] font-medium text-amber-800">Perbaikan / Terkendala</div>
+          <div className="text-xl font-bold text-amber-700 mt-1">{maintenanceCount}</div>
+          <div className="text-[10px] text-amber-600 mt-0.5">Maintenance / Hilang</div>
+        </div>
       </div>
 
       {/* Tabs Container */}

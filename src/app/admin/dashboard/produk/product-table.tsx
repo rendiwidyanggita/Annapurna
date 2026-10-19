@@ -45,6 +45,9 @@ export interface ProductItem {
     variantName: string;
     size: string | null;
     color: string | null;
+    _count?: {
+      units: number;
+    };
   }[];
   media: {
     id: string;
@@ -220,15 +223,31 @@ export function ProductTable({
                     {/* Variasi / Stok */}
                     <TableCell>
                       {product.itemType === "consumable" ? (
-                        <span className="text-xs font-medium text-gray-700">
+                        <span className="text-xs font-semibold text-gray-800">
                           Stok: {product.consumableStock} unit
                         </span>
                       ) : (
-                        <span className="text-xs text-gray-600">
-                          {product.variants.length > 0
-                            ? `${product.variants.length} variasi`
-                            : "1 variasi default"}
-                        </span>
+                        (() => {
+                          const totalUnits = product.variants.reduce(
+                            (acc, v) => acc + (v._count?.units ?? 0),
+                            0
+                          );
+                          const variantCount =
+                            product.variants.length > 0
+                              ? product.variants.length
+                              : 1;
+
+                          return (
+                            <div className="space-y-0.5 text-xs">
+                              <span className="font-semibold text-gray-800">
+                                {totalUnits} Unit Fisik
+                              </span>
+                              <span className="text-[11px] text-[var(--color-muted)] block">
+                                ({variantCount} variasi)
+                              </span>
+                            </div>
+                          );
+                        })()
                       )}
                     </TableCell>
 

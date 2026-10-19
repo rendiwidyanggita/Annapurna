@@ -10,6 +10,7 @@ import {
   RentalDateGroup,
   type DurationScheme,
 } from "@/components/molecules/rental-date-group";
+import { QuantityStepper } from "@/components/atoms";
 import { useCartStore } from "@/store/cart-store";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -56,6 +57,9 @@ export function ProductInteractivePanel({
   const [endDate, setEndDate] = useState<Date>(addDays(today, 1));
   const [durationDays, setDurationDays] = useState<number>(1);
 
+  // Dynamic Quantity State (Convex Reactive Pattern)
+  const [quantity, setQuantity] = useState<number>(1);
+
   // Real-time Availability State (AA-64, AA-66)
   const [isCheckingAvailability, setIsCheckingAvailability] = useState<boolean>(false);
   const [availabilityState, setAvailabilityState] = useState<{
@@ -69,6 +73,15 @@ export function ProductInteractivePanel({
     statusLevel: (itemType === "consumable" ? consumableStock : availableUnitsCount) > 0 ? "available" : "unavailable",
     message: "Verifikasi jadwal sewa Anda.",
   });
+
+  // Reactive auto-clamping when available unit count changes
+  useEffect(() => {
+    if (availabilityState.availableCount > 0) {
+      setQuantity((prev) => Math.min(Math.max(1, prev), availabilityState.availableCount));
+    } else {
+      setQuantity(1);
+    }
+  }, [availabilityState.availableCount]);
 
   const [addedToCartSuccess, setAddedToCartSuccess] = useState<boolean>(false);
 
@@ -161,7 +174,7 @@ export function ProductInteractivePanel({
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
       unitPrice: currentUnitPrice,
-      quantity: 1,
+      quantity,
     });
 
     if (redirectAfter) {
@@ -186,7 +199,7 @@ export function ProductInteractivePanel({
       : "";
 
   const waText = encodeURIComponent(
-    `Halo Annapurna Adventure, saya tertarik ingin menyewa produk "${productName}"${variantLabel} untuk paket durasi ${durationLabel} tanggal ${startDate.toLocaleDateString("id-ID")}. Apakah unit tersedia?`
+    `Halo Annapurna Adventure, saya tertarik ingin menyewa produk "${productName}"${variantLabel} sebanyak ${quantity} unit untuk paket durasi ${durationLabel} tanggal ${startDate.toLocaleDateString("id-ID")}. Apakah unit tersedia?`
   );
 
   const waUrl = `https://wa.me/6281234567890?text=${waText}`;
@@ -269,6 +282,28 @@ export function ProductInteractivePanel({
           </button>
         </div>
       )}
+
+      {/* 4. Quantity Stepper (Dynamic schedule-aware) */}
+      <div className="flex items-center justify-between p-3.5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]/70">
+        <div className="space-y-0.5">
+          <div className="text-xs font-bold text-gray-800">Jumlah Unit Sewa</div>
+          <div className="text-[11px] text-[var(--color-muted)]">
+            {availabilityState.availableCount > 0 ? (
+              <span>Maksimal {availabilityState.availableCount} unit untuk jadwal ini</span>
+            ) : (
+              <span className="text-red-500">Unit tidak tersedia</span>
+            )}
+          </div>
+        </div>
+        <QuantityStepper
+          value={quantity}
+          min={1}
+          max={availabilityState.availableCount}
+          disabled={!availabilityState.isAvailable || isCheckingAvailability}
+          onChange={setQuantity}
+          label=""
+        />
+      </div>
 
       {/* Action Buttons: Sewa Sekarang, Tambah ke Keranjang, & WhatsApp */}
       <div className="space-y-3 pt-2">

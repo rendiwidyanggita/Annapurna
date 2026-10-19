@@ -319,6 +319,7 @@ model RentalTransaction {
 
   @@index([userId])
   @@index([transactionStatus, paymentStatus])
+  @@index([transactionStatus, startDate, endDate])
   @@index([transactionCode])
   @@map("rental_transactions")
 }

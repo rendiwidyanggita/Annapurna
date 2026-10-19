@@ -74,6 +74,13 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
             variantName: true,
             size: true,
             color: true,
+            _count: {
+              select: {
+                units: {
+                  where: { deletedAt: null, isActive: true },
+                },
+              },
+            },
           },
         },
         media: {

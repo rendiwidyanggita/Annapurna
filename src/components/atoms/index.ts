@@ -8,3 +8,9 @@ export type { StatusBadgeProps, StatusBadgeVariant } from "./status-badge";
 
 export { TabSwitcher } from "./tab-switcher";
 export type { TabSwitcherProps, TabItem } from "./tab-switcher";
+
+export { WhatsAppIcon, InstagramIcon, LocationIcon } from "./brand-icons";
+export type { IconProps as BrandIconProps } from "./brand-icons";
+
+export { QuantityStepper } from "./quantity-stepper";
+export type { QuantityStepperProps } from "./quantity-stepper";

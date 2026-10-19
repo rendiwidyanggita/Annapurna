@@ -126,7 +126,7 @@ export async function GET(request: NextRequest) {
       statusLevel = "limited";
     }
 
-    let message = "Unit siap disewa untuk tanggal yang dipilih.";
+    let message = `Tersedia ${availableUnits.length} unit siap disewa untuk jadwal ini.`;
     if (!isAvailable) {
       message = "Seluruh unit telah dipesan atau sedang dalam masa sewa untuk rentang tanggal tersebut.";
     } else if (statusLevel === "limited") {
