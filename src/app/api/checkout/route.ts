@@ -99,11 +99,11 @@ export async function POST(request: NextRequest) {
             candidates.forEach((c) => allCandidateUnitIdsSet.add(c.id));
           }
 
-          // Anti-Deadlock Protocol (OQ-17): Sort candidate IDs alphabetically ASCENDING before locking
+          // Anti-Deadlock Protocol (OQ-17 & Supabase Rule 5.2): Sort candidate IDs alphabetically ASCENDING before locking
           const sortedUnitIds = Array.from(allCandidateUnitIdsSet).sort();
 
-          for (const unitId of sortedUnitIds) {
-            await tx.$queryRaw`SELECT id FROM inventory_units WHERE id = ${unitId} FOR UPDATE`;
+          if (sortedUnitIds.length > 0) {
+            await tx.$queryRaw`SELECT id FROM inventory_units WHERE id = ANY(${sortedUnitIds}::text[]) ORDER BY id ASC FOR UPDATE`;
           }
 
           // Re-verify availability inside the lock without overlapping active transactions
@@ -157,8 +157,8 @@ export async function POST(request: NextRequest) {
             new Set(consumableItems.map((c) => c.productId))
           ).sort();
 
-          for (const prodId of sortedConsumableProductIds) {
-            await tx.$queryRaw`SELECT id FROM products WHERE id = ${prodId} FOR UPDATE`;
+          if (sortedConsumableProductIds.length > 0) {
+            await tx.$queryRaw`SELECT id FROM products WHERE id = ANY(${sortedConsumableProductIds}::text[]) ORDER BY id ASC FOR UPDATE`;
           }
 
           for (const item of consumableItems) {
