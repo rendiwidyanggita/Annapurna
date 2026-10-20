@@ -491,7 +491,7 @@ Layout shell yang membungkus seluruh halaman customer-facing.
 
 #### 7. Invoice & Integrasi Midtrans
 **Issues:** AA-70 · AA-71 · AA-72 · AA-73 · AA-74 · AA-75  
-**Status:** 📋 To Do
+**Status:** ✅ Done
 
 **Yang harus dibuat:**
 - **AA-70** — `src/app/(main)/pesanan/[id]/page.tsx` (invoice pending): tampilan ringkasan booking + tombol "Bayar DP" saat status "Menunggu DP"
@@ -507,7 +507,7 @@ Layout shell yang membungkus seluruh halaman customer-facing.
 
 #### 8. Status Transaksi & Stepper UI
 **Issue:** AA-76  
-**Status:** 📋 To Do
+**Status:** ✅ Done
 
 **Yang harus dibuat:**
 - State machine: `Menunggu DP` → `DP Dibayar` → `Siap Diambil` → `Sedang Disewa` → `Selesai` (tanpa status Pending — OQ-04)
@@ -563,10 +563,10 @@ Layout shell yang membungkus seluruh halaman customer-facing.
 | 5 | Halaman Cart Rental | AA-67 | ✅ Done |
 | 6 | Halaman Checkout + Soft-Hold | AA-68 | ✅ Done |
 | 7 | Test Concurrency (Overbooking Prevention) | AA-69 | ✅ Done |
-| 8 | Invoice Booking + Expired Rule | AA-70, 71 | 📋 To Do |
-| 9 | Integrasi Midtrans Snap (DP) | AA-72 | 📋 To Do |
-| 10 | Webhook Midtrans + Idempotency | AA-73, 74, 75 | 📋 To Do |
-| 11 | State Machine + Stepper UI Transaksi | AA-76 | 📋 To Do |
+| 8 | Invoice Booking + Expired Rule | AA-70, 71 | ✅ Done |
+| 9 | Integrasi Midtrans Snap (DP) | AA-72 | ✅ Done |
+| 10 | Webhook Midtrans + Idempotency | AA-73, 74, 75 | ✅ Done |
+| 11 | State Machine + Stepper UI Transaksi | AA-76 | ✅ Done |
 | 12 | Form Catat Jaminan Identitas | AA-77 | 📋 To Do |
 | 13 | Form Pelunasan Sisa Pembayaran | AA-78 | 📋 To Do |
 | 14 | Proses Pickup (Handover) | AA-79 | 📋 To Do |
