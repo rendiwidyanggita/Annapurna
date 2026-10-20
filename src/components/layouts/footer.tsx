@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ROUTES } from "@/config/routes";
 import { SITE_CONFIG } from "@/config/site";
+import { WhatsAppIcon, InstagramIcon, LocationIcon } from "@/components/atoms";
 
 /**
  * Footer — Persistent footer for all customer-facing pages.
@@ -12,7 +13,7 @@ import { SITE_CONFIG } from "@/config/site";
  * - Background: dark green #0F4F3C
  * - Logo: white variant via CSS brightness-0 invert filter
  * - 3-column grid desktop, stacked vertical mobile
- * - Contact data sourced from SITE_CONFIG (single source of truth)
+ * - Contact data sourced from SITE_CONFIG with official brand SVGs from theSVG
  */
 export function Footer() {
   return (
@@ -86,13 +87,15 @@ export function Footer() {
                   href={SITE_CONFIG.contact.whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-start gap-2 text-sm text-white/80 hover:text-white transition-colors duration-150"
+                  className="flex items-center gap-2.5 text-sm text-white/80 hover:text-white transition-colors duration-150 group"
                   aria-label="Hubungi kami via WhatsApp"
                 >
-                  <span className="shrink-0 mt-px text-xs font-semibold text-white/50 uppercase tracking-wide">
-                    WA
+                  <span className="shrink-0 flex items-center justify-center w-7 h-7 rounded-lg bg-white/10 group-hover:bg-[#25D366]/25 transition-colors p-1.5 border border-white/10 shadow-sm">
+                    <WhatsAppIcon className="w-full h-full drop-shadow-sm" />
                   </span>
-                  <span>{SITE_CONFIG.contact.phone}</span>
+                  <span className="group-hover:translate-x-0.5 transition-transform font-medium">
+                    {SITE_CONFIG.contact.phone}
+                  </span>
                 </a>
               </li>
               {/* Instagram */}
@@ -101,25 +104,33 @@ export function Footer() {
                   href={SITE_CONFIG.contact.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-start gap-2 text-sm text-white/80 hover:text-white transition-colors duration-150"
+                  className="flex items-center gap-2.5 text-sm text-white/80 hover:text-white transition-colors duration-150 group"
                   aria-label="Ikuti kami di Instagram"
                 >
-                  <span className="shrink-0 mt-px text-xs font-semibold text-white/50 uppercase tracking-wide">
-                    IG
+                  <span className="shrink-0 flex items-center justify-center w-7 h-7 rounded-lg bg-white/10 group-hover:bg-[#E1306C]/25 transition-colors p-1.5 border border-white/10 shadow-sm">
+                    <InstagramIcon className="w-full h-full drop-shadow-sm" />
                   </span>
-                  <span>@{SITE_CONFIG.contact.instagram}</span>
+                  <span className="group-hover:translate-x-0.5 transition-transform font-medium">
+                    @{SITE_CONFIG.contact.instagram}
+                  </span>
                 </a>
               </li>
-              {/* Address */}
+              {/* Address / Location */}
               <li>
-                <div className="flex items-start gap-2 text-sm text-white/70">
-                  <span className="shrink-0 mt-px text-xs font-semibold text-white/50 uppercase tracking-wide">
-                    Loc
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(SITE_CONFIG.contact.address)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-2.5 text-sm text-white/70 hover:text-white transition-colors duration-150 group"
+                  aria-label="Buka lokasi toko di Google Maps"
+                >
+                  <span className="shrink-0 flex items-center justify-center w-7 h-7 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors p-1.5 border border-white/10 shadow-sm mt-0.5">
+                    <LocationIcon className="w-full h-full drop-shadow-sm" />
                   </span>
-                  <address className="not-italic leading-relaxed">
+                  <address className="not-italic leading-relaxed group-hover:text-white transition-colors">
                     {SITE_CONFIG.contact.address}
                   </address>
-                </div>
+                </a>
               </li>
             </ul>
           </div>
