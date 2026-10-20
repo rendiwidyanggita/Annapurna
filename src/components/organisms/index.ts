@@ -8,4 +8,6 @@ export { CategoryGrid } from "./category-grid";
 export { ProductTabs } from "./product-tabs";
 export { HowItWorksSection } from "./how-it-works-section";
 export { MediaUploader } from "./MediaUploader";
+export { TransactionStepper } from "./transaction-stepper";
+export type { TransactionStepperProps } from "./transaction-stepper";
 
