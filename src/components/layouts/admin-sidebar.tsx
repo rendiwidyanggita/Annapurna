@@ -51,7 +51,6 @@ const NAV_ITEMS: NavItem[] = [
     label: "Transaksi",
     href: ROUTES.ADMIN.TRANSACTIONS,
     icon: TransactionIcon,
-    disabled: true,
   },
   {
     label: "Produk",
