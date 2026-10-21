@@ -303,6 +303,8 @@ model RentalTransaction {
   paymentStatus     PaymentStatus     @default(Unpaid) @map("payment_status")
   guaranteeStatus   GuaranteeStatus   @default(Not_Received) @map("guarantee_status")
   guaranteeDocType  String?           @map("guarantee_doc_type")
+  guaranteeIdNumber String?           @map("guarantee_id_number")
+  guaranteeNotes    String?           @map("guarantee_notes")
   notes             String?
   cancelledReason   String?           @map("cancelled_reason")
   termsAgreedAt     DateTime?         @map("terms_agreed_at")
@@ -338,6 +340,7 @@ model RentalTransactionItem {
 
   transaction RentalTransaction @relation(fields: [transactionId], references: [id])
   unit        InventoryUnit?    @relation(fields: [unitId], references: [id])
+  returnItems ReturnItem[]
 
   @@index([transactionId, unitId])
   @@map("rental_transaction_items")
@@ -349,6 +352,7 @@ model Payment {
   midtransOrderId       String        @unique @map("midtrans_order_id")
   midtransTransactionId String?       @map("midtrans_transaction_id")
   paymentType           String?       @map("payment_type")
+  paymentMethod         String?       @map("payment_method")
   grossAmount           Int           @map("gross_amount")
   paymentStatus         PaymentStatus @default(Pending) @map("payment_status")
   snapToken             String?       @map("snap_token")
@@ -381,16 +385,20 @@ model ReturnTransaction {
 }
 
 model ReturnItem {
-  id                  String     @id @default(uuid())
-  returnTransactionId String     @map("return_transaction_id")
-  unitId              String     @map("unit_id")
-  returnedCondition   UnitStatus @map("returned_condition")
+  id                  String                 @id @default(uuid())
+  returnTransactionId String                 @map("return_transaction_id")
+  transactionItemId   String                 @map("transaction_item_id")
+  unitId              String?                @map("unit_id")
+  quantity            Int                    @default(1)
+  returnedCondition   UnitStatus             @map("returned_condition")
   notes               String?
-  createdAt           DateTime   @default(now()) @map("created_at")
+  createdAt           DateTime               @default(now()) @map("created_at")
 
-  returnTransaction ReturnTransaction @relation(fields: [returnTransactionId], references: [id])
-  unit              InventoryUnit     @relation(fields: [unitId], references: [id])
+  returnTransaction   ReturnTransaction      @relation(fields: [returnTransactionId], references: [id], onDelete: Cascade)
+  transactionItem     RentalTransactionItem  @relation(fields: [transactionItemId], references: [id])
+  unit                InventoryUnit?         @relation(fields: [unitId], references: [id])
 
+  @@index([transactionItemId])
   @@map("return_items")
 }
 
