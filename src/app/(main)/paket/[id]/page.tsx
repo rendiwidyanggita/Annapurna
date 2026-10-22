@@ -8,9 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Package01Icon,
-  Message01Icon,
   Calendar01Icon,
 } from "@hugeicons/core-free-icons";
+import { SITE_CONFIG } from "@/config/site";
+import { WhatsAppIcon, InstagramIcon } from "@/components/atoms";
 
 interface PackageDetailPageProps {
   params: Promise<{
@@ -76,10 +77,11 @@ export default async function PackageDetailPage({
     notFound();
   }
 
+  const waNumber = SITE_CONFIG.contact.whatsapp.replace(/[^0-9]/g, "");
   const waText = encodeURIComponent(
     `Halo Annapurna Adventure, saya tertarik dengan "${pkg.name}" (Paket Sewa). Apakah paket ini tersedia untuk tanggal tertentu?`
   );
-  const waUrl = `https://wa.me/6281234567890?text=${waText}`;
+  const waUrl = `https://wa.me/${waNumber}?text=${waText}`;
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
@@ -94,10 +96,10 @@ export default async function PackageDetailPage({
           <li>/</li>
           <li>
             <Link
-              href="/katalog"
+              href="/paket"
               className="hover:text-[var(--color-primary)] transition-colors"
             >
-              Katalog
+              Paket Sewa
             </Link>
           </li>
           <li>/</li>
@@ -195,12 +197,28 @@ export default async function PackageDetailPage({
                 type="button"
                 variant="outline"
                 size="lg"
-                className="w-full border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-bold h-11 text-sm gap-2"
+                className="w-full border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-bold h-11 text-sm gap-2 rounded-xl"
               >
-                <HugeiconsIcon icon={Message01Icon} size={18} className="text-emerald-600" />
+                <span className="w-5 h-5 flex items-center justify-center">
+                  <WhatsAppIcon className="w-4 h-4 fill-emerald-600" />
+                </span>
                 Tanya Paket via WhatsApp
               </Button>
             </a>
+
+            {/* Direct Social Links info */}
+            <div className="pt-2 flex items-center justify-between text-xs text-[var(--color-muted)] px-1">
+              <span>Customer Care ({SITE_CONFIG.contact.phone})</span>
+              <a
+                href={SITE_CONFIG.contact.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 hover:text-[#E1306C] transition-colors font-medium"
+              >
+                <InstagramIcon className="w-3.5 h-3.5" />
+                <span>@{SITE_CONFIG.contact.instagram}</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>

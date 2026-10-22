@@ -10,4 +10,5 @@ export { HowItWorksSection } from "./how-it-works-section";
 export { MediaUploader } from "./MediaUploader";
 export { TransactionStepper } from "./transaction-stepper";
 export type { TransactionStepperProps } from "./transaction-stepper";
+export { FeaturedPackages, FeaturedPackagesSkeleton } from "./featured-packages";
 

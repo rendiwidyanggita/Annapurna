@@ -9,6 +9,9 @@ export type { ProductCardProps } from "./product-card";
 export { CategoryCard } from "./category-card";
 export type { CategoryCardProps } from "./category-card";
 
+export { PackageCard } from "./package-card";
+export type { PackageCardProps } from "./package-card";
+
 export { StepCard } from "./step-card";
 export type { StepCardProps } from "./step-card";
 

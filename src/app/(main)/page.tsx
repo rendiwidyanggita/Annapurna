@@ -3,6 +3,10 @@ import type { Metadata } from "next";
 import { HeroSection } from "@/components/organisms/hero-section";
 import { CategoryGrid } from "@/components/organisms/category-grid";
 import { ProductTabs } from "@/components/organisms/product-tabs";
+import {
+  FeaturedPackages,
+  FeaturedPackagesSkeleton,
+} from "@/components/organisms/featured-packages";
 import { HowItWorksSection } from "@/components/organisms/how-it-works-section";
 import { SITE_CONFIG } from "@/config/site";
 
@@ -18,13 +22,11 @@ export const metadata: Metadata = {
  * Navbar and Footer are in (main)/layout.tsx — not duplicated here.
  *
  * Sections (top to bottom):
- * 1. HeroSection    — full-width photo with gradient overlay, CTA
- * 2. CategoryGrid   — 5 product categories with Hugeicons
- * 3. ProductTabs    — Terlaris/Terbaru tabs from DB (wrapped in Suspense)
- * 4. HowItWorks     — 4-step rental process with soft green background
- *
- * ProductTabs is wrapped in <Suspense> following context7 streaming pattern:
- * page shell renders immediately, product data streams in after DB resolves.
+ * 1. HeroSection      — full-width photo with gradient overlay, CTA
+ * 2. CategoryGrid     — 5 product categories with Hugeicons
+ * 3. ProductTabs      — Terlaris/Terbaru tabs from DB (wrapped in Suspense)
+ * 4. FeaturedPackages — Bundled rental packages from DB (wrapped in Suspense)
+ * 5. HowItWorks       — 4-step rental process with soft green background
  */
 export default function Home() {
   return (
@@ -45,6 +47,13 @@ export default function Home() {
           }
         >
           <ProductTabs />
+        </Suspense>
+      </section>
+
+      {/* ── Featured Packages — Suspense for streaming DB data ── */}
+      <section className="container-page pb-12 md:pb-16">
+        <Suspense fallback={<FeaturedPackagesSkeleton />}>
+          <FeaturedPackages />
         </Suspense>
       </section>
 
