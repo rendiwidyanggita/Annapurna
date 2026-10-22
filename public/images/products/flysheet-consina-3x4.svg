@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="800" y2="600" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#071913"/>
+      <stop offset="60%" stop-color="#0D2E24"/>
+      <stop offset="100%" stop-color="#144637"/>
+    </linearGradient>
+
+    <!-- Radial Center Glow -->
+    <radialGradient id="centerGlow" cx="400" cy="260" r="220" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.22"/>
+      <stop offset="60%" stop-color="#059669" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#059669" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Card Glass Border Gradient -->
+    <linearGradient id="cardBorder" x1="0" y1="0" x2="800" y2="600" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#34D399" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#064E3B" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="800" height="600" fill="url(#bgGrad)"/>
+
+  <!-- Topographic Contour Lines -->
+  <g opacity="0.18" stroke="#34D399" stroke-width="1.5" fill="none">
+    <ellipse cx="400" cy="260" rx="360" ry="210" />
+    <ellipse cx="400" cy="260" rx="290" ry="165" />
+    <ellipse cx="400" cy="260" rx="220" ry="120" />
+    <path d="M-50 150 Q200 80 400 130 T850 90" />
+    <path d="M-50 480 Q200 420 400 460 T850 430" />
+    <path d="M-50 530 Q250 490 450 520 T850 500" />
+  </g>
+
+  <!-- Mountain Silhouette in Lower Area -->
+  <polygon points="-50,560 120,440 280,560" fill="#0A231C" opacity="0.6" />
+  <polygon points="520,560 680,420 850,560" fill="#0A231C" opacity="0.6" />
+
+  <!-- Center Ambient Glow -->
+  <circle cx="400" cy="260" r="200" fill="url(#centerGlow)"/>
+
+  <!-- Outer Rounded Border Frame -->
+  <rect x="16" y="16" width="768" height="568" rx="24" fill="none" stroke="url(#cardBorder)" stroke-width="2"/>
+
+  <!-- ── TOP BAR: Brand & Category ── -->
+  <!-- Brand Badge Left -->
+  <g transform="translate(48, 48)">
+    <rect width="260" height="38" rx="10" fill="#064E3B" fill-opacity="0.8" stroke="#10B981" stroke-width="1"/>
+    <circle cx="20" cy="19" r="5" fill="#F59E0B"/>
+    <text x="36" y="24" fill="#E7F3EE" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700" letter-spacing="1.5">CONSINA THE OUTDOOR LIFESTYLE</text>
+  </g>
+
+  <!-- Category Badge Right -->
+  <g transform="translate(520, 48)">
+    <rect width="232" height="38" rx="10" fill="#052E24" fill-opacity="0.9" stroke="#34D399" stroke-width="1"/>
+    <text x="116" y="24" fill="#A7F3D0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" text-anchor="middle" letter-spacing="1">TENDA &amp; SHELTER</text>
+  </g>
+
+  <!-- ── CENTER: Equipment Icon & Visual ── -->
+  <g id="gearIcon">
+    
+        <!-- Flysheet Silhouette -->
+        <polygon points="400,160 560,250 400,340 240,250" fill="none" stroke="#25D366" stroke-width="8" stroke-linejoin="round" />
+        <line x1="400" y1="160" x2="400" y2="340" stroke="#F59E0B" stroke-width="6" />
+        <line x1="240" y1="250" x2="560" y2="250" stroke="#10B981" stroke-width="5" stroke-dasharray="6 4" />
+        <circle cx="400" cy="160" r="6" fill="#6EE7B7" />
+        <circle cx="560" cy="250" r="6" fill="#6EE7B7" />
+        <circle cx="400" cy="340" r="6" fill="#6EE7B7" />
+        <circle cx="240" cy="250" r="6" fill="#6EE7B7" />
+      
+  </g>
+
+  <!-- ── BOTTOM: Product Details Box ── -->
+  <g transform="translate(48, 400)">
+    <!-- Bottom Container Card -->
+    <rect width="704" height="152" rx="18" fill="#062820" fill-opacity="0.85" stroke="#10B981" stroke-width="1.2"/>
+
+    <!-- Product Name (Bold, High Contrast) -->
+    <text x="24" y="40" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="800" letter-spacing="0.2">
+      Flysheet Waterproof Consina 3x4
+    </text>
+
+    <!-- Tagline -->
+    <text x="24" y="66" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="500">
+      Pelindung shelter anti rembes dan angin
+    </text>
+
+    <!-- 3 Specs Badges -->
+    <g transform="translate(24, 88)">
+      <!-- Spec 1 -->
+      <g>
+        <rect width="190" height="28" rx="7" fill="#0B382C" stroke="#22543D" stroke-width="1"/>
+        <text x="95" y="18" fill="#E2E8F0" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" text-anchor="middle">
+          Ukuran 3 x 4 Meter
+        </text>
+      </g>
+      <!-- Spec 2 -->
+      <g transform="translate(202, 0)">
+        <rect width="220" height="28" rx="7" fill="#0B382C" stroke="#22543D" stroke-width="1"/>
+        <text x="110" y="18" fill="#E2E8F0" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" text-anchor="middle">
+          Bahan Taslan Coating
+        </text>
+      </g>
+      <!-- Spec 3 -->
+      <g transform="translate(434, 0)">
+        <rect width="222" height="28" rx="7" fill="#0B382C" stroke="#22543D" stroke-width="1"/>
+        <text x="111" y="18" fill="#E2E8F0" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" text-anchor="middle">
+          19 Titik Loop Pengikat
+        </text>
+      </g>
+    </g>
+
+    <!-- Footer Watermark inside card -->
+    <text x="680" y="136" fill="#10B981" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="700" text-anchor="end" letter-spacing="1" opacity="0.8">
+      ANNAPURNA ADVENTURE · SEWA ALAT OUTDOOR
+    </text>
+  </g>
+</svg>
