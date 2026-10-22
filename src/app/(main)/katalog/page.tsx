@@ -49,7 +49,21 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   }
 
   if (categoryId) {
-    where.categoryId = categoryId;
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(categoryId);
+    if (isUuid) {
+      where.categoryId = categoryId;
+    } else {
+      const slugMap: Record<string, string> = {
+        tenda: "Tenda",
+        carrier: "Carrier",
+        "sleeping-gear": "Sleeping",
+        "alat-masak": "Cooking",
+      };
+      const queryName = slugMap[categoryId.toLowerCase()] || categoryId;
+      where.category = {
+        name: { contains: queryName, mode: "insensitive" },
+      };
+    }
   }
 
   if (itemType && (itemType === ItemType.rental_unit || itemType === ItemType.consumable)) {

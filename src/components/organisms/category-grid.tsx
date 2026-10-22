@@ -8,51 +8,80 @@ import {
 } from "@hugeicons/core-free-icons";
 import { CategoryCard } from "@/components/molecules/category-card";
 import { ROUTES } from "@/config/routes";
+import { prisma } from "@/lib/prisma";
 
 /**
- * MVP categories — hardcoded for Sprint 1.
- * Slugs match the URL query param used in /katalog?kategori={slug}.
- * Icons selected from @hugeicons/core-free-icons (verified available).
+ * MVP categories configuration.
+ * Slugs match query param or route.
+ * categoryMatcher is used to match DB category names.
  */
 const CATEGORIES = [
   {
     slug: "tenda",
     name: "Tenda",
+    categoryMatcher: "tenda",
     icon: HikingIcon,
   },
   {
     slug: "carrier",
     name: "Carrier",
+    categoryMatcher: "carrier",
     icon: Backpack01Icon,
   },
   {
     slug: "sleeping-gear",
     name: "Sleeping Gear",
+    categoryMatcher: "sleeping gear",
     icon: SleepingIcon,
   },
   {
     slug: "alat-masak",
     name: "Alat Masak",
+    categoryMatcher: "cooking",
     icon: CookingPotIcon,
   },
   {
     slug: "paket",
     name: "Paket Camping",
+    categoryMatcher: "paket",
     icon: Package01Icon,
   },
 ] as const;
 
 /**
- * CategoryGrid — Organism that displays the 5 MVP product categories.
+ * CategoryGrid — Organism that displays the 5 MVP product categories with live item counts.
  *
  * Server Component. Rendered in homepage between HeroSection and ProductTabs.
- *
- * Layout:
- * - Mobile: 2-column grid
- * - Tablet: 3-column grid
- * - Desktop: 5-column grid (all categories in one row)
  */
-export function CategoryGrid() {
+export async function CategoryGrid() {
+  const [categoriesRaw, packageCount] = await Promise.all([
+    prisma.category.findMany({
+      where: { isActive: true },
+      select: {
+        id: true,
+        name: true,
+        _count: {
+          select: {
+            products: {
+              where: { isActive: true, deletedAt: null },
+            },
+          },
+        },
+      },
+    }),
+    prisma.package.count({
+      where: { isActive: true, deletedAt: null },
+    }),
+  ]);
+
+  const getCount = (matcher: string): number => {
+    if (matcher === "paket") return packageCount;
+    const cat = categoriesRaw.find((c) =>
+      c.name.toLowerCase().includes(matcher.toLowerCase()),
+    );
+    return cat?._count.products ?? 0;
+  };
+
   return (
     <section aria-label="Kategori Perlengkapan">
       {/* Section header */}
@@ -76,6 +105,7 @@ export function CategoryGrid() {
             slug={cat.slug}
             name={cat.name}
             icon={cat.icon}
+            productCount={getCount(cat.categoryMatcher)}
           />
         ))}
       </div>

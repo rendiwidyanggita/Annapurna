@@ -20,6 +20,7 @@ import {
   CheckmarkCircle01Icon,
   Loading01Icon,
 } from "@hugeicons/core-free-icons";
+import { SITE_CONFIG } from "@/config/site";
 
 interface ProductInteractivePanelProps {
   productId: string;
@@ -202,7 +203,8 @@ export function ProductInteractivePanel({
     `Halo Annapurna Adventure, saya tertarik ingin menyewa produk "${productName}"${variantLabel} sebanyak ${quantity} unit untuk paket durasi ${durationLabel} tanggal ${startDate.toLocaleDateString("id-ID")}. Apakah unit tersedia?`
   );
 
-  const waUrl = `https://wa.me/6281234567890?text=${waText}`;
+  const waNumber = SITE_CONFIG.contact.whatsapp.replace(/[^0-9]/g, "");
+  const waUrl = `https://wa.me/${waNumber}?text=${waText}`;
 
   return (
     <div className="space-y-6">
