@@ -14,18 +14,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   TransactionStatusBadge,
   PaymentStatusBadge,
-  GuaranteeBadge,
-} from "../status-badge";
+  GuaranteeStatusBadge,
+} from "@/components/atoms/status-badge";
 import {
   revealGuaranteeIdAction,
   cancelTransactionAction,
@@ -36,12 +28,13 @@ import {
   ViewIcon,
   ViewOffIcon,
   SecurityCheckIcon,
-  CheckmarkCircle02Icon,
-  ShoppingBagIcon,
+  CheckmarkCircle01Icon,
+  Package01Icon,
   Calendar01Icon,
   UserIcon,
   Invoice01Icon,
   AlertCircleIcon,
+  Loading01Icon,
 } from "@hugeicons/core-free-icons";
 import { format } from "date-fns";
 import { id as localeId } from "date-fns/locale";
@@ -218,23 +211,24 @@ export function TransactionDetailClient({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-16">
       {/* ── Top Bar ── */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <Button asChild variant="outline" size="sm" className="h-9 w-9 p-0">
-            <Link href="/admin/dashboard/transaksi">
-              <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
-            </Link>
-          </Button>
+          <Link
+            href="/admin/dashboard/transaksi"
+            className="p-2 rounded-xl border border-[#E5E7EB] bg-white hover:bg-gray-50 text-gray-600 transition-colors shadow-2xs"
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
+          </Link>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold font-mono text-slate-900">
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-xl font-bold font-mono text-gray-900 tabular-nums">
                 {transaction.transactionCode}
               </h1>
-              <TransactionStatusBadge status={transaction.transactionStatus} />
+              <TransactionStatusBadge status={transaction.transactionStatus} size="sm" />
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-gray-500 mt-0.5 tabular-nums">
               Dipesan pada{" "}
               {format(new Date(transaction.createdAt), "dd MMMM yyyy HH:mm", {
                 locale: localeId,
@@ -243,70 +237,78 @@ export function TransactionDetailClient({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {isReadyPickup && (
-            <Button asChild className="bg-blue-600 hover:bg-blue-700 h-9 text-xs">
-              <Link href={`/admin/dashboard/transaksi/${transaction.id}/pickup`}>
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="mr-1.5" />
-                Proses Handover (Pickup)
-              </Link>
-            </Button>
+            <Link href={`/admin/dashboard/transaksi/${transaction.id}/pickup`}>
+              <Button size="sm" className="bg-blue-600 hover:bg-blue-700 h-9 text-xs font-semibold gap-1.5 shadow-2xs text-white">
+                <HugeiconsIcon icon={CheckmarkCircle01Icon} size={15} />
+                <span>Proses Serah Terima (Pickup)</span>
+              </Button>
+            </Link>
           )}
 
           {isReadyReturn && (
-            <Button asChild className="bg-emerald-600 hover:bg-emerald-700 h-9 text-xs">
-              <Link href={`/admin/dashboard/transaksi/${transaction.id}/return`}>
-                <HugeiconsIcon icon={ShoppingBagIcon} size={16} className="mr-1.5" />
-                Pemeriksaan Pengembalian (Return)
-              </Link>
-            </Button>
+            <Link href={`/admin/dashboard/transaksi/${transaction.id}/return`}>
+              <Button size="sm" className="bg-[#16624B] hover:bg-[#0F4F3C] h-9 text-xs font-semibold gap-1.5 shadow-2xs text-white">
+                <HugeiconsIcon icon={Package01Icon} size={15} />
+                <span>Pemeriksaan Return & Denda</span>
+              </Button>
+            </Link>
           )}
 
           {canCancel && (
             <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="h-9 text-xs text-rose-600 border-rose-200 hover:bg-rose-50">
-                  Batalkan Pesanan
+                <Button variant="outline" size="sm" className="h-9 text-xs font-semibold text-red-600 border-red-200 hover:bg-red-50">
+                  Batalkan Transaksi
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Konfirmasi Pembatalan Transaksi</DialogTitle>
-                  <DialogDescription>
-                    Membatalkan transaksi toko akan melepaskan seluruh jadwal reservasi unit inventaris. Jika DP telah dibayar, status pembayaran akan ditandai untuk refund penuh sesuai kebijakan toko.
+                  <DialogTitle className="text-base font-bold text-gray-900">
+                    Konfirmasi Pembatalan Transaksi
+                  </DialogTitle>
+                  <DialogDescription className="text-xs text-gray-500">
+                    Membatalkan transaksi akan melepaskan jadwal reservasi unit inventaris. Jika DP telah dibayar, tandai status untuk kebijakan pengembalian dana.
                   </DialogDescription>
                 </DialogHeader>
 
-                <div className="space-y-3 py-2">
-                  <label className="text-xs font-semibold text-slate-700">
-                    Alasan Pembatalan (Wajib diisi):
+                <div className="space-y-2 py-2">
+                  <label className="text-xs font-semibold text-gray-700">
+                    Alasan Pembatalan <span className="text-red-500">*</span>:
                   </label>
                   <textarea
                     rows={3}
                     value={cancelReason}
                     onChange={(e) => setCancelReason(e.target.value)}
-                    placeholder="Contoh: Permintaan pembatalan dari customer karena kondisi darurat..."
-                    className="w-full rounded-md border border-slate-300 p-2 text-sm focus:border-primary focus:outline-none"
+                    placeholder="Contoh: Permintaan pembatalan dari customer karena kendala cuaca buruk..."
+                    className="w-full rounded-lg border border-gray-200 p-2.5 text-xs text-gray-800 focus:border-[#16624B] focus:outline-none"
                   />
                   {cancelError && (
-                    <p className="text-xs text-rose-600">{cancelError}</p>
+                    <p className="text-xs text-red-600 font-medium">{cancelError}</p>
                   )}
                 </div>
 
-                <DialogFooter>
+                <DialogFooter className="gap-2 sm:gap-0">
                   <Button
+                    type="button"
                     variant="outline"
+                    size="sm"
                     onClick={() => setIsCancelDialogOpen(false)}
                     disabled={isCancelling}
+                    className="text-xs"
                   >
                     Tutup
                   </Button>
                   <Button
+                    type="button"
                     variant="destructive"
+                    size="sm"
                     onClick={handleCancelSubmit}
                     disabled={isCancelling}
+                    className="text-xs"
                   >
-                    {isCancelling ? "Memproses..." : "Ya, Batalkan Transaksi"}
+                    {isCancelling ? "Memproses..." : "Ya, Batalkan"}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -317,59 +319,59 @@ export function TransactionDetailClient({
 
       {/* ── Cancelled Banner if applicable ── */}
       {transaction.transactionStatus === TransactionStatus.Dibatalkan && (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-rose-800 text-sm">
-          <div className="flex items-center gap-2 font-semibold">
-            <HugeiconsIcon icon={AlertCircleIcon} size={18} />
-            Transaksi Dibatalkan
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-800 text-xs flex items-start gap-2.5">
+          <HugeiconsIcon icon={AlertCircleIcon} size={18} className="text-red-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-bold text-red-900">Transaksi Dibatalkan</p>
+            <p className="mt-0.5 text-red-700">
+              {transaction.cancelledReason || "Tidak ada rincian alasan pembatalan tercatat."}
+            </p>
           </div>
-          <p className="mt-1 text-xs text-rose-700">
-            {transaction.cancelledReason || "Tidak ada alasan pembatalan tercatat."}
-          </p>
         </div>
       )}
 
       {/* ── Grid: Info Pelanggan & Jaminan ── */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Customer & Schedule Card */}
-        <div className="rounded-xl border border-[var(--color-border)] bg-white p-5 shadow-xs space-y-4">
-          <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-            <HugeiconsIcon icon={UserIcon} size={18} className="text-slate-500" />
-            <h2 className="text-sm font-semibold text-slate-900">
-              Data Penyewa & Jadwal
+        <div className="rounded-xl border border-[#E5E7EB] bg-white p-5 shadow-2xs space-y-4">
+          <div className="flex items-center gap-2 border-b border-[#E5E7EB] pb-3">
+            <HugeiconsIcon icon={UserIcon} size={18} className="text-[#16624B]" />
+            <h2 className="text-sm font-bold text-gray-900">
+              Data Penyewa & Jadwal Sewa
             </h2>
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div>
-              <span className="text-slate-500">Nama Pelanggan</span>
-              <p className="font-semibold text-slate-900 mt-0.5">
+              <span className="text-gray-500 text-[11px]">Nama Lengkap</span>
+              <p className="font-semibold text-gray-900 mt-0.5">
                 {transaction.user.profile?.fullName || "-"}
               </p>
             </div>
             <div>
-              <span className="text-slate-500">Email</span>
-              <p className="font-medium text-slate-900 mt-0.5">
+              <span className="text-gray-500 text-[11px]">Email Terdaftar</span>
+              <p className="font-medium text-gray-800 mt-0.5">
                 {transaction.user.email}
               </p>
             </div>
             <div>
-              <span className="text-slate-500">Nomor Telepon</span>
-              <p className="font-medium text-slate-900 mt-0.5">
+              <span className="text-gray-500 text-[11px]">Nomor Telepon / WhatsApp</span>
+              <p className="font-medium text-gray-800 mt-0.5 tabular-nums">
                 {transaction.user.profile?.phoneNumber || "-"}
               </p>
             </div>
             <div>
-              <span className="text-slate-500">Skema Durasi</span>
-              <p className="font-medium text-slate-900 mt-0.5 capitalize">
+              <span className="text-gray-500 text-[11px]">Skema Durasi</span>
+              <p className="font-medium text-gray-800 mt-0.5 capitalize tabular-nums">
                 {transaction.pricingScheme} ({transaction.totalDurationDays} hari)
               </p>
             </div>
-            <div className="col-span-2 rounded-lg bg-slate-50 p-2.5">
-              <span className="text-slate-500 block mb-1">Periode Sewa</span>
-              <p className="font-medium text-slate-900 flex items-center gap-2">
-                <HugeiconsIcon icon={Calendar01Icon} size={14} className="text-slate-400" />
+            <div className="col-span-2 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] p-3">
+              <span className="text-gray-500 text-[11px] block mb-1">Periode Tanggal Sewa</span>
+              <p className="font-semibold text-gray-900 flex items-center gap-2 tabular-nums">
+                <HugeiconsIcon icon={Calendar01Icon} size={15} className="text-[#16624B]" />
                 {format(new Date(transaction.startDate), "dd MMMM yyyy", { locale: localeId })}
-                {" → "}
+                <span className="text-gray-400">→</span>
                 {format(new Date(transaction.endDate), "dd MMMM yyyy", { locale: localeId })}
               </p>
             </div>
@@ -377,32 +379,33 @@ export function TransactionDetailClient({
         </div>
 
         {/* Guarantee Document Card (PRD 30 Privacy Compliant) */}
-        <div className="rounded-xl border border-[var(--color-border)] bg-white p-5 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="rounded-xl border border-[#E5E7EB] bg-white p-5 shadow-2xs space-y-4">
+          <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
             <div className="flex items-center gap-2">
               <HugeiconsIcon icon={SecurityCheckIcon} size={18} className="text-blue-600" />
-              <h2 className="text-sm font-semibold text-slate-900">
-                Dokumen Jaminan Fisik (KTP / SIM / KTM)
+              <h2 className="text-sm font-bold text-gray-900">
+                Dokumen Jaminan Fisik Pelanggan
               </h2>
             </div>
-            <GuaranteeBadge
+            <GuaranteeStatusBadge
               status={transaction.guaranteeStatus}
               docType={transaction.guaranteeDocType}
+              size="sm"
             />
           </div>
 
           <div className="space-y-3 text-xs">
             <div className="flex items-center justify-between">
-              <span className="text-slate-500">Tipe Dokumen:</span>
-              <span className="font-semibold text-slate-900">
-                {transaction.guaranteeDocType || "Belum diserahkan"}
+              <span className="text-gray-500">Tipe Dokumen Fisik:</span>
+              <span className="font-semibold text-gray-900">
+                {transaction.guaranteeDocType || "Belum diserahkan ke kasir"}
               </span>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-slate-500">Nomor Identitas:</span>
+              <span className="text-gray-500">Nomor Identitas (NIK/SIM):</span>
               <div className="flex items-center gap-2">
-                <span className="font-mono text-sm font-bold text-slate-800">
+                <span className="font-mono text-xs font-bold text-gray-900 bg-gray-100 px-2 py-0.5 rounded border border-gray-200 tabular-nums">
                   {isRevealed
                     ? rawGuaranteeId || "Tidak ada data"
                     : transaction.maskedGuaranteeId}
@@ -414,13 +417,17 @@ export function TransactionDetailClient({
                     size="sm"
                     onClick={handleRevealId}
                     disabled={isRevealing}
-                    className="h-7 px-2 text-[11px] text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                    className="h-7 px-2 text-[11px] text-blue-600 hover:text-blue-800 hover:bg-blue-50 font-semibold"
                   >
-                    <HugeiconsIcon
-                      icon={isRevealed ? ViewOffIcon : ViewIcon}
-                      size={14}
-                      className="mr-1"
-                    />
+                    {isRevealing ? (
+                      <HugeiconsIcon icon={Loading01Icon} size={13} className="mr-1 animate-spin" />
+                    ) : (
+                      <HugeiconsIcon
+                        icon={isRevealed ? ViewOffIcon : ViewIcon}
+                        size={13}
+                        className="mr-1"
+                      />
+                    )}
                     {isRevealed ? "Sembunyikan" : "Lihat NIK"}
                   </Button>
                 )}
@@ -428,134 +435,136 @@ export function TransactionDetailClient({
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-slate-500">Lokasi / Catatan Simpan:</span>
-              <span className="font-medium text-slate-700">
-                {transaction.guaranteeNotes || "-"}
+              <span className="text-gray-500">Lokasi / Catatan Simpan:</span>
+              <span className="font-medium text-gray-800">
+                {transaction.guaranteeNotes || <span className="text-gray-400">-</span>}
               </span>
             </div>
 
-            <div className="rounded-lg bg-blue-50/50 border border-blue-100 p-2.5 text-[11px] text-blue-800">
-              <strong>Privasi Dokumen:</strong> Nomor identitas disamarkan secara otomatis di layar kasir untuk perlindungan privasi. Klik &quot;Lihat NIK&quot; hanya untuk verifikasi fisik di meja kasir.
+            <div className="rounded-lg bg-blue-50/70 border border-blue-100 p-2.5 text-[11px] text-blue-800 leading-relaxed">
+              <strong>Privasi Dokumen (PRD Section 30):</strong> Nomor identitas pelanggan disamarkan otomatis di layar kasir untuk perlindungan privasi. Klik tombol &ldquo;Lihat NIK&rdquo; hanya untuk verifikasi fisik saat serah terima barang.
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── Section: Rincian Barang ── */}
-      <div className="rounded-xl border border-[var(--color-border)] bg-white shadow-xs overflow-hidden">
-        <div className="p-4 border-b border-slate-100">
-          <h2 className="text-sm font-semibold text-slate-900">
-            Daftar Barang yang Disewa ({transaction.items.length} jenis)
+      {/* ── Section: Rincian Barang yang Disewa ── */}
+      <div className="rounded-xl border border-[#E5E7EB] bg-white shadow-2xs overflow-hidden">
+        <div className="p-4 border-b border-[#E5E7EB] bg-[#F9FAFB] flex items-center justify-between">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-gray-700">
+            Daftar Barang yang Disewa ({transaction.items.length} jenis produk)
           </h2>
         </div>
-        <Table>
-          <TableHeader className="bg-slate-50">
-            <TableRow>
-              <TableHead className="font-semibold text-slate-700">Nama Barang</TableHead>
-              <TableHead className="font-semibold text-slate-700">Kode Unit Fisik</TableHead>
-              <TableHead className="text-center font-semibold text-slate-700">Qty</TableHead>
-              <TableHead className="font-semibold text-slate-700">Harga Sewa</TableHead>
-              <TableHead className="font-semibold text-slate-700">Subtotal</TableHead>
-              <TableHead className="font-semibold text-slate-700">Status Kembali</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {transaction.items.map((item) => {
-              const totalReturned = item.returnItems.reduce(
-                (sum, r) => sum + r.quantity,
-                0
-              );
-              const isFullyReturned = totalReturned >= item.quantity;
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead className="bg-[#F9FAFB] border-b border-[#E5E7EB] text-gray-600 font-semibold uppercase tracking-wider text-[11px]">
+              <tr>
+                <th className="py-3 px-4">Nama Produk</th>
+                <th className="py-3 px-4">Kode Unit Fisik</th>
+                <th className="py-3 px-4 text-center">Kuantitas</th>
+                <th className="py-3 px-4">Harga Sewa Satuan</th>
+                <th className="py-3 px-4">Subtotal</th>
+                <th className="py-3 px-4">Status Pengembalian</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#E5E7EB]">
+              {transaction.items.map((item) => {
+                const totalReturned = item.returnItems.reduce(
+                  (sum, r) => sum + r.quantity,
+                  0
+                );
+                const isFullyReturned = totalReturned >= item.quantity;
 
-              return (
-                <TableRow key={item.id}>
-                  <TableCell className="font-medium text-slate-900">
-                    {item.productNameSnap}
-                  </TableCell>
-                  <TableCell className="font-mono text-xs">
-                    {item.unit ? (
-                      <span className="rounded bg-slate-100 px-2 py-0.5 text-slate-700">
-                        {item.unit.inventoryCode}
-                      </span>
-                    ) : item.unitCodeSnap ? (
-                      <span className="rounded bg-slate-100 px-2 py-0.5 text-slate-700">
-                        {item.unitCodeSnap}
-                      </span>
-                    ) : (
-                      <span className="text-slate-400">Consumable</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-center font-semibold text-slate-900">
-                    {item.quantity}
-                  </TableCell>
-                  <TableCell className="text-xs text-slate-700">
-                    Rp {item.priceSnap.toLocaleString("id-ID")}
-                  </TableCell>
-                  <TableCell className="text-xs font-semibold text-slate-900">
-                    Rp {item.subtotal.toLocaleString("id-ID")}
-                  </TableCell>
-                  <TableCell>
-                    {isFullyReturned ? (
-                      <span className="inline-flex items-center gap-1 text-xs text-emerald-600 font-medium">
-                        <HugeiconsIcon icon={CheckmarkCircle02Icon} size={14} />
-                        Dikembalikan ({totalReturned}/{item.quantity})
-                      </span>
-                    ) : totalReturned > 0 ? (
-                      <span className="text-xs text-amber-600 font-medium">
-                        Parsial ({totalReturned}/{item.quantity})
-                      </span>
-                    ) : (
-                      <span className="text-xs text-slate-400">
-                        Belum kembali
-                      </span>
-                    )}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+                return (
+                  <tr key={item.id} className="hover:bg-gray-50/80 transition-colors">
+                    <td className="py-3 px-4 font-semibold text-gray-900">
+                      {item.productNameSnap}
+                    </td>
+                    <td className="py-3 px-4 font-mono text-xs tabular-nums">
+                      {item.unit ? (
+                        <span className="font-bold text-gray-900 bg-gray-100 px-2 py-0.5 rounded border border-gray-200">
+                          {item.unit.inventoryCode}
+                        </span>
+                      ) : item.unitCodeSnap ? (
+                        <span className="font-bold text-gray-900 bg-gray-100 px-2 py-0.5 rounded border border-gray-200">
+                          {item.unitCodeSnap}
+                        </span>
+                      ) : (
+                        <span className="text-gray-400 font-sans">Consumable</span>
+                      )}
+                    </td>
+                    <td className="py-3 px-4 text-center font-bold text-gray-900 tabular-nums">
+                      {item.quantity}
+                    </td>
+                    <td className="py-3 px-4 text-gray-700 tabular-nums">
+                      Rp {item.priceSnap.toLocaleString("id-ID")}
+                    </td>
+                    <td className="py-3 px-4 font-bold text-gray-900 tabular-nums">
+                      Rp {item.subtotal.toLocaleString("id-ID")}
+                    </td>
+                    <td className="py-3 px-4">
+                      {isFullyReturned ? (
+                        <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                          <HugeiconsIcon icon={CheckmarkCircle01Icon} size={12} />
+                          Dikembalikan ({totalReturned}/{item.quantity})
+                        </span>
+                      ) : totalReturned > 0 ? (
+                        <span className="inline-flex items-center text-[11px] text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                          Parsial ({totalReturned}/{item.quantity})
+                        </span>
+                      ) : (
+                        <span className="text-[11px] text-gray-400">
+                          Belum kembali
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* ── Section: Rincian Pembayaran & Denda (PRD 16.14) ── */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Financial Breakdown */}
-        <div className="rounded-xl border border-[var(--color-border)] bg-white p-5 shadow-xs space-y-4">
-          <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-            <HugeiconsIcon icon={Invoice01Icon} size={18} className="text-slate-500" />
-            <h2 className="text-sm font-semibold text-slate-900">
+        <div className="rounded-xl border border-[#E5E7EB] bg-white p-5 shadow-2xs space-y-4">
+          <div className="flex items-center gap-2 border-b border-[#E5E7EB] pb-3">
+            <HugeiconsIcon icon={Invoice01Icon} size={18} className="text-[#16624B]" />
+            <h2 className="text-sm font-bold text-gray-900">
               Ringkasan Tagihan & Finansial
             </h2>
           </div>
 
           <div className="space-y-2 text-xs">
-            <div className="flex justify-between py-1 border-b border-slate-100">
-              <span className="text-slate-500">Total Biaya Sewa:</span>
-              <span className="font-semibold text-slate-900">
+            <div className="flex justify-between py-1.5 border-b border-[#E5E7EB]">
+              <span className="text-gray-600">Total Biaya Sewa:</span>
+              <span className="font-semibold text-gray-900 tabular-nums">
                 Rp {transaction.totalAmount.toLocaleString("id-ID")}
               </span>
             </div>
-            <div className="flex justify-between py-1 border-b border-slate-100">
-              <span className="text-slate-500">Down Payment (DP 50%):</span>
-              <span className="font-semibold text-emerald-600">
+            <div className="flex justify-between py-1.5 border-b border-[#E5E7EB]">
+              <span className="text-gray-600">Down Payment (DP 50% via Midtrans):</span>
+              <span className="font-semibold text-[#16624B] tabular-nums">
                 Rp {transaction.dpAmount.toLocaleString("id-ID")}
               </span>
             </div>
-            <div className="flex justify-between py-1 border-b border-slate-100">
-              <span className="text-slate-500">Sisa Pelunasan di Toko:</span>
-              <span className="font-semibold text-slate-900">
+            <div className="flex justify-between py-1.5 border-b border-[#E5E7EB]">
+              <span className="text-gray-600">Sisa Pelunasan di Toko:</span>
+              <span className="font-semibold text-gray-900 tabular-nums">
                 Rp {transaction.remainingAmount.toLocaleString("id-ID")}
               </span>
             </div>
-            <div className="flex justify-between py-1 border-b border-slate-100">
-              <span className="text-slate-500">Total Denda Manual (PRD 16.14):</span>
-              <span className="font-semibold text-rose-600">
+            <div className="flex justify-between py-1.5 border-b border-[#E5E7EB]">
+              <span className="text-gray-600">Total Denda Manual (PRD 16.14):</span>
+              <span className={`font-semibold tabular-nums ${totalPenalties > 0 ? "text-red-600" : "text-gray-400"}`}>
                 Rp {totalPenalties.toLocaleString("id-ID")}
               </span>
             </div>
-            <div className="flex justify-between pt-2 text-sm font-bold">
-              <span className="text-slate-900">Total Akhir:</span>
-              <span className="text-primary">
+            <div className="flex justify-between pt-2.5 text-sm font-bold">
+              <span className="text-gray-900">Total Tagihan Akhir:</span>
+              <span className="text-[#16624B] tabular-nums text-base">
                 Rp {(transaction.totalAmount + totalPenalties).toLocaleString("id-ID")}
               </span>
             </div>
@@ -563,16 +572,16 @@ export function TransactionDetailClient({
 
           {/* List of Penalties */}
           {transaction.penalties.length > 0 && (
-            <div className="mt-4 rounded-lg bg-rose-50/60 border border-rose-100 p-3 space-y-2">
-              <span className="text-xs font-semibold text-rose-900 block">
-                Rincian Denda Manual:
+            <div className="mt-4 rounded-xl bg-red-50/70 border border-red-200 p-3.5 space-y-2">
+              <span className="text-xs font-bold text-red-900 block">
+                Rincian Denda Tercatat:
               </span>
               {transaction.penalties.map((pen) => (
-                <div key={pen.id} className="text-xs text-rose-800 flex justify-between">
+                <div key={pen.id} className="text-xs text-red-800 flex justify-between">
                   <span>
                     <strong>{pen.penaltyType}</strong>: {pen.reason}
                   </span>
-                  <span className="font-mono font-semibold">
+                  <span className="font-mono font-bold tabular-nums">
                     Rp {pen.amount.toLocaleString("id-ID")}
                   </span>
                 </div>
@@ -582,61 +591,65 @@ export function TransactionDetailClient({
         </div>
 
         {/* Payment History */}
-        <div className="rounded-xl border border-[var(--color-border)] bg-white p-5 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h2 className="text-sm font-semibold text-slate-900">
-              Riwayat Pembayaran
+        <div className="rounded-xl border border-[#E5E7EB] bg-white p-5 shadow-2xs space-y-4">
+          <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
+            <h2 className="text-sm font-bold text-gray-900">
+              Riwayat Pembayaran Transaksi
             </h2>
-            <PaymentStatusBadge status={transaction.paymentStatus} />
+            <PaymentStatusBadge status={transaction.paymentStatus} size="sm" />
           </div>
 
           <div className="space-y-3">
-            {transaction.payments.map((p) => (
-              <div
-                key={p.id}
-                className="rounded-lg border border-slate-100 p-3 text-xs space-y-1 hover:bg-slate-50/50"
-              >
-                <div className="flex justify-between font-medium">
-                  <span className="text-slate-900">
-                    {p.paymentType || "Pembayaran"} ({p.paymentMethod || "Midtrans"})
-                  </span>
-                  <span className="font-semibold text-emerald-600">
-                    Rp {p.grossAmount.toLocaleString("id-ID")}
-                  </span>
+            {transaction.payments.length === 0 ? (
+              <p className="text-xs text-gray-400">Belum ada riwayat pembayaran terkonfirmasi.</p>
+            ) : (
+              transaction.payments.map((p) => (
+                <div
+                  key={p.id}
+                  className="rounded-xl border border-[#E5E7EB] p-3 text-xs space-y-1.5 hover:bg-gray-50/60 transition-colors"
+                >
+                  <div className="flex justify-between font-semibold">
+                    <span className="text-gray-900">
+                      {p.paymentType || "Pembayaran"} ({p.paymentMethod || "Midtrans"})
+                    </span>
+                    <span className="text-[#16624B] tabular-nums">
+                      Rp {p.grossAmount.toLocaleString("id-ID")}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-gray-400 font-mono text-[11px] tabular-nums">
+                    <span>Order: {p.midtransOrderId}</span>
+                    <span>
+                      {p.paidAt
+                        ? format(new Date(p.paidAt), "dd/MM/yyyy HH:mm")
+                        : "Pending"}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between text-slate-400 font-mono text-[11px]">
-                  <span>{p.midtransOrderId}</span>
-                  <span>
-                    {p.paidAt
-                      ? format(new Date(p.paidAt), "dd/MM/yyyy HH:mm")
-                      : "Pending"}
-                  </span>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>
 
       {/* ── Section: Log Aktivitas Audit Trail ── */}
-      <div className="rounded-xl border border-[var(--color-border)] bg-white p-5 shadow-xs space-y-4">
-        <h2 className="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-3">
+      <div className="rounded-xl border border-[#E5E7EB] bg-white p-5 shadow-2xs space-y-4">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-gray-700 border-b border-[#E5E7EB] pb-3">
           Jejak Audit & Log Aktivitas (Audit Trail)
         </h2>
-        <div className="space-y-4">
+        <div className="space-y-3">
           {transaction.activityLogs.length === 0 ? (
-            <p className="text-xs text-slate-400">Belum ada riwayat aktivitas.</p>
+            <p className="text-xs text-gray-400">Belum ada riwayat aktivitas.</p>
           ) : (
             transaction.activityLogs.map((log) => (
-              <div key={log.id} className="flex gap-3 text-xs border-l-2 border-slate-200 pl-3 py-1">
+              <div key={log.id} className="flex gap-3 text-xs border-l-2 border-[#16624B]/40 pl-3 py-1">
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-slate-900">{log.action}</span>
-                    <span className="text-slate-400 text-[11px]">
+                    <span className="font-bold text-gray-900">{log.action}</span>
+                    <span className="text-gray-400 text-[11px] tabular-nums">
                       {format(new Date(log.createdAt), "dd MMM yyyy HH:mm:ss", { locale: localeId })}
                     </span>
                   </div>
-                  <p className="text-slate-600 mt-0.5">{log.description}</p>
+                  <p className="text-gray-600 mt-0.5">{log.description}</p>
                 </div>
               </div>
             ))
@@ -646,3 +659,4 @@ export function TransactionDetailClient({
     </div>
   );
 }
+

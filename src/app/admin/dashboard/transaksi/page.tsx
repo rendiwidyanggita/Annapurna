@@ -5,6 +5,10 @@ import { TransactionTable } from "./transaction-table";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Transaksi & Operasional — Admin ANNAPURNA",
+};
+
 interface TransactionsPageProps {
   searchParams: Promise<{
     page?: string;
@@ -36,17 +40,6 @@ export default async function TransactionsPage({
 
   return (
     <div className="space-y-6">
-      {/* ── Page Header ── */}
-      <div>
-        <h1 className="text-xl font-bold tracking-tight text-slate-900">
-          Manajemen Transaksi & Operasional Toko
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Kelola siklus rental fisik: serah terima barang (pickup), pemeriksaan pengembalian (return), denda manual, dan pencatatan jaminan identitas.
-        </p>
-      </div>
-
-      {/* ── Transaction Table Client Component ── */}
       <TransactionTable
         transactions={data.transactions}
         total={data.total}
@@ -59,3 +52,4 @@ export default async function TransactionsPage({
     </div>
   );
 }
+
