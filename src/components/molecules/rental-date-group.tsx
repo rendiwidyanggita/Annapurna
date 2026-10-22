@@ -140,14 +140,18 @@ export function RentalDateGroup({
               </Button>
             </PopoverTrigger>
             <PopoverContent
-              className="w-auto p-0 bg-white border border-neutral-200 shadow-xl rounded-2xl z-50"
+              className="w-auto p-0 bg-white border border-neutral-200/80 shadow-xl rounded-2xl z-50 overflow-hidden"
               align="start"
+              sideOffset={6}
             >
               <Calendar
                 mode="single"
                 selected={selectedDate}
                 onSelect={handleSelectDate}
                 disabled={(date) => isBefore(date, today)}
+                locale={localeId}
+                defaultMonth={selectedDate || today}
+                autoFocus
               />
             </PopoverContent>
           </Popover>
