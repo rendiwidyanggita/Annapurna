@@ -3,7 +3,13 @@
 import { useActionState, useState } from "react";
 import Link from "next/link";
 import { resetPassword, type ActionState } from "../actions";
-import { Eye, EyeOff, Loader2, CheckCircle } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ViewIcon,
+  ViewOffIcon,
+  Loading03Icon,
+  CheckmarkCircle02Icon,
+} from "@hugeicons/core-free-icons";
 
 const initialState: ActionState = {};
 
@@ -24,7 +30,7 @@ export default function ResetPasswordPage() {
     return (
       <div className="text-center">
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#e7f3ee] mb-4">
-          <CheckCircle size={28} className="text-[#16624b]" />
+          <HugeiconsIcon icon={CheckmarkCircle02Icon} size={28} className="text-[#16624b]" />
         </div>
         <h1 className="text-xl font-bold text-[#111827] mb-2">Password Berhasil Diubah</h1>
         <p className="text-sm text-[#6b7280] mb-6">{state.success}</p>
@@ -78,7 +84,7 @@ export default function ResetPasswordPage() {
               tabIndex={-1}
               aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
             >
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              <HugeiconsIcon icon={showPassword ? ViewOffIcon : ViewIcon} size={16} />
             </button>
           </div>
         </div>
@@ -106,7 +112,7 @@ export default function ResetPasswordPage() {
               tabIndex={-1}
               aria-label={showConfirm ? "Sembunyikan password" : "Tampilkan password"}
             >
-              {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+              <HugeiconsIcon icon={showConfirm ? ViewOffIcon : ViewIcon} size={16} />
             </button>
           </div>
         </div>
@@ -117,7 +123,7 @@ export default function ResetPasswordPage() {
           disabled={isPending}
           className="w-full rounded-lg bg-[#16624b] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0f4f3c] focus:outline-none focus:ring-2 focus:ring-[#16624b]/40 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
         >
-          {isPending && <Loader2 size={16} className="animate-spin" />}
+          {isPending && <HugeiconsIcon icon={Loading03Icon} size={16} className="animate-spin" />}
           {isPending ? "Menyimpan..." : "Simpan Password Baru"}
         </button>
       </form>

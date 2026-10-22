@@ -1,7 +1,16 @@
 "use client";
 
 import { useActionState } from "react";
-import { User, Phone, MapPin, Mail, AlertCircle, Loader2, ArrowRight } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  User02Icon,
+  Call02Icon,
+  Location01Icon,
+  Mail01Icon,
+  AlertCircleIcon,
+  Loading03Icon,
+  ArrowRight01Icon,
+} from "@hugeicons/core-free-icons";
 import { completeProfile, type CompleteProfileActionState } from "./actions";
 
 interface CompleteProfileFormProps {
@@ -26,7 +35,7 @@ export function CompleteProfileForm({
       {/* Pesan Error */}
       {state?.error && (
         <div className="flex items-start gap-2.5 p-3.5 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 animate-in fade-in duration-200">
-          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-red-600" />
+          <HugeiconsIcon icon={AlertCircleIcon} size={20} className="shrink-0 mt-0.5 text-red-600" />
           <span>{state.error}</span>
         </div>
       )}
@@ -38,7 +47,7 @@ export function CompleteProfileForm({
         </label>
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-            <Mail className="w-4 h-4" />
+            <HugeiconsIcon icon={Mail01Icon} size={16} />
           </div>
           <input
             type="email"
@@ -56,7 +65,7 @@ export function CompleteProfileForm({
         </label>
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-            <User className="w-4 h-4" />
+            <HugeiconsIcon icon={User02Icon} size={16} />
           </div>
           <input
             id="fullName"
@@ -80,7 +89,7 @@ export function CompleteProfileForm({
         </label>
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-            <Phone className="w-4 h-4" />
+            <HugeiconsIcon icon={Call02Icon} size={16} />
           </div>
           <input
             id="phoneNumber"
@@ -104,7 +113,7 @@ export function CompleteProfileForm({
         </label>
         <div className="relative">
           <div className="absolute top-3 left-0 pl-3.5 pointer-events-none text-gray-400">
-            <MapPin className="w-4 h-4" />
+            <HugeiconsIcon icon={Location01Icon} size={16} />
           </div>
           <textarea
             id="address"
@@ -126,13 +135,13 @@ export function CompleteProfileForm({
       >
         {isPending ? (
           <>
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <HugeiconsIcon icon={Loading03Icon} size={16} className="animate-spin" />
             <span>Menyimpan Profil...</span>
           </>
         ) : (
           <>
             <span>Simpan & Mulai Jelajah</span>
-            <ArrowRight className="w-4 h-4" />
+            <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
           </>
         )}
       </button>

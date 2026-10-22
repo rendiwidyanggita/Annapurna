@@ -3,7 +3,13 @@
 import { useActionState, useState, startTransition } from "react";
 import Link from "next/link";
 import { register, signInWithGoogle, type ActionState } from "../actions";
-import { Eye, EyeOff, Loader2, CheckCircle } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ViewIcon,
+  ViewOffIcon,
+  Loading03Icon,
+  CheckmarkCircle02Icon,
+} from "@hugeicons/core-free-icons";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterInput } from "@/schemas/auth";
@@ -53,7 +59,7 @@ export default function RegisterPage() {
     return (
       <div className="text-center">
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#e7f3ee] mb-4">
-          <CheckCircle size={28} className="text-[#16624b]" />
+          <HugeiconsIcon icon={CheckmarkCircle02Icon} size={28} className="text-[#16624b]" />
         </div>
         <h1 className="text-xl font-bold text-[#111827] mb-2">Cek Email Anda</h1>
         <p className="text-sm text-[#6b7280] mb-6">{state.success}</p>
@@ -144,7 +150,7 @@ export default function RegisterPage() {
                       tabIndex={-1}
                       aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                     >
-                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      <HugeiconsIcon icon={showPassword ? ViewOffIcon : ViewIcon} size={16} />
                     </button>
                   </div>
                 </FormControl>
@@ -176,7 +182,7 @@ export default function RegisterPage() {
                       tabIndex={-1}
                       aria-label={showConfirm ? "Sembunyikan password" : "Tampilkan password"}
                     >
-                      {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                      <HugeiconsIcon icon={showConfirm ? ViewOffIcon : ViewIcon} size={16} />
                     </button>
                   </div>
                 </FormControl>
@@ -190,7 +196,7 @@ export default function RegisterPage() {
             disabled={isPending}
             className="w-full bg-[#16624b] hover:bg-[#0f4f3c] text-white focus-visible:ring-[#16624b]/40 mt-6"
           >
-            {isPending && <Loader2 size={16} className="animate-spin mr-2" />}
+            {isPending && <HugeiconsIcon icon={Loading03Icon} size={16} className="animate-spin mr-2" />}
             {isPending ? "Mendaftarkan..." : "Daftar"}
           </Button>
         </form>
@@ -212,7 +218,7 @@ export default function RegisterPage() {
         className="w-full text-[#111827] hover:bg-[#f9fafb] focus-visible:ring-[#16624b]/20 gap-2.5"
       >
         {isGooglePending ? (
-          <Loader2 size={16} className="animate-spin" />
+          <HugeiconsIcon icon={Loading03Icon} size={16} className="animate-spin" />
         ) : (
           <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />

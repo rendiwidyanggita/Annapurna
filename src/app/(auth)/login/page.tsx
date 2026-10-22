@@ -4,7 +4,8 @@ import { useActionState, useState, Suspense, startTransition } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { login, signInWithGoogle, type ActionState } from "../actions";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ViewIcon, ViewOffIcon, Loading03Icon } from "@hugeicons/core-free-icons";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginInput } from "@/schemas/auth";
@@ -138,7 +139,7 @@ function LoginForm() {
                       tabIndex={-1}
                       aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                     >
-                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      <HugeiconsIcon icon={showPassword ? ViewOffIcon : ViewIcon} size={16} />
                     </button>
                   </div>
                 </FormControl>
@@ -152,7 +153,7 @@ function LoginForm() {
             disabled={isPending}
             className="w-full bg-[#16624b] hover:bg-[#0f4f3c] text-white focus-visible:ring-[#16624b]/40 mt-6"
           >
-            {isPending && <Loader2 size={16} className="animate-spin mr-2" />}
+            {isPending && <HugeiconsIcon icon={Loading03Icon} size={16} className="animate-spin mr-2" />}
             {isPending ? "Memproses..." : "Masuk"}
           </Button>
         </form>
@@ -174,7 +175,7 @@ function LoginForm() {
         className="w-full text-[#111827] hover:bg-[#f9fafb] focus-visible:ring-[#16624b]/20 gap-2.5"
       >
         {isGooglePending ? (
-          <Loader2 size={16} className="animate-spin" />
+          <HugeiconsIcon icon={Loading03Icon} size={16} className="animate-spin" />
         ) : (
           <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
