@@ -4,8 +4,19 @@ import { requireRole } from "@/lib/auth/require-role";
 import { UnitTable, type InventoryUnitItem } from "./unit-table";
 import { ConsumableTab, type ConsumableProductItem } from "./consumable-tab";
 import { UnitTabsClient } from "./unit-tabs-client";
+import { AdminKpiCard } from "@/components/molecules/admin-kpi-card";
+import {
+  Package01Icon,
+  CheckmarkCircle01Icon,
+  Time02Icon,
+  AlertCircleIcon,
+} from "@hugeicons/core-free-icons";
 
 export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: "Manajemen Unit & Stok — Admin ANNAPURNA",
+};
 
 export default async function InventoryPage() {
   try {
@@ -109,41 +120,39 @@ export default async function InventoryPage() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-xl font-bold text-[var(--color-foreground)]">
-          Inventaris & Unit Fisik
-        </h1>
-        <p className="text-xs text-[var(--color-muted)] mt-1">
-          Kelola unit fisik peralatan camping sewaan, riwayat status teknisi, dan stok barang habis pakai (consumable).
-        </p>
+      {/* ── Archetype A: KPI Summary Strip ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <AdminKpiCard
+          label="Total Aset Fisik"
+          value={totalUnits}
+          icon={Package01Icon}
+          iconColorVariant="emerald"
+          subtext="Unit teregistrasi di sistem"
+        />
+        <AdminKpiCard
+          label="Siap Disewa (Available)"
+          value={availableCount}
+          icon={CheckmarkCircle01Icon}
+          iconColorVariant="blue"
+          subtext="Kondisi sehat di etalase toko"
+        />
+        <AdminKpiCard
+          label="Sedang Disewa (Rented)"
+          value={rentedCount}
+          icon={Time02Icon}
+          iconColorVariant="purple"
+          subtext="Berada di tangan pelanggan"
+        />
+        <AdminKpiCard
+          label="Perbaikan / Terkendala"
+          value={maintenanceCount}
+          icon={AlertCircleIcon}
+          iconColorVariant={maintenanceCount > 0 ? "rose" : "neutral"}
+          subtext="Maintenance, Rusak, atau Hilang"
+        />
       </div>
 
-      {/* Inventory Health & Summary Metrics */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="p-3.5 rounded-xl border border-[var(--color-border)] bg-white shadow-xs">
-          <div className="text-[11px] font-medium text-[var(--color-muted)]">Total Aset Fisik</div>
-          <div className="text-xl font-bold text-gray-900 mt-1">{totalUnits}</div>
-          <div className="text-[10px] text-gray-500 mt-0.5">Unit terdaftar di sistem</div>
-        </div>
-        <div className="p-3.5 rounded-xl border border-emerald-200 bg-emerald-50/50 shadow-xs">
-          <div className="text-[11px] font-medium text-emerald-800">Siap Disewa</div>
-          <div className="text-xl font-bold text-emerald-700 mt-1">{availableCount}</div>
-          <div className="text-[10px] text-emerald-600 mt-0.5">Kondisi sehat di toko</div>
-        </div>
-        <div className="p-3.5 rounded-xl border border-blue-200 bg-blue-50/50 shadow-xs">
-          <div className="text-[11px] font-medium text-blue-800">Sedang Disewa</div>
-          <div className="text-xl font-bold text-blue-700 mt-1">{rentedCount}</div>
-          <div className="text-[10px] text-blue-600 mt-0.5">Unit di tangan penyewa</div>
-        </div>
-        <div className="p-3.5 rounded-xl border border-amber-200 bg-amber-50/50 shadow-xs">
-          <div className="text-[11px] font-medium text-amber-800">Perbaikan / Terkendala</div>
-          <div className="text-xl font-bold text-amber-700 mt-1">{maintenanceCount}</div>
-          <div className="text-[10px] text-amber-600 mt-0.5">Maintenance / Hilang</div>
-        </div>
-      </div>
-
-      {/* Tabs Container */}
+      {/* ── Tabs Container (Rental Units vs Consumables) ── */}
       <UnitTabsClient
         unitCount={units.length}
         consumableCount={consumables.length}

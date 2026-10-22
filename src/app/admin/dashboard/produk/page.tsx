@@ -1,8 +1,15 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
+import { AdminKpiCard } from "@/components/molecules/admin-kpi-card";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { PlusSignIcon } from "@hugeicons/core-free-icons";
+import {
+  PlusSignIcon,
+  ShoppingBag01Icon,
+  Package01Icon,
+  Archive01Icon,
+  AlertCircleIcon,
+} from "@hugeicons/core-free-icons";
 import { ProductTable, type ProductItem } from "./product-table";
 import { ProductFilterBar } from "./product-filter-bar";
 import { ItemType, type Prisma } from "@prisma/client";
@@ -16,6 +23,10 @@ interface PageProps {
     page?: string;
   }>;
 }
+
+export const metadata = {
+  title: "Katalog Produk & Variasi — Admin ANNAPURNA",
+};
 
 export default async function AdminProductsPage({ searchParams }: PageProps) {
   const resolvedParams = await searchParams;
@@ -53,8 +64,15 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
     where.isActive = false;
   }
 
-  // Parallel data fetching
-  const [categories, totalProducts, products] = await Promise.all([
+  // Parallel data fetching for table and KPIs
+  const [
+    categories,
+    totalProducts,
+    products,
+    totalRentalUnits,
+    totalConsumables,
+    inactiveProducts,
+  ] = await Promise.all([
     prisma.category.findMany({
       where: { isActive: true },
       select: { id: true, name: true },
@@ -96,42 +114,72 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
       skip: (currentPage - 1) * pageSize,
       take: pageSize,
     }),
+    prisma.product.count({
+      where: { deletedAt: null, itemType: ItemType.rental_unit },
+    }),
+    prisma.product.count({
+      where: { deletedAt: null, itemType: ItemType.consumable },
+    }),
+    prisma.product.count({
+      where: { deletedAt: null, isActive: false },
+    }),
   ]);
 
   const totalPages = Math.ceil(totalProducts / pageSize);
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[var(--color-border)]">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight text-[var(--color-primary)]">
-              Manajemen Produk
-            </h1>
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-[var(--color-primary)] border border-emerald-200">
-              {totalProducts} Total
-            </span>
-          </div>
-          <p className="text-sm text-[var(--color-muted)] mt-1">
-            Kelola katalog alat outdoor, skema tarif durasi sewa, dan variasi unit fisik.
-          </p>
-        </div>
-
-        <div>
-          <Link href="/admin/dashboard/produk/baru">
-            <Button className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white shadow-sm gap-2">
-              <HugeiconsIcon icon={PlusSignIcon} size={18} />
-              Tambah Produk
-            </Button>
-          </Link>
-        </div>
+      {/* ── Archetype A: KPI Strip ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <AdminKpiCard
+          label="Total Produk Master"
+          value={totalProducts}
+          icon={ShoppingBag01Icon}
+          iconColorVariant="emerald"
+          subtext="Seluruh katalog aktif & arsip"
+        />
+        <AdminKpiCard
+          label="Alat Rental (Unit Fisik)"
+          value={totalRentalUnits}
+          icon={Package01Icon}
+          iconColorVariant="blue"
+          subtext="Dilacak per kode inventaris"
+        />
+        <AdminKpiCard
+          label="Barang Consumable"
+          value={totalConsumables}
+          icon={Archive01Icon}
+          iconColorVariant="amber"
+          subtext="Stok massal / habis pakai"
+        />
+        <AdminKpiCard
+          label="Produk Nonaktif"
+          value={inactiveProducts}
+          icon={AlertCircleIcon}
+          iconColorVariant={inactiveProducts > 0 ? "rose" : "neutral"}
+          subtext="Tidak tampil di katalog publik"
+        />
       </div>
 
-      {/* Filter Bar */}
-      <ProductFilterBar categories={categories} />
+      {/* ── Archetype A: Filter & Action Toolbar ── */}
+      <ProductFilterBar
+        categories={categories}
+        totalProducts={totalProducts}
+        primaryAction={
+          <Link href="/admin/dashboard/produk/baru">
+            <Button
+              type="button"
+              size="sm"
+              className="h-9 bg-[#16624B] hover:bg-[#0F4F3C] text-white text-xs font-semibold gap-1.5 shadow-2xs"
+            >
+              <HugeiconsIcon icon={PlusSignIcon} size={15} />
+              <span>+ Tambah Produk</span>
+            </Button>
+          </Link>
+        }
+      />
 
-      {/* Product Table */}
+      {/* ── Archetype A: Product Table with Health Indicators ── */}
       <ProductTable
         products={products as unknown as ProductItem[]}
         totalCount={totalProducts}

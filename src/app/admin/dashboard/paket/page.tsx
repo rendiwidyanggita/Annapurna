@@ -2,8 +2,19 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/auth/require-role";
 import { PackageTable, type PackageListItem } from "./package-table";
+import { AdminKpiCard } from "@/components/molecules/admin-kpi-card";
+import {
+  Package01Icon,
+  CheckmarkCircle01Icon,
+  CancelCircleIcon,
+  Layers01Icon,
+} from "@hugeicons/core-free-icons";
 
 export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: "Paket Sewa — Admin ANNAPURNA",
+};
 
 export default async function PackagesPage() {
   try {
@@ -45,18 +56,50 @@ export default async function PackagesPage() {
     })),
   }));
 
+  // KPI Metrics
+  const totalPackages = packages.length;
+  const activePackages = packages.filter((p) => p.isActive).length;
+  const inactivePackages = totalPackages - activePackages;
+  const totalItemsCount = packages.reduce((acc, p) => acc + p.items.reduce((sum, item) => sum + item.quantity, 0), 0);
+  const avgItemsPerPackage = totalPackages > 0 ? (totalItemsCount / totalPackages).toFixed(1) : "0";
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-[var(--color-foreground)]">
-          Manajemen Paket Sewa
-        </h1>
-        <p className="text-xs text-[var(--color-muted)] mt-1">
-          Kelola paket camping hemat, komposisi produk pembentuk, galeri media, dan snapshot harga 3 durasi sewa.
-        </p>
+      {/* ── Archetype A: KPI Strip ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <AdminKpiCard
+          label="Total Paket Sewa"
+          value={totalPackages}
+          icon={Package01Icon}
+          iconColorVariant="emerald"
+          subtext="Paket bundling terdaftar"
+        />
+        <AdminKpiCard
+          label="Paket Aktif"
+          value={activePackages}
+          icon={CheckmarkCircle01Icon}
+          iconColorVariant="blue"
+          subtext="Tampil di katalog booking"
+        />
+        <AdminKpiCard
+          label="Paket Nonaktif"
+          value={inactivePackages}
+          icon={CancelCircleIcon}
+          iconColorVariant={inactivePackages > 0 ? "amber" : "neutral"}
+          subtext="Disembunyikan dari katalog"
+        />
+        <AdminKpiCard
+          label="Rata-rata Item / Paket"
+          value={`${avgItemsPerPackage} unit`}
+          icon={Layers01Icon}
+          iconColorVariant="purple"
+          subtext={`Dari ${totalItemsCount} total item bundling`}
+        />
       </div>
 
+      {/* ── Package Table ── */}
       <PackageTable packages={packages} />
     </div>
   );
 }
+

@@ -22,23 +22,23 @@ export function UnitTabsClient({
   return (
     <div className="space-y-4">
       {/* Tab Navigation Buttons */}
-      <div className="flex border-b border-[var(--color-border)] gap-6">
+      <div className="flex border-b border-[#E5E7EB] gap-6">
         <button
           type="button"
           onClick={() => setActiveTab("units")}
           className={`pb-3 text-xs font-semibold flex items-center gap-2 border-b-2 transition-all ${
             activeTab === "units"
-              ? "border-[var(--color-primary)] text-[var(--color-primary)]"
-              : "border-transparent text-[var(--color-muted)] hover:text-neutral-800"
+              ? "border-[#16624B] text-[#16624B]"
+              : "border-transparent text-gray-500 hover:text-gray-800"
           }`}
         >
-          <HugeiconsIcon icon={ListViewIcon} className="w-4 h-4" />
+          <HugeiconsIcon icon={ListViewIcon} size={16} />
           <span>Unit Fisik (Rental)</span>
           <span
-            className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+            className={`px-2 py-0.5 rounded-full text-[10px] font-bold tabular-nums transition-colors ${
               activeTab === "units"
-                ? "bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
-                : "bg-neutral-100 text-neutral-600"
+                ? "bg-[#16624B]/10 text-[#16624B]"
+                : "bg-gray-100 text-gray-500"
             }`}
           >
             {unitCount}
@@ -50,17 +50,17 @@ export function UnitTabsClient({
           onClick={() => setActiveTab("consumable")}
           className={`pb-3 text-xs font-semibold flex items-center gap-2 border-b-2 transition-all ${
             activeTab === "consumable"
-              ? "border-[var(--color-primary)] text-[var(--color-primary)]"
-              : "border-transparent text-[var(--color-muted)] hover:text-neutral-800"
+              ? "border-[#16624B] text-[#16624B]"
+              : "border-transparent text-gray-500 hover:text-gray-800"
           }`}
         >
-          <HugeiconsIcon icon={Package01Icon} className="w-4 h-4" />
+          <HugeiconsIcon icon={Package01Icon} size={16} />
           <span>Stok Habis Pakai (Consumable)</span>
           <span
-            className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+            className={`px-2 py-0.5 rounded-full text-[10px] font-bold tabular-nums transition-colors ${
               activeTab === "consumable"
-                ? "bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
-                : "bg-neutral-100 text-neutral-600"
+                ? "bg-[#16624B]/10 text-[#16624B]"
+                : "bg-gray-100 text-gray-500"
             }`}
           >
             {consumableCount}
@@ -73,3 +73,4 @@ export function UnitTabsClient({
     </div>
   );
 }
+

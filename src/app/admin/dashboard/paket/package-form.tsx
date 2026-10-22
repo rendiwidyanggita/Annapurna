@@ -20,6 +20,8 @@ import {
   AlertCircleIcon,
   Loading01Icon,
   Cancel01Icon,
+  CheckmarkCircle01Icon,
+  Layers01Icon,
 } from "@hugeicons/core-free-icons";
 import { MediaUploader, type MediaItem } from "@/components/organisms/MediaUploader";
 import { createRentalPackage, updateRentalPackage } from "./actions";
@@ -87,17 +89,19 @@ export function PackageForm({ products, initialData }: PackageFormProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[] | undefined>>({});
 
-  // Calculate sum of individual items permalam price for reference
+  // Calculations for bundle economy preview
   const individualTotalPermalam = packageItems.reduce(
     (acc, curr) => acc + curr.pricePermalam * curr.quantity,
     0
   );
+  const totalItemPieces = packageItems.reduce((acc, curr) => acc + curr.quantity, 0);
+  const savingsPermalam = individualTotalPermalam > pricePermalam ? individualTotalPermalam - pricePermalam : 0;
+  const savingsPercent = individualTotalPermalam > 0 ? Math.round((savingsPermalam / individualTotalPermalam) * 100) : 0;
 
   function handleAddItem() {
     const prod = products.find((p) => p.id === selectedProductId);
     if (!prod) return;
 
-    // Check if already in package
     const existingIndex = packageItems.findIndex((i) => i.productId === prod.id);
     if (existingIndex >= 0) {
       const copy = [...packageItems];
@@ -141,7 +145,6 @@ export function PackageForm({ products, initialData }: PackageFormProps) {
     setErrorMessage(null);
     setFieldErrors({});
 
-    // Client affordance check (backend will also strictly enforce via Zod)
     if (packageItems.length === 0) {
       setErrorMessage("Paket wajib memiliki minimal 1 item produk pembentuk.");
       setFieldErrors({ items: ["Paket wajib memiliki minimal 1 item produk pembentuk."] });
@@ -160,14 +163,11 @@ export function PackageForm({ products, initialData }: PackageFormProps) {
       formData.append("pricePerkegiatan2", String(pricePerkegiatan2));
       formData.append("isActive", String(isActive));
 
-      // Items composition payload
       const itemsPayload = packageItems.map((item) => ({
         productId: item.productId,
         quantity: item.quantity,
       }));
       formData.append("items", JSON.stringify(itemsPayload));
-
-      // Media gallery payload
       formData.append("media", JSON.stringify(mediaList));
 
       const res = isEditing
@@ -189,48 +189,356 @@ export function PackageForm({ products, initialData }: PackageFormProps) {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl pb-16">
-      {/* Top Bar */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 pb-20">
+      {/* ── Top Bar ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Link
             href="/admin/dashboard/paket"
-            className="p-2 rounded-lg border border-[var(--color-border)] hover:bg-neutral-100 text-neutral-600 transition-colors"
+            className="p-2 rounded-xl border border-[#E5E7EB] bg-white hover:bg-gray-50 text-gray-600 transition-colors shadow-2xs"
           >
-            <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4" />
+            <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
           </Link>
           <div>
-            <h1 className="text-xl font-bold text-[var(--color-foreground)]">
-              {isEditing ? `Edit Paket: ${initialData?.name}` : "Buat Paket Sewa Baru"}
-            </h1>
-            <p className="text-xs text-[var(--color-muted)] mt-0.5">
-              Atur komposisi produk, snapshot harga durasi sewa, dan galeri media paket.
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-bold text-gray-900">
+                {isEditing ? `Edit Paket: ${initialData?.name}` : "Tambah Paket Sewa Baru"}
+              </h1>
+              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#16624B]/10 text-[#16624B]">
+                {isEditing ? "Mode Edit" : "Paket Baru"}
+              </span>
+            </div>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Konfigurasikan komposisi alat outdoor hemat, tarif 3 durasi sewa, dan galeri paket.
             </p>
           </div>
+        </div>
+
+        {/* Top Action Quick Buttons */}
+        <div className="flex items-center gap-2">
+          <Link href="/admin/dashboard/paket">
+            <Button type="button" variant="outline" size="sm" disabled={isPending} className="text-xs h-9">
+              Batal
+            </Button>
+          </Link>
+          <Button
+            type="button"
+            size="sm"
+            onClick={handleSubmit}
+            disabled={isPending || packageItems.length === 0 || !name.trim()}
+            className="bg-[#16624B] hover:bg-[#0F4F3C] text-white text-xs font-semibold h-9 px-4 gap-1.5 shadow-2xs"
+          >
+            {isPending ? (
+              <HugeiconsIcon icon={Loading01Icon} size={15} className="animate-spin" />
+            ) : (
+              <HugeiconsIcon icon={CheckmarkCircle01Icon} size={15} />
+            )}
+            <span>{isEditing ? "Perbarui Paket" : "Simpan Paket"}</span>
+          </Button>
         </div>
       </div>
 
       {errorMessage && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center gap-2">
-          <HugeiconsIcon icon={AlertCircleIcon} className="w-5 h-5 shrink-0" />
+          <HugeiconsIcon icon={AlertCircleIcon} size={18} className="shrink-0 text-red-600" />
           <span>{errorMessage}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Section 1: Informasi Dasar Paket */}
-        <div className="bg-white rounded-xl border border-[var(--color-border)] p-6 space-y-4 shadow-sm">
-          <div className="flex items-center justify-between border-b border-[var(--color-border)] pb-3">
-            <div className="flex items-center gap-2">
-              <HugeiconsIcon icon={Package01Icon} className="w-4 h-4 text-[var(--color-primary)]" />
-              <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
-                1. Informasi Dasar Paket
+      {/* ── Archetype B: 12-Column Responsive Layout ── */}
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* ═══════════ LEFT COLUMN (8 COLS): Main Content ═══════════ */}
+        <div className="lg:col-span-8 space-y-6">
+          {/* Card 1: Informasi Dasar Paket */}
+          <div className="bg-white rounded-xl border border-[#E5E7EB] p-5 sm:p-6 space-y-4 shadow-2xs">
+            <div className="flex items-center gap-2 border-b border-[#E5E7EB] pb-3">
+              <HugeiconsIcon icon={Package01Icon} size={18} className="text-[#16624B]" />
+              <h2 className="text-sm font-bold text-gray-900">
+                1. Informasi Dasar Paket Sewa
               </h2>
             </div>
-            <div className="flex items-center gap-2">
-              <Label htmlFor="isActiveSwitch" className="text-xs text-neutral-600 cursor-pointer">
-                Status Aktif
-              </Label>
+
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="packageName" className="text-xs font-semibold text-gray-700">
+                  Nama Paket Sewa <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="packageName"
+                  placeholder="Contoh: Paket Camping 2 Orang Komplit, Paket Pendaki Rinjani..."
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  disabled={isPending}
+                  required
+                  className="text-xs sm:text-sm font-medium"
+                />
+                {fieldErrors.name && (
+                  <p className="text-xs text-red-600 font-medium">{fieldErrors.name[0]}</p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="packageDesc" className="text-xs font-semibold text-gray-700">
+                  Deskripsi & Peruntukan Paket
+                </Label>
+                <Textarea
+                  id="packageDesc"
+                  rows={3}
+                  placeholder="Jelaskan kapasitas orang, cocok untuk gunung apa, dan benefit sewa paket..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  disabled={isPending}
+                  className="text-xs sm:text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Card 2: 3 Tingkat Tarif Durasi Sewa */}
+          <div className="bg-white rounded-xl border border-[#E5E7EB] p-5 sm:p-6 space-y-4 shadow-2xs">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
+              <div className="flex items-center gap-2">
+                <HugeiconsIcon icon={DollarCircleIcon} size={18} className="text-[#16624B]" />
+                <h2 className="text-sm font-bold text-gray-900">
+                  2. Snapshot Harga per Durasi Sewa
+                </h2>
+              </div>
+              <span className="text-[11px] text-gray-400 font-medium">Wajib diisi lengkap</span>
+            </div>
+
+            {/* Benchmark Estimasi Satuan */}
+            <div className="p-3.5 bg-[#F9FAFB] rounded-xl border border-[#E5E7EB] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <span className="text-gray-600">
+                Estimasi total harga sewa satuan produk pembentuk (Permalam):
+              </span>
+              <span className="font-bold text-gray-900 tabular-nums">
+                Rp {individualTotalPermalam.toLocaleString("id-ID")}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {/* Permalam */}
+              <div className="space-y-1.5">
+                <Label htmlFor="pricePermalam" className="text-xs font-semibold text-gray-700">
+                  Permalam (1 malam) <span className="text-red-500">*</span>
+                </Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-medium">
+                    Rp
+                  </span>
+                  <Input
+                    id="pricePermalam"
+                    type="number"
+                    min="0"
+                    value={pricePermalam || ""}
+                    onChange={(e) => setPricePermalam(parseInt(e.target.value) || 0)}
+                    disabled={isPending}
+                    required
+                    className="pl-9 text-xs sm:text-sm font-bold tabular-nums"
+                  />
+                </div>
+                {fieldErrors.pricePermalam && (
+                  <p className="text-xs text-red-600 font-medium">{fieldErrors.pricePermalam[0]}</p>
+                )}
+              </div>
+
+              {/* 3H3M */}
+              <div className="space-y-1.5">
+                <Label htmlFor="pricePerkegiatan1" className="text-xs font-semibold text-gray-700">
+                  Perkegiatan I (3H3M) <span className="text-red-500">*</span>
+                </Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-medium">
+                    Rp
+                  </span>
+                  <Input
+                    id="pricePerkegiatan1"
+                    type="number"
+                    min="0"
+                    value={pricePerkegiatan1 || ""}
+                    onChange={(e) => setPricePerkegiatan1(parseInt(e.target.value) || 0)}
+                    disabled={isPending}
+                    required
+                    className="pl-9 text-xs sm:text-sm font-bold tabular-nums"
+                  />
+                </div>
+                {fieldErrors.pricePerkegiatan1 && (
+                  <p className="text-xs text-red-600 font-medium">{fieldErrors.pricePerkegiatan1[0]}</p>
+                )}
+              </div>
+
+              {/* 5H5M */}
+              <div className="space-y-1.5">
+                <Label htmlFor="pricePerkegiatan2" className="text-xs font-semibold text-gray-700">
+                  Perkegiatan II (5H5M) <span className="text-red-500">*</span>
+                </Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-medium">
+                    Rp
+                  </span>
+                  <Input
+                    id="pricePerkegiatan2"
+                    type="number"
+                    min="0"
+                    value={pricePerkegiatan2 || ""}
+                    onChange={(e) => setPricePerkegiatan2(parseInt(e.target.value) || 0)}
+                    disabled={isPending}
+                    required
+                    className="pl-9 text-xs sm:text-sm font-bold tabular-nums"
+                  />
+                </div>
+                {fieldErrors.pricePerkegiatan2 && (
+                  <p className="text-xs text-red-600 font-medium">{fieldErrors.pricePerkegiatan2[0]}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Komposisi Produk Pembentuk Paket (AA-51) */}
+          <div className="bg-white rounded-xl border border-[#E5E7EB] p-5 sm:p-6 space-y-4 shadow-2xs">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
+              <div className="flex items-center gap-2">
+                <HugeiconsIcon icon={Layers01Icon} size={18} className="text-[#16624B]" />
+                <h2 className="text-sm font-bold text-gray-900">
+                  3. Komposisi Isi Produk dalam Paket <span className="text-red-500">*</span>
+                </h2>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setIsAddItemModalOpen(true)}
+                disabled={isPending}
+                className="bg-[#16624B] hover:bg-[#0F4F3C] text-white text-xs font-semibold h-8 px-3 flex items-center gap-1.5 shadow-2xs"
+              >
+                <HugeiconsIcon icon={PlusSignIcon} size={14} />
+                <span>Tambah Produk</span>
+              </Button>
+            </div>
+
+            {fieldErrors.items && (
+              <p className="text-xs text-red-600 font-medium">{fieldErrors.items[0]}</p>
+            )}
+
+            {packageItems.length === 0 ? (
+              <div className="py-12 text-center text-xs text-gray-400 border-2 border-dashed border-gray-200 rounded-xl space-y-2">
+                <HugeiconsIcon icon={Package01Icon} size={28} className="mx-auto text-gray-300" />
+                <p className="font-semibold text-gray-700">Belum ada produk yang dimasukkan</p>
+                <p className="text-[11px] text-gray-400">
+                  Klik tombol &ldquo;Tambah Produk&rdquo; di atas untuk memilih item pembentuk paket ini.
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-lg border border-[#E5E7EB]">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead className="bg-[#F9FAFB] text-gray-600 font-semibold border-b border-[#E5E7EB] text-[11px] uppercase tracking-wider">
+                    <tr>
+                      <th className="py-2.5 px-3">Produk</th>
+                      <th className="py-2.5 px-3">Tipe</th>
+                      <th className="py-2.5 px-3">Harga Satuan (Permalam)</th>
+                      <th className="py-2.5 px-3">Kuantitas</th>
+                      <th className="py-2.5 px-3">Subtotal Acuan</th>
+                      <th className="py-2.5 px-3 text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#E5E7EB]">
+                    {packageItems.map((item) => (
+                      <tr key={item.productId} className="hover:bg-gray-50/80 transition-colors">
+                        <td className="py-2.5 px-3">
+                          <div className="flex items-center gap-2.5">
+                            {item.thumbnailUrl ? (
+                              <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+                                <Image
+                                  src={item.thumbnailUrl}
+                                  alt={item.productName}
+                                  fill
+                                  className="object-cover"
+                                  unoptimized
+                                />
+                              </div>
+                            ) : (
+                              <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 text-gray-400 border border-gray-200">
+                                <HugeiconsIcon icon={Package01Icon} size={15} />
+                              </div>
+                            )}
+                            <span className="font-semibold text-gray-900">{item.productName}</span>
+                          </div>
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span className="text-[11px] font-medium text-gray-500">
+                            {item.itemType === "rental_unit" ? "Rental Unit" : "Consumable"}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 text-gray-700 font-medium tabular-nums">
+                          Rp {item.pricePermalam.toLocaleString("id-ID")}
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}
+                              disabled={item.quantity <= 1 || isPending}
+                              className="w-6 h-6 rounded border border-gray-200 flex items-center justify-center hover:bg-gray-100 disabled:opacity-30 text-xs font-bold transition-colors"
+                            >
+                              -
+                            </button>
+                            <span className="w-7 text-center font-bold tabular-nums text-gray-900">{item.quantity}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}
+                              disabled={isPending}
+                              className="w-6 h-6 rounded border border-gray-200 flex items-center justify-center hover:bg-gray-100 text-xs font-bold transition-colors"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </td>
+                        <td className="py-2.5 px-3 font-semibold text-gray-900 tabular-nums">
+                          Rp {(item.pricePermalam * item.quantity).toLocaleString("id-ID")}
+                        </td>
+                        <td className="py-2.5 px-3 text-right">
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveItem(item.productId)}
+                            disabled={isPending}
+                            className="p-1 rounded-md text-red-600 hover:bg-red-50 transition-colors"
+                            title="Hapus dari paket"
+                          >
+                            <HugeiconsIcon icon={Delete01Icon} size={15} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ═══════════ RIGHT COLUMN (4 COLS): Sidebar & Media ═══════════ */}
+        <div className="lg:col-span-4 space-y-6">
+          {/* Card 1: Galeri & Banner Media Paket */}
+          <div className="bg-white rounded-xl border border-[#E5E7EB] p-5 sm:p-6 space-y-3 shadow-2xs">
+            <div className="flex items-center gap-2 border-b border-[#E5E7EB] pb-3">
+              <HugeiconsIcon icon={Image01Icon} size={18} className="text-[#16624B]" />
+              <h2 className="text-sm font-bold text-gray-900">Media Paket</h2>
+            </div>
+            <p className="text-[11px] text-gray-500">
+              Unggah foto banner representatif paket. Foto pertama otomatis menjadi cover utama.
+            </p>
+
+            <MediaUploader
+              initialMedia={mediaList}
+              folder="packages"
+              disabled={isPending}
+              onChange={(items) => setMediaList(items)}
+            />
+          </div>
+
+          {/* Card 2: Pengaturan Status Publikasi */}
+          <div className="bg-white rounded-xl border border-[#E5E7EB] p-5 sm:p-6 space-y-3 shadow-2xs">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
+              <span className="text-sm font-bold text-gray-900">Status Visibilitas</span>
               <Switch
                 id="isActiveSwitch"
                 checked={isActive}
@@ -238,316 +546,96 @@ export function PackageForm({ products, initialData }: PackageFormProps) {
                 disabled={isPending}
               />
             </div>
+            <p className="text-xs text-gray-500 leading-relaxed">
+              {isActive
+                ? "Paket ini aktif dan akan ditampilkan di katalog booking website untuk disewa pelanggan."
+                : "Paket ini nonaktif dan disembunyikan sementara dari katalog booking pelanggan."}
+            </p>
           </div>
 
-          <div className="space-y-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="packageName" className="text-xs font-semibold">
-                Nama Paket Sewa <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="packageName"
-                placeholder="Contoh: Paket Camping 2 Orang Komplit, Paket Pendaki Rinjani"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                disabled={isPending}
-                required
-                className="text-sm"
-              />
-              {fieldErrors.name && (
-                <p className="text-xs text-red-600">{fieldErrors.name[0]}</p>
-              )}
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="packageDesc" className="text-xs font-semibold">
-                Deskripsi Paket
-              </Label>
-              <Textarea
-                id="packageDesc"
-                rows={3}
-                placeholder="Jelaskan peruntukan paket, keunggulan, dan kecukupan kapasitas..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                disabled={isPending}
-                className="text-sm"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Section 2: Galeri Media (AA-52 & AA-53) */}
-        <div className="bg-white rounded-xl border border-[var(--color-border)] p-6 space-y-4 shadow-sm">
-          <div className="flex items-center gap-2 border-b border-[var(--color-border)] pb-3">
-            <HugeiconsIcon icon={Image01Icon} className="w-4 h-4 text-[var(--color-primary)]" />
-            <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
-              2. Galeri Media Paket
-            </h2>
-          </div>
-          <p className="text-xs text-[var(--color-muted)]">
-            Unggah foto/video representatif paket sewa. Foto pertama otomatis menjadi banner utama.
-          </p>
-
-          <MediaUploader
-            initialMedia={mediaList}
-            folder="packages"
-            disabled={isPending}
-            onChange={(items) => setMediaList(items)}
-          />
-        </div>
-
-        {/* Section 3: Snapshot Harga per Durasi Sewa (AA-50) */}
-        <div className="bg-white rounded-xl border border-[var(--color-border)] p-6 space-y-4 shadow-sm">
-          <div className="flex items-center gap-2 border-b border-[var(--color-border)] pb-3">
-            <HugeiconsIcon icon={DollarCircleIcon} className="w-4 h-4 text-[var(--color-primary)]" />
-            <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
-              3. Snapshot Harga per Durasi Sewa (Wajib diisi)
-            </h2>
-          </div>
-
-          <div className="p-3 bg-neutral-50 rounded-lg text-xs text-[var(--color-muted)] flex items-center justify-between">
-            <span>Estimasi total harga satuan produk pembentuk (Permalam):</span>
-            <span className="font-bold text-neutral-800">
-              Rp {individualTotalPermalam.toLocaleString("id-ID")}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="pricePermalam" className="text-xs font-semibold">
-                Permalam (1 malam) <span className="text-red-500">*</span>
-              </Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-neutral-400">
-                  Rp
-                </span>
-                <Input
-                  id="pricePermalam"
-                  type="number"
-                  min="0"
-                  value={pricePermalam || ""}
-                  onChange={(e) => setPricePermalam(parseInt(e.target.value) || 0)}
-                  disabled={isPending}
-                  required
-                  className="pl-9 text-sm font-semibold"
-                />
+          {/* Card 3: Ringkasan Nilai Paket (Bundle Economics) */}
+          <div className="bg-[#16624B]/5 rounded-xl border border-[#16624B]/20 p-5 space-y-3">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#16624B]">
+              Ringkasan Bundle Hemat
+            </h3>
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center justify-between text-gray-600">
+                <span>Total Macam Produk:</span>
+                <span className="font-semibold text-gray-900 tabular-nums">{packageItems.length} macam</span>
               </div>
-              {fieldErrors.pricePermalam && (
-                <p className="text-xs text-red-600">{fieldErrors.pricePermalam[0]}</p>
-              )}
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="pricePerkegiatan1" className="text-xs font-semibold">
-                Perkegiatan I (3 hari 3 malam) <span className="text-red-500">*</span>
-              </Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-neutral-400">
-                  Rp
-                </span>
-                <Input
-                  id="pricePerkegiatan1"
-                  type="number"
-                  min="0"
-                  value={pricePerkegiatan1 || ""}
-                  onChange={(e) => setPricePerkegiatan1(parseInt(e.target.value) || 0)}
-                  disabled={isPending}
-                  required
-                  className="pl-9 text-sm font-semibold"
-                />
+              <div className="flex items-center justify-between text-gray-600">
+                <span>Total Jumlah Fisik Alat:</span>
+                <span className="font-semibold text-gray-900 tabular-nums">{totalItemPieces} unit</span>
               </div>
-              {fieldErrors.pricePerkegiatan1 && (
-                <p className="text-xs text-red-600">{fieldErrors.pricePerkegiatan1[0]}</p>
-              )}
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="pricePerkegiatan2" className="text-xs font-semibold">
-                Perkegiatan II (5 hari 5 malam) <span className="text-red-500">*</span>
-              </Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-neutral-400">
-                  Rp
+              <div className="flex items-center justify-between text-gray-600">
+                <span>Harga Satuan Normal:</span>
+                <span className="font-semibold text-gray-900 tabular-nums">
+                  Rp {individualTotalPermalam.toLocaleString("id-ID")}
                 </span>
-                <Input
-                  id="pricePerkegiatan2"
-                  type="number"
-                  min="0"
-                  value={pricePerkegiatan2 || ""}
-                  onChange={(e) => setPricePerkegiatan2(parseInt(e.target.value) || 0)}
-                  disabled={isPending}
-                  required
-                  className="pl-9 text-sm font-semibold"
-                />
               </div>
-              {fieldErrors.pricePerkegiatan2 && (
-                <p className="text-xs text-red-600">{fieldErrors.pricePerkegiatan2[0]}</p>
+              <div className="flex items-center justify-between text-gray-600">
+                <span>Harga Paket Ditawarkan:</span>
+                <span className="font-bold text-[#16624B] tabular-nums">
+                  Rp {pricePermalam.toLocaleString("id-ID")}
+                </span>
+              </div>
+              {savingsPermalam > 0 && (
+                <div className="pt-2 border-t border-[#16624B]/20 flex items-center justify-between text-emerald-800 font-semibold">
+                  <span>Hemat Pelanggan:</span>
+                  <span className="tabular-nums">
+                    Rp {savingsPermalam.toLocaleString("id-ID")} ({savingsPercent}%)
+                  </span>
+                </div>
               )}
             </div>
           </div>
-        </div>
 
-        {/* Section 4: Komposisi Isi Paket (AA-51) */}
-        <div className="bg-white rounded-xl border border-[var(--color-border)] p-6 space-y-4 shadow-sm">
-          <div className="flex items-center justify-between border-b border-[var(--color-border)] pb-3">
-            <div className="flex items-center gap-2">
-              <HugeiconsIcon icon={Package01Icon} className="w-4 h-4 text-[var(--color-primary)]" />
-              <h2 className="text-sm font-semibold text-[var(--color-foreground)]">
-                4. Komposisi Isi Produk dalam Paket <span className="text-red-500">*</span>
-              </h2>
-            </div>
+          {/* Card 4: Action Footer */}
+          <div className="bg-white rounded-xl border border-[#E5E7EB] p-4 shadow-2xs space-y-2">
             <Button
-              type="button"
-              size="sm"
-              onClick={() => setIsAddItemModalOpen(true)}
-              disabled={isPending}
-              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white text-xs flex items-center gap-1"
+              type="submit"
+              disabled={isPending || packageItems.length === 0 || !name.trim()}
+              className="w-full bg-[#16624B] hover:bg-[#0F4F3C] text-white text-xs font-semibold h-10 gap-2 shadow-2xs"
             >
-              <HugeiconsIcon icon={PlusSignIcon} className="w-3.5 h-3.5" />
-              Tambah Produk
+              {isPending && <HugeiconsIcon icon={Loading01Icon} size={15} className="animate-spin" />}
+              <span>{isEditing ? "Perbarui Paket Sewa" : "Simpan Paket Sewa"}</span>
             </Button>
+            <Link href="/admin/dashboard/paket" className="block">
+              <Button type="button" variant="outline" disabled={isPending} className="w-full text-xs h-9">
+                Batal & Kembali
+              </Button>
+            </Link>
           </div>
-
-          {fieldErrors.items && (
-            <p className="text-xs text-red-600 font-medium">{fieldErrors.items[0]}</p>
-          )}
-
-          {packageItems.length === 0 ? (
-            <div className="py-8 text-center text-xs text-[var(--color-muted)] border-2 border-dashed rounded-lg">
-              Belum ada produk yang dimasukkan ke dalam paket ini. Klik &ldquo;Tambah Produk&rdquo; di atas untuk menambahkan.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-neutral-50 text-[var(--color-muted)] font-semibold border-b">
-                  <tr>
-                    <th className="py-2.5 px-3">Produk</th>
-                    <th className="py-2.5 px-3">Tipe Item</th>
-                    <th className="py-2.5 px-3">Harga Satuan (Permalam)</th>
-                    <th className="py-2.5 px-3">Kuantitas</th>
-                    <th className="py-2.5 px-3">Subtotal Acuan</th>
-                    <th className="py-2.5 px-3 text-right">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--color-border)]">
-                  {packageItems.map((item) => (
-                    <tr key={item.productId} className="hover:bg-neutral-50">
-                      <td className="py-2.5 px-3">
-                        <div className="flex items-center gap-2">
-                          {item.thumbnailUrl ? (
-                            <div className="relative w-7 h-7 rounded overflow-hidden bg-neutral-100 shrink-0 border">
-                              <Image
-                                src={item.thumbnailUrl}
-                                alt={item.productName}
-                                fill
-                                className="object-cover"
-                                unoptimized
-                              />
-                            </div>
-                          ) : (
-                            <div className="w-7 h-7 rounded bg-neutral-100 flex items-center justify-center shrink-0">
-                              <HugeiconsIcon icon={Package01Icon} className="w-3.5 h-3.5 text-neutral-400" />
-                            </div>
-                          )}
-                          <span className="font-semibold text-neutral-800">{item.productName}</span>
-                        </div>
-                      </td>
-                      <td className="py-2.5 px-3">
-                        <span className="text-[11px] text-neutral-500">
-                          {item.itemType === "rental_unit" ? "Rental Unit" : "Consumable"}
-                        </span>
-                      </td>
-                      <td className="py-2.5 px-3 text-neutral-600">
-                        Rp {item.pricePermalam.toLocaleString("id-ID")}
-                      </td>
-                      <td className="py-2.5 px-3">
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}
-                            disabled={item.quantity <= 1 || isPending}
-                            className="w-5 h-5 rounded border flex items-center justify-center hover:bg-neutral-100 disabled:opacity-30"
-                          >
-                            -
-                          </button>
-                          <span className="w-6 text-center font-bold">{item.quantity}</span>
-                          <button
-                            type="button"
-                            onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}
-                            disabled={isPending}
-                            className="w-5 h-5 rounded border flex items-center justify-center hover:bg-neutral-100"
-                          >
-                            +
-                          </button>
-                        </div>
-                      </td>
-                      <td className="py-2.5 px-3 font-semibold text-neutral-700">
-                        Rp {(item.pricePermalam * item.quantity).toLocaleString("id-ID")}
-                      </td>
-                      <td className="py-2.5 px-3 text-right">
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveItem(item.productId)}
-                          disabled={isPending}
-                          className="p-1 text-red-500 hover:text-red-700 rounded hover:bg-red-50"
-                          title="Hapus dari paket"
-                        >
-                          <HugeiconsIcon icon={Delete01Icon} className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-
-        {/* Submit Actions */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-[var(--color-border)]">
-          <Link href="/admin/dashboard/paket">
-            <Button type="button" variant="outline" disabled={isPending} className="text-xs">
-              Batal
-            </Button>
-          </Link>
-          <Button
-            type="submit"
-            disabled={isPending || packageItems.length === 0 || !name.trim()}
-            className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white text-xs px-6 flex items-center gap-2"
-          >
-            {isPending && <HugeiconsIcon icon={Loading01Icon} className="w-4 h-4 animate-spin" />}
-            {isEditing ? "Perbarui Paket Sewa" : "Simpan Paket Sewa"}
-          </Button>
         </div>
       </form>
 
-      {/* Add Item to Package Modal */}
+      {/* ── Add Item to Package Modal ── */}
       {isAddItemModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-[var(--color-border)] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between p-5 border-b border-[var(--color-border)]">
-              <h3 className="text-sm font-semibold text-[var(--color-foreground)]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-[#E5E7EB] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between p-5 border-b border-[#E5E7EB]">
+              <h3 className="text-sm font-bold text-gray-900">
                 Tambah Produk ke Komposisi Paket
               </h3>
               <button
                 type="button"
                 onClick={() => setIsAddItemModalOpen(false)}
-                className="p-1 rounded-lg text-neutral-400 hover:text-neutral-600"
+                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
               >
-                <HugeiconsIcon icon={Cancel01Icon} className="w-5 h-5" />
+                <HugeiconsIcon icon={Cancel01Icon} size={18} />
               </button>
             </div>
 
             <div className="p-5 space-y-4">
               <div className="space-y-1.5">
-                <Label htmlFor="selectProduct" className="text-xs font-semibold">
-                  Pilih Produk
+                <Label htmlFor="selectProduct" className="text-xs font-semibold text-gray-700">
+                  Pilih Produk Rental / Consumable
                 </Label>
                 <select
                   id="selectProduct"
                   value={selectedProductId}
                   onChange={(e) => setSelectedProductId(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg text-sm bg-white border-[var(--color-border)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                  className="w-full px-3 py-2 border rounded-lg text-xs font-medium bg-[#F9FAFB] border-gray-200 text-gray-800 focus:outline-none focus:border-[#16624B]"
                 >
                   {products.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -559,7 +647,7 @@ export function PackageForm({ products, initialData }: PackageFormProps) {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="itemQty" className="text-xs font-semibold">
+                <Label htmlFor="itemQty" className="text-xs font-semibold text-gray-700">
                   Jumlah / Kuantitas dalam Paket
                 </Label>
                 <Input
@@ -568,23 +656,23 @@ export function PackageForm({ products, initialData }: PackageFormProps) {
                   min="1"
                   value={itemQuantity}
                   onChange={(e) => setItemQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                  className="text-sm font-semibold"
+                  className="text-xs sm:text-sm font-semibold tabular-nums"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E5E7EB]">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setIsAddItemModalOpen(false)}
-                  className="text-xs"
+                  className="text-xs h-9"
                 >
                   Batal
                 </Button>
                 <Button
                   type="button"
                   onClick={handleAddItem}
-                  className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white text-xs"
+                  className="bg-[#16624B] hover:bg-[#0F4F3C] text-white text-xs font-semibold h-9 px-4 shadow-2xs"
                 >
                   Tambahkan ke Paket
                 </Button>
@@ -596,3 +684,4 @@ export function PackageForm({ products, initialData }: PackageFormProps) {
     </div>
   );
 }
+

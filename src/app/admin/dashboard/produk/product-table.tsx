@@ -12,9 +12,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { StatusBadge } from "@/components/atoms/status-badge";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Edit01Icon,
@@ -22,9 +22,11 @@ import {
   ShoppingBag01Icon,
   ArrowLeft01Icon,
   ArrowRight01Icon,
+  Settings01Icon,
 } from "@hugeicons/core-free-icons";
 import { DeleteProductDialog } from "./delete-product-dialog";
 import { toggleProductStatus } from "./actions";
+import { cn } from "@/lib/utils";
 
 export interface ProductItem {
   id: string;
@@ -84,9 +86,10 @@ export function ProductTable({
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-  const [deletingProduct, setDeletingProduct] = useState<{ id: string; name: string } | null>(
-    null
-  );
+  const [deletingProduct, setDeletingProduct] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   function goToPage(page: number) {
     const params = new URLSearchParams(searchParams.toString());
@@ -104,43 +107,47 @@ export function ProductTable({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-white overflow-hidden shadow-sm">
+      {/* ── Table Container (Archetype A Compact View) ── */}
+      <div className="rounded-xl border border-[#E5E7EB] bg-white overflow-hidden shadow-2xs">
         <Table>
-          <TableHeader className="bg-[var(--color-surface)]">
-            <TableRow className="border-b border-[var(--color-border)]">
-              <TableHead className="font-semibold text-xs text-[var(--color-muted)] uppercase tracking-wider pl-4">
-                Produk
+          <TableHeader className="bg-[#F9FAFB]">
+            <TableRow className="border-b border-[#E5E7EB]">
+              <TableHead className="font-semibold text-xs text-[#6B7280] uppercase tracking-wider pl-6 py-3.5">
+                Produk Info
               </TableHead>
-              <TableHead className="font-semibold text-xs text-[var(--color-muted)] uppercase tracking-wider">
-                Kategori
+              <TableHead className="font-semibold text-xs text-[#6B7280] uppercase tracking-wider">
+                Kategori & Tipe
               </TableHead>
-              <TableHead className="font-semibold text-xs text-[var(--color-muted)] uppercase tracking-wider">
-                Tipe
+              <TableHead className="font-semibold text-xs text-[#6B7280] uppercase tracking-wider">
+                Tarif Durasi (Permalam / K1 / K2)
               </TableHead>
-              <TableHead className="font-semibold text-xs text-[var(--color-muted)] uppercase tracking-wider">
-                Tarif Sewa
+              <TableHead className="font-semibold text-xs text-[#6B7280] uppercase tracking-wider">
+                Kesehatan Stok / Unit
               </TableHead>
-              <TableHead className="font-semibold text-xs text-[var(--color-muted)] uppercase tracking-wider">
-                Variasi / Stok
+              <TableHead className="font-semibold text-xs text-[#6B7280] uppercase tracking-wider text-center">
+                Status Katalog
               </TableHead>
-              <TableHead className="font-semibold text-xs text-[var(--color-muted)] uppercase tracking-wider text-center">
-                Status
-              </TableHead>
-              <TableHead className="font-semibold text-xs text-[var(--color-muted)] uppercase tracking-wider text-right pr-4">
+              <TableHead className="font-semibold text-xs text-[#6B7280] uppercase tracking-wider text-right pr-6">
                 Aksi
               </TableHead>
             </TableRow>
           </TableHeader>
 
-          <TableBody>
+          <TableBody className="divide-y divide-[#E5E7EB]">
             {products.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-44 text-center">
-                  <div className="flex flex-col items-center justify-center text-[var(--color-muted)] space-y-2">
-                    <HugeiconsIcon icon={ShoppingBag01Icon} size={40} className="stroke-1 opacity-50" />
-                    <p className="text-sm font-medium">Belum ada produk yang ditemukan.</p>
-                    <p className="text-xs text-gray-400">
-                      Coba sesuaikan filter pencarian atau tambahkan produk baru.
+                <TableCell colSpan={6} className="h-44 text-center">
+                  <div className="flex flex-col items-center justify-center text-[#6B7280] space-y-2">
+                    <HugeiconsIcon
+                      icon={ShoppingBag01Icon}
+                      size={36}
+                      className="opacity-40"
+                    />
+                    <p className="text-sm font-semibold text-[#111827]">
+                      Belum ada produk ditemukan
+                    </p>
+                    <p className="text-xs text-[#6B7280] max-w-sm">
+                      Silakan sesuaikan filter pencarian atau tambahkan produk master baru.
                     </p>
                   </div>
                 </TableCell>
@@ -150,15 +157,55 @@ export function ProductTable({
                 const primaryMedia =
                   product.media.find((m) => m.isPrimary) || product.media[0];
 
+                const isRental = product.itemType === "rental_unit";
+                const totalUnits = product.variants.reduce(
+                  (acc, v) => acc + (v._count?.units ?? 0),
+                  0
+                );
+                const variantCount = Math.max(1, product.variants.length);
+
+                // Stock Health Calculation (Archetype A)
+                let stockLabel = "";
+                let stockStatusVariant: "available" | "warning" | "damaged" = "available";
+                let progressPercent = 0;
+
+                if (isRental) {
+                  progressPercent = Math.min(100, Math.max(15, totalUnits * 12));
+                  if (totalUnits >= 4) {
+                    stockLabel = `${totalUnits} Unit (Aman)`;
+                    stockStatusVariant = "available";
+                  } else if (totalUnits > 0) {
+                    stockLabel = `${totalUnits} Unit (Menipis)`;
+                    stockStatusVariant = "warning";
+                  } else {
+                    stockLabel = "0 Unit (Kosong)";
+                    stockStatusVariant = "damaged";
+                    progressPercent = 5;
+                  }
+                } else {
+                  progressPercent = Math.min(100, (product.consumableStock / 30) * 100);
+                  if (product.consumableStock >= 10) {
+                    stockLabel = `${product.consumableStock} Pcs (Aman)`;
+                    stockStatusVariant = "available";
+                  } else if (product.consumableStock > 0) {
+                    stockLabel = `${product.consumableStock} Pcs (Menipis)`;
+                    stockStatusVariant = "warning";
+                  } else {
+                    stockLabel = "0 Pcs (Habis)";
+                    stockStatusVariant = "damaged";
+                    progressPercent = 5;
+                  }
+                }
+
                 return (
                   <TableRow
                     key={product.id}
-                    className="border-b border-[var(--color-border-soft)] hover:bg-[var(--color-surface)]/60 transition-colors"
+                    className="hover:bg-[#F9FAFB]/70 transition-colors"
                   >
-                    {/* Produk (Thumbnail + Nama) */}
-                    <TableCell className="pl-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="relative w-12 h-12 rounded-md overflow-hidden bg-gray-100 border border-gray-200 shrink-0">
+                    {/* ── 1. Produk Info (Thumbnail + Name + ID) ── */}
+                    <TableCell className="pl-6 py-4">
+                      <div className="flex items-center gap-3.5">
+                        <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-100 border border-[#E5E7EB] shrink-0">
                           {primaryMedia ? (
                             <Image
                               src={primaryMedia.mediaUrl}
@@ -176,123 +223,125 @@ export function ProductTable({
                         <div className="min-w-0">
                           <Link
                             href={`/admin/dashboard/produk/${product.id}/edit`}
-                            className="font-medium text-sm text-[var(--color-foreground)] hover:text-[var(--color-primary)] transition-colors line-clamp-1"
+                            className="font-bold text-sm text-[#111827] hover:text-[#16624B] transition-colors line-clamp-1 leading-snug"
                           >
                             {product.name}
                           </Link>
-                          <span className="text-xs text-[var(--color-muted)] block">
-                            ID: {product.id.slice(0, 8)}...
+                          <span className="font-mono text-[11px] text-[#6B7280] block mt-0.5 tabular-nums">
+                            ID: {product.id.slice(0, 8)}
                           </span>
                         </div>
                       </div>
                     </TableCell>
 
-                    {/* Kategori */}
-                    <TableCell>
-                      <Badge variant="secondary" className="text-xs font-normal">
-                        {product.category.name}
-                      </Badge>
-                    </TableCell>
-
-                    {/* Tipe Item */}
-                    <TableCell>
-                      {product.itemType === "rental_unit" ? (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          Rental Unit
+                    {/* ── 2. Kategori & Tipe ── */}
+                    <TableCell className="align-middle">
+                      <div className="space-y-1">
+                        <span className="inline-block text-xs font-semibold text-[#111827]">
+                          {product.category?.name || "Tanpa Kategori"}
                         </span>
-                      ) : (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                          Consumable
-                        </span>
-                      )}
-                    </TableCell>
-
-                    {/* Tarif Sewa (AA-54 preview) */}
-                    <TableCell>
-                      <div className="text-xs space-y-0.5">
-                        <div className="font-semibold text-[var(--color-primary)]">
-                          {formatRupiah(product.pricePermalam)}
-                          <span className="text-[10px] text-gray-500 font-normal"> /mlm</span>
-                        </div>
-                        <div className="text-[11px] text-[var(--color-muted)]">
-                          3H2M: {formatRupiah(product.pricePerkegiatan1)}
+                        <div>
+                          <span
+                            className={cn(
+                              "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border",
+                              isRental
+                                ? "bg-[#E7F3EE] text-[#16624B] border-emerald-200"
+                                : "bg-amber-50 text-amber-700 border-amber-200"
+                            )}
+                          >
+                            {isRental ? "Rental Unit" : "Consumable"}
+                          </span>
                         </div>
                       </div>
                     </TableCell>
 
-                    {/* Variasi / Stok */}
-                    <TableCell>
-                      {product.itemType === "consumable" ? (
-                        <span className="text-xs font-semibold text-gray-800">
-                          Stok: {product.consumableStock} unit
-                        </span>
-                      ) : (
-                        (() => {
-                          const totalUnits = product.variants.reduce(
-                            (acc, v) => acc + (v._count?.units ?? 0),
-                            0
-                          );
-                          const variantCount =
-                            product.variants.length > 0
-                              ? product.variants.length
-                              : 1;
-
-                          return (
-                            <div className="space-y-0.5 text-xs">
-                              <span className="font-semibold text-gray-800">
-                                {totalUnits} Unit Fisik
-                              </span>
-                              <span className="text-[11px] text-[var(--color-muted)] block">
-                                ({variantCount} variasi)
-                              </span>
-                            </div>
-                          );
-                        })()
-                      )}
+                    {/* ── 3. Tarif Durasi Sewa (tabular-nums) ── */}
+                    <TableCell className="align-middle tabular-nums">
+                      <div className="text-xs space-y-0.5">
+                        <div className="font-bold text-[#16624B]">
+                          {formatRupiah(product.pricePermalam)}
+                          <span className="text-[10px] text-[#6B7280] font-normal"> /mlm</span>
+                        </div>
+                        <div className="text-[11px] text-[#6B7280]">
+                          K1: {formatRupiah(product.pricePerkegiatan1)} | K2: {formatRupiah(product.pricePerkegiatan2)}
+                        </div>
+                      </div>
                     </TableCell>
 
-                    {/* Status Toggle */}
-                    <TableCell className="text-center">
-                      <div className="flex items-center justify-center gap-2">
+                    {/* ── 4. Stok / Ketersediaan & Progress Health Bar ── */}
+                    <TableCell className="align-middle tabular-nums">
+                      <div className="w-36 space-y-1.5">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-xs font-bold text-[#111827]">
+                            {stockLabel}
+                          </span>
+                        </div>
+                        {/* Health Progress Bar */}
+                        <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                          <div
+                            className={cn(
+                              "h-1.5 rounded-full transition-all duration-300",
+                              stockStatusVariant === "available" && "bg-[#16624B]",
+                              stockStatusVariant === "warning" && "bg-amber-500",
+                              stockStatusVariant === "damaged" && "bg-red-500"
+                            )}
+                            style={{ width: `${progressPercent}%` }}
+                          />
+                        </div>
+                        <div className="text-[10px] text-[#6B7280]">
+                          {isRental
+                            ? `${variantCount} variasi aktif`
+                            : "Stok habis pakai"}
+                        </div>
+                      </div>
+                    </TableCell>
+
+                    {/* ── 5. Status Katalog Toggle ── */}
+                    <TableCell className="align-middle text-center">
+                      <div className="inline-flex items-center gap-2">
                         <Switch
                           checked={product.isActive}
                           onCheckedChange={() => handleToggleStatus(product.id)}
                           disabled={isPending}
-                          aria-label={`Ubah status ${product.name}`}
+                          aria-label={`Ubah status katalog ${product.name}`}
                         />
-                        <span
-                          className={`text-xs font-medium ${
-                            product.isActive ? "text-emerald-600" : "text-gray-400"
-                          }`}
+                        <StatusBadge
+                          variant={product.isActive ? "active" : "inactive"}
+                          dot
+                          size="sm"
                         >
                           {product.isActive ? "Aktif" : "Nonaktif"}
-                        </span>
+                        </StatusBadge>
                       </div>
                     </TableCell>
 
-                    {/* Aksi */}
-                    <TableCell className="pr-4 text-right">
+                    {/* ── 6. Aksi ── */}
+                    <TableCell className="align-middle pr-6 text-right">
                       <div className="flex items-center justify-end gap-1.5">
-                        <Link href={`/admin/dashboard/produk/${product.id}/edit`}>
+                        <Link
+                          href={`/admin/dashboard/produk/${product.id}/edit`}
+                          title="Edit Produk & Variasi"
+                        >
                           <Button
                             variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-[var(--color-muted)] hover:text-[var(--color-primary)] hover:bg-gray-100"
-                            title="Edit Produk"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-[#6B7280] hover:text-[#16624B] hover:bg-[#E7F3EE] rounded-lg"
                           >
-                            <HugeiconsIcon icon={Edit01Icon} size={16} />
+                            <HugeiconsIcon icon={Edit01Icon} size={15} />
+                            <span className="sr-only">Edit</span>
                           </Button>
                         </Link>
                         <Button
                           variant="ghost"
-                          size="icon"
+                          size="sm"
                           onClick={() =>
                             setDeletingProduct({ id: product.id, name: product.name })
                           }
-                          className="h-8 w-8 text-[var(--color-muted)] hover:text-red-600 hover:bg-red-50"
+                          className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg"
                           title="Hapus Produk"
                         >
-                          <HugeiconsIcon icon={Delete01Icon} size={16} />
+                          <HugeiconsIcon icon={Delete01Icon} size={15} />
+                          <span className="sr-only">Hapus</span>
                         </Button>
                       </div>
                     </TableCell>
@@ -304,12 +353,12 @@ export function ProductTable({
         </Table>
       </div>
 
-      {/* Pagination Footer */}
+      {/* ── Pagination Footer (tabular-nums) ── */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between px-2 pt-2 text-xs text-[var(--color-muted)]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-2 pt-2 text-xs text-[#6B7280] tabular-nums">
           <p>
-            Total <span className="font-semibold text-gray-700">{totalCount}</span> produk
-            (Halaman {currentPage} dari {totalPages})
+            Menampilkan halaman <strong className="text-[#111827]">{currentPage}</strong> dari{" "}
+            <strong className="text-[#111827]">{totalPages}</strong> (Total {totalCount} produk)
           </p>
           <div className="flex items-center gap-1.5">
             <Button
@@ -317,7 +366,7 @@ export function ProductTable({
               size="sm"
               onClick={() => goToPage(currentPage - 1)}
               disabled={currentPage <= 1 || isPending}
-              className="h-8 text-xs gap-1"
+              className="h-8 text-xs gap-1 border-gray-200"
             >
               <HugeiconsIcon icon={ArrowLeft01Icon} size={14} />
               Sebelumnya
@@ -327,7 +376,7 @@ export function ProductTable({
               size="sm"
               onClick={() => goToPage(currentPage + 1)}
               disabled={currentPage >= totalPages || isPending}
-              className="h-8 text-xs gap-1"
+              className="h-8 text-xs gap-1 border-gray-200"
             >
               Selanjutnya
               <HugeiconsIcon icon={ArrowRight01Icon} size={14} />
@@ -336,10 +385,10 @@ export function ProductTable({
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
+      {/* ── Delete Confirmation Dialog ── */}
       <DeleteProductDialog
         product={deletingProduct}
-        open={!!deletingProduct}
+        open={Boolean(deletingProduct)}
         onOpenChange={(open) => {
           if (!open) setDeletingProduct(null);
         }}
