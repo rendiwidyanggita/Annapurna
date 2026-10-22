@@ -1,17 +1,17 @@
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { getCurrentUserProfile } from "@/lib/auth/profile";
-import { AdminSidebar } from "@/components/layouts/admin-sidebar";
+import { AdminShell } from "@/components/layouts";
 
 /**
- * AdminLayout — Shell layout for all admin/owner pages.
+ * AdminLayout — Shell layout for all admin and owner routes.
  *
- * Next.js App Router pattern (context7):
- * - Server Component: fetches user server-side, no client bundle overhead
- * - Double-guards admin access beyond middleware:
- *   1. Middleware (proxy.ts) checks only authentication — fast, at edge
- *   2. Layout checks role via DB — authoritative, prevents JWT claim tampering
- * - AdminSidebar is a Client Component (needs usePathname) composed here
+ * Architecture:
+ * - Server Component: fetches user and authoritative DB role server-side.
+ * - Double-guards access beyond middleware:
+ *   1. Middleware checks authentication edge-level
+ *   2. Layout verifies role in database, preventing JWT role tampering
+ * - AdminShell is a Client Component managing the responsive desktop/mobile drawer and sticky header.
  *
  * Route: /admin/* → src/app/admin/...
  */
@@ -34,28 +34,14 @@ export default async function AdminLayout({
     redirect("/");
   }
 
+  const adminName =
+    profileStatus.profile?.fullName ||
+    profileStatus.user.email.split("@")[0] ||
+    "Admin";
+
   return (
-    <div className="flex h-screen bg-[var(--color-background)] overflow-hidden">
-      {/* ── Sidebar — fixed left ── */}
-      <AdminSidebar
-        adminName={profileStatus.profile?.fullName ?? profileStatus.user.email}
-        adminRole={roleName}
-      />
-
-      {/* ── Main content area ── */}
-      <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
-        {/* Top bar */}
-        <header className="h-14 border-b border-[var(--color-border)] bg-white flex items-center px-6 shrink-0">
-          <h1 className="text-sm font-semibold text-[var(--color-muted)]">
-            ANNAPURNA Admin Panel
-          </h1>
-        </header>
-
-        {/* Scrollable content */}
-        <main className="flex-1 overflow-y-auto p-6">
-          {children}
-        </main>
-      </div>
-    </div>
+    <AdminShell adminName={adminName} adminRole={roleName}>
+      {children}
+    </AdminShell>
   );
 }
