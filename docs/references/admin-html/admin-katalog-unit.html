@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Katalog & Unit (ANNAPURNA Adventure)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Manrope', sans-serif; background-color: #F9FAFB; color: #111827; }
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+    /* Palet Warna ANNAPURNA */
+    .bg-primary-green { background-color: #16624B; }
+    .text-primary-green { color: #16624B; }
+    .border-primary-green { border-color: #16624B; }
+    .bg-dark-green { background-color: #0F4F3C; }
+    .bg-soft-green { background-color: #E7F3EE; }
+    .text-status-success { color: #16A34A; }
+    .text-status-warning { color: #D97706; }
+    .text-status-danger { color: #DC2626; }
+  </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+  <!-- Sidebar (Simulasi) -->
+  <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col">
+    <div class="h-16 flex items-center px-6 border-b border-gray-200">
+      <span class="font-bold text-lg tracking-wider text-primary-green">ANNAPURNA</span>
+    </div>
+    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+      <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Operasional</p>
+      <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">Dashboard</a>
+      <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">Transaksi</a>
+      <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-6 mb-2">Katalog & Inventaris</p>
+      <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md bg-soft-green text-primary-green">Produk & Unit</a>
+      <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">Paket Sewa</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <!-- Header -->
+    <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
+      <h1 class="text-xl font-semibold text-gray-900">Manajemen Produk & Unit</h1>
+      <button class="bg-primary-green hover:bg-dark-green text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+        + Tambah Produk Baru
+      </button>
+    </header>
+
+    <!-- Konten Scrollable -->
+    <div class="flex-1 overflow-y-auto p-6">
+      <!-- Filter Bar (Adaptasi Salesai) -->
+      <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6 flex flex-wrap gap-4 items-center justify-between">
+        <div class="flex flex-wrap gap-4 flex-1">
+          <!-- Kategori -->
+          <div class="min-w-[150px]">
+            <label class="block text-xs font-medium text-gray-700 mb-1">Kategori</label>
+            <select class="w-full border-gray-300 rounded-md text-sm focus:ring-primary-green focus:border-primary-green">
+              <option>Semua Kategori</option>
+              <option>Tenda</option>
+              <option>Alat Masak</option>
+            </select>
+          </div>
+          <!-- Harga (Durasi Permalam) -->
+          <div class="min-w-[150px]">
+            <label class="block text-xs font-medium text-gray-700 mb-1">Harga (Permalam)</label>
+            <select class="w-full border-gray-300 rounded-md text-sm focus:ring-primary-green focus:border-primary-green">
+              <option>Semua Harga</option>
+              <option>< Rp 50.000</option>
+              <option>Rp 50k - Rp 100k</option>
+            </select>
+          </div>
+          <!-- Status Unit (Adaptasi Salesai Status) -->
+          <div class="min-w-[150px]">
+            <label class="block text-xs font-medium text-gray-700 mb-1">Status Ketersediaan</label>
+            <select class="w-full border-gray-300 rounded-md text-sm focus:ring-primary-green focus:border-primary-green">
+              <option>Semua Status</option>
+              <option>Tersedia (Available)</option>
+              <option>Kosong / Rented</option>
+            </select>
+          </div>
+           <!-- Item Type (Fitur Rental) -->
+           <div class="min-w-[150px]">
+            <label class="block text-xs font-medium text-gray-700 mb-1">Tipe Item</label>
+            <select class="w-full border-gray-300 rounded-md text-sm focus:ring-primary-green focus:border-primary-green">
+              <option>Semua Tipe</option>
+              <option>Rental Unit</option>
+              <option>Consumable</option>
+            </select>
+          </div>
+        </div>
+        <!-- Search -->
+        <div class="w-full md:w-64">
+           <input type="text" placeholder="Cari nama produk / kode..." class="w-full border-gray-300 rounded-md text-sm focus:ring-primary-green focus:border-primary-green">
+        </div>
+      </div>
+
+      <!-- Tabel Produk (Adaptasi Salesai List) -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produk Info</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga (Permalam / K1 / K2)</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stok / Ketersediaan</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipe</th>
+              <th scope="col" class="relative px-6 py-3"><span class="sr-only">Aksi</span></th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <!-- Row 1: Rental Unit -->
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-md"></div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">Tenda Dome 4P</div>
+                    <div class="text-sm text-gray-500 tabular-nums">ID: TND-001 - TND-010</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap tabular-nums text-sm text-gray-900">
+                <div class="font-medium">Rp 40k</div>
+                <div class="text-xs text-gray-500">Rp 70k | Rp 110k</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <!-- Progress Bar Adaptasi Salesai -->
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-sm text-gray-900 tabular-nums">8/10</span>
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Aman</span>
+                </div>
+                <div class="w-24 bg-gray-200 rounded-full h-1.5">
+                  <div class="bg-primary-green h-1.5 rounded-full" style="width: 80%"></div>
+                </div>
+                <div class="text-xs text-gray-500 mt-1">2 Rented</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                Rental Unit
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <a href="#" class="text-primary-green hover:text-dark-green">Detail / Varian</a>
+              </td>
+            </tr>
+            <!-- Row 2: Consumable -->
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-md"></div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">Gas Kaleng</div>
+                    <div class="text-sm text-gray-500 tabular-nums">is_reusable: false</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap tabular-nums text-sm text-gray-900">
+                <div class="font-medium">Rp 10k</div>
+                <div class="text-xs text-gray-500">- | -</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-sm text-gray-900 tabular-nums">15 Pcs</span>
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Menipis</span>
+                </div>
+                 <div class="w-24 bg-gray-200 rounded-full h-1.5">
+                  <div class="bg-yellow-500 h-1.5 rounded-full" style="width: 25%"></div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                Consumable
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <a href="#" class="text-primary-green hover:text-dark-green">Update Stok</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

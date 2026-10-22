@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detail Variasi & Unit Produk — ANNAPURNA Adventure Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Manrope', sans-serif; background-color: #F9FAFB; color: #111827; }
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col lg:flex-row antialiased">
+
+  <!-- SIDEBAR ADMIN -->
+  <aside class="w-full lg:w-64 bg-white border-b lg:border-b-0 lg:border-r border-[#E5E7EB] flex-shrink-0 flex flex-col justify-between">
+    <div>
+      <div class="h-16 px-6 flex items-center justify-between border-b border-[#E5E7EB]">
+        <a href="admin-katalog-unit.html" class="flex items-center gap-3">
+          <svg class="w-10 h-8 flex-shrink-0" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M8 58L28 38L36 42L56 20C60 16 66 16 70 21L84 39L96 44L104 36L115 54L103 42L96 49L80 43L67 27C63 23 58 23 54 27L42 40L46 31L28 45L24 42L8 58Z" fill="#16624B"/>
+            <path d="M53 68L61 44L59 40L61 39L62 42L63 39L65 40L63 44L71 68H66L62 54L58 68H53Z" fill="#16A34A"/>
+          </svg>
+          <div class="leading-none">
+            <span class="block text-sm font-bold tracking-wider text-[#111827]">ANNAPURNA</span>
+            <span class="block text-[10px] font-medium tracking-[0.2em] text-[#6B7280] mt-0.5">ADVENTURE</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="p-4 space-y-6 text-sm" aria-label="Menu Utama Admin">
+        <div>
+          <p class="px-3 text-xs font-semibold uppercase tracking-wider text-[#6B7280] mb-2">Operasional</p>
+          <ul class="space-y-1">
+            <li>
+              <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#6B7280] hover:bg-[#E7F3EE] hover:text-[#16624B] font-medium">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                <span>Dashboard Ringkasan</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#6B7280] hover:bg-[#E7F3EE] hover:text-[#16624B] font-medium">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/></svg>
+                <span>Transaksi Penyewaan</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#6B7280] hover:bg-[#E7F3EE] hover:text-[#16624B] font-medium">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                <span>Pengambilan & Return</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="px-3 text-xs font-semibold uppercase tracking-wider text-[#6B7280] mb-2">Katalog & Inventaris</p>
+          <ul class="space-y-1">
+            <li>
+              <a href="admin-katalog-unit.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#E7F3EE] text-[#16624B] font-semibold">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                <span>Produk & Unit Barang</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#6B7280] hover:bg-[#E7F3EE] hover:text-[#16624B] font-medium">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2"/></svg>
+                <span>Paket Penyewaan</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="p-4 border-t border-[#E5E7EB]">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-[#0B3E2F] text-white flex items-center justify-center font-semibold text-sm">OW</div>
+        <div>
+          <p class="text-sm font-semibold text-[#111827]">Owner Annapurna</p>
+          <p class="text-xs text-[#16624B] font-semibold">Super Admin / Owner</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT (SalesSync Inspired Layout) -->
+  <div class="flex-1 flex flex-col min-w-0">
+    <!-- Top Header -->
+    <header class="h-16 bg-white border-b border-[#E5E7EB] px-6 flex items-center justify-between sticky top-0 z-10">
+      <div class="flex items-center gap-4">
+        <h1 class="text-lg font-bold text-[#111827]">Detail Variasi & Manajemen Unit</h1>
+        <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#E7F3EE] text-[#16624B]">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#16624B]"></span>
+          Tipe: Rental Unit
+        </span>
+      </div>
+
+      <!-- Right Action Buttons -->
+      <div class="flex items-center gap-3">
+        <button type="button" class="px-4 py-2 rounded-lg border border-[#E5E7EB] bg-white hover:bg-gray-50 text-[#111827] font-semibold text-sm flex items-center gap-2 transition">
+          <svg class="w-4 h-4 text-[#6B7280]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>Riwayat Status Unit</span>
+        </button>
+        <button type="button" class="px-5 py-2 rounded-lg bg-[#16624B] hover:bg-[#0F4F3C] text-white font-semibold text-sm flex items-center gap-2 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#16624B]">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+          <span>Simpan Perubahan</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="p-6 max-w-7xl w-full mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- LEFT COLUMN (7 Cols: Product Info, Size/Color Chip Selector, Pricing & Unit Matrix) -->
+        <div class="lg:col-span-7 space-y-6">
+
+          <!-- Card 1: Informasi & Pilihan Variasi (SalesSync Size/Color Selector Adapted) -->
+          <div class="bg-white p-6 rounded-xl border border-[#E5E7EB] space-y-5">
+            <div class="flex items-center justify-between">
+              <h2 class="text-base font-bold text-[#111827]">Informasi & Variasi Produk</h2>
+              <span class="text-xs text-[#6B7280] tabular-nums">ID Produk: <strong class="text-[#111827]">PRD-JKT-042</strong></span>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-[#6B7280] mb-1.5">Nama Produk Rental</label>
+              <input type="text" value="Jaket Gunung Gore-Tex Summit Series" class="w-full px-4 py-2.5 bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg text-sm font-semibold text-[#111827] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16624B]" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-[#6B7280] mb-1.5">Deskripsi Spesifikasi</label>
+              <textarea rows="3" class="w-full px-4 py-2.5 bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg text-sm text-[#111827] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16624B]">Jaket teknis outer shell tahan air (waterproof) dan tahan angin (windproof) dengan hoodie adjustable dan jahitan full seam-sealed. Wajib dicek kondisi resleting dan lapisan dalam saat pengembalian.</textarea>
+            </div>
+
+            <!-- Interactive Size & Color Variant Selector (SalesSync Style with ANNAPURNA Palette) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2 border-t border-[#E5E7EB]">
+              <!-- Pilih Ukuran -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-bold text-[#111827]">Variasi Ukuran Tersedia</span>
+                  <span class="text-[11px] text-[#16624B] font-semibold">3 Ukuran Aktif</span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <button type="button" class="w-11 h-11 rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] text-xs font-semibold text-[#6B7280] hover:border-[#16624B]">S</button>
+                  <button type="button" class="w-11 h-11 rounded-lg bg-[#E7F3EE] border-2 border-[#16624B] text-xs font-bold text-[#16624B]">M</button>
+                  <button type="button" class="w-11 h-11 rounded-lg bg-[#16624B] text-white text-xs font-bold shadow-sm">L</button>
+                  <button type="button" class="w-11 h-11 rounded-lg bg-[#E7F3EE] border-2 border-[#16624B] text-xs font-bold text-[#16624B]">XL</button>
+                  <button type="button" class="w-11 h-11 rounded-lg border border-dashed border-[#6B7280] text-xs font-semibold text-[#6B7280] hover:border-[#16624B] hover:text-[#16624B]">+</button>
+                </div>
+              </div>
+
+              <!-- Pilih Warna Dominan -->
+              <div>
+                <span class="block text-xs font-bold text-[#111827] mb-2">Variasi Warna (Ukuran L Terpilih)</span>
+                <div class="flex flex-wrap items-center gap-3 pt-1">
+                  <label class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border-2 border-[#16624B] bg-[#E7F3EE]/50 text-xs font-bold text-[#16624B] cursor-pointer">
+                    <span class="w-3.5 h-3.5 rounded-full bg-[#16624B] border border-white"></span>
+                    <span>Hijau Sage (5 Unit)</span>
+                  </label>
+                  <label class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-[#E5E7EB] bg-white text-xs font-medium text-[#111827] cursor-pointer hover:bg-gray-50">
+                    <span class="w-3.5 h-3.5 rounded-full bg-gray-900"></span>
+                    <span>Hitam (4 Unit)</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Daftar Unit Fisik pada Variasi Terpilih (Ukuran L - Hijau Sage) -->
+          <div class="bg-white p-6 rounded-xl border border-[#E5E7EB] space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E5E7EB] pb-3">
+              <div>
+                <h2 class="text-base font-bold text-[#111827]">Daftar Unit Fisik — Variasi Ukuran L (Hijau Sage)</h2>
+                <p class="text-xs text-[#6B7280]">Ubah status kondisi fisik jika unit sedang diperbaiki, rusak, atau hilang (FR-24).</p>
+              </div>
+              <button type="button" class="px-3 py-1.5 rounded-lg bg-[#E7F3EE] text-[#16624B] hover:bg-[#16624B] hover:text-white text-xs font-bold transition self-start">
+                + Tambah Kode Unit Baru
+              </button>
+            </div>
+
+            <div class="space-y-2.5 tabular-nums">
+              <!-- Unit 1 -->
+              <div class="p-3.5 rounded-lg border border-[#E5E7EB] flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#F9FAFB]">
+                <div class="flex items-center gap-3">
+                  <span class="font-mono text-xs font-bold px-2.5 py-1 rounded bg-gray-100 text-[#111827]">JKT-L-001</span>
+                  <div>
+                    <p class="text-xs font-semibold text-[#111827]">Kondisi Sangat Baik (Resleting & Seam Normal)</p>
+                    <p class="text-[11px] text-[#6B7280]">Terakhir diperiksa: 19 Okt 2026 oleh Rendi</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-[#16A34A]">Available</span>
+                  <select aria-label="Ubah status JKT-L-001" class="px-2.5 py-1 border border-[#E5E7EB] rounded-md text-xs bg-white">
+                    <option selected>Ubah Status...</option>
+                    <option>Available</option>
+                    <option>Maintenance</option>
+                    <option>Damaged</option>
+                    <option>Lost</option>
+                    <option>Inactive</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Unit 2 -->
+              <div class="p-3.5 rounded-lg border border-[#E5E7EB] flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#F9FAFB]">
+                <div class="flex items-center gap-3">
+                  <span class="font-mono text-xs font-bold px-2.5 py-1 rounded bg-gray-100 text-[#111827]">JKT-L-002</span>
+                  <div>
+                    <p class="text-xs font-semibold text-[#111827]">Sedang Disewa (TRX-20261021-09)</p>
+                    <p class="text-[11px] text-[#2563EB] font-medium">Jadwal Sewa: 21 Okt 2026 – 24 Okt 2026 (Perkegiatan I)</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-[#2563EB]">Rented (Aktif)</span>
+                </div>
+              </div>
+
+              <!-- Unit 3 -->
+              <div class="p-3.5 rounded-lg border border-amber-200 bg-amber-50/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                  <span class="font-mono text-xs font-bold px-2.5 py-1 rounded bg-white border border-amber-300 text-[#111827]">JKT-L-003</span>
+                  <div>
+                    <p class="text-xs font-semibold text-[#B45309]">Proses Waterproofing Ulang & Pencucian</p>
+                    <p class="text-[11px] text-[#6B7280]">Otomatis dikunci dari availability check</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-[#D97706]">Maintenance</span>
+                  <button type="button" class="px-2.5 py-1 rounded-md bg-[#16624B] text-white text-xs font-semibold hover:bg-[#0F4F3C]">Set Available</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN (5 Cols: Prominent Media Preview + Pricing & Category Summary) -->
+        <div class="lg:col-span-5 space-y-6">
+
+          <!-- Card 3: Prominent Media Gallery Preview (SalesSync Right Panel) -->
+          <div class="bg-white p-6 rounded-xl border border-[#E5E7EB] space-y-4">
+            <div class="flex items-center justify-between">
+              <h2 class="text-base font-bold text-[#111827]">Pratinjau Galeri Produk</h2>
+              <span class="text-xs font-semibold text-[#16624B]">4 Media Tersimpan</span>
+            </div>
+
+            <!-- Main Cover Image -->
+            <div class="relative rounded-xl overflow-hidden bg-[#F9FAFB] border border-[#E5E7EB] aspect-[4/3]">
+              <img src="https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=700&q=80" alt="Jaket Gunung Hijau Sage" class="w-full h-full object-cover" />
+              <span class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-[#0B3E2F]/90 text-white text-xs font-semibold">
+                Cover Utama (is_primary)
+              </span>
+            </div>
+
+            <!-- Thumbnail Strip + Add Button -->
+            <div class="grid grid-cols-4 gap-3">
+              <button type="button" class="rounded-lg overflow-hidden border-2 border-[#16624B] aspect-square">
+                <img src="https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=160&q=80" alt="Thumb 1" class="w-full h-full object-cover" />
+              </button>
+              <button type="button" class="rounded-lg overflow-hidden border border-[#E5E7EB] hover:border-[#16624B] aspect-square">
+                <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=160&q=80" alt="Thumb 2" class="w-full h-full object-cover" />
+              </button>
+              <button type="button" class="rounded-lg overflow-hidden border border-[#E5E7EB] hover:border-[#16624B] aspect-square">
+                <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=160&q=80" alt="Thumb 3" class="w-full h-full object-cover" />
+              </button>
+              <button type="button" aria-label="Tambah media" class="rounded-lg border-2 border-dashed border-[#16624B] bg-[#E7F3EE]/50 hover:bg-[#E7F3EE] flex flex-col items-center justify-center aspect-square text-[#16624B] transition">
+                <span class="w-6 h-6 rounded-full bg-[#16624B] text-white flex items-center justify-center text-sm font-bold">+</span>
+                <span class="text-[10px] font-bold mt-1">Unggah</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 4: Ringkasan Tarif Durasi & Kategori -->
+          <div class="bg-white p-6 rounded-xl border border-[#E5E7EB] space-y-4">
+            <h2 class="text-base font-bold text-[#111827]">Tarif Durasi & Kategori</h2>
+
+            <div class="grid grid-cols-2 gap-3 tabular-nums">
+              <div class="p-3 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB]">
+                <span class="text-[11px] font-semibold text-[#6B7280] block">Tarif Permalam</span>
+                <span class="text-base font-bold text-[#111827]">Rp 25.000</span>
+              </div>
+              <div class="p-3 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB]">
+                <span class="text-[11px] font-semibold text-[#6B7280] block">DP 50% (Permalam)</span>
+                <span class="text-base font-bold text-[#16624B]">Rp 12.500</span>
+              </div>
+              <div class="p-3 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB]">
+                <span class="text-[11px] font-semibold text-[#6B7280] block">Perkegiatan I (3H3M)</span>
+                <span class="text-base font-bold text-[#111827]">Rp 60.000</span>
+              </div>
+              <div class="p-3 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB]">
+                <span class="text-[11px] font-semibold text-[#6B7280] block">Perkegiatan II (5H5M)</span>
+                <span class="text-base font-bold text-[#111827]">Rp 90.000</span>
+              </div>
+            </div>
+
+            <div class="pt-2">
+              <label class="block text-xs font-semibold text-[#6B7280] mb-1.5">Kategori Katalog</label>
+              <div class="flex items-center gap-2">
+                <select class="flex-1 px-3.5 py-2 border border-[#E5E7EB] rounded-lg text-sm font-medium text-[#111827] bg-[#F9FAFB]">
+                  <option selected>Perlengkapan Pribadi</option>
+                  <option>Tenda</option>
+                  <option>Alat Masak</option>
+                </select>
+                <button type="button" class="px-3.5 py-2 rounded-lg bg-[#E7F3EE] text-[#16624B] font-semibold text-xs hover:bg-[#16624B] hover:text-white transition">
+                  + Kategori
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tambah Produk Rental — ANNAPURNA Adventure Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Manrope', sans-serif; background-color: #F9FAFB; color: #111827; }
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col lg:flex-row antialiased">
+
+  <!-- SIDEBAR ADMIN -->
+  <aside class="w-full lg:w-64 bg-white border-b lg:border-b-0 lg:border-r border-[#E5E7EB] flex-shrink-0 flex flex-col justify-between">
+    <div>
+      <div class="h-16 px-6 flex items-center justify-between border-b border-[#E5E7EB]">
+        <a href="admin-katalog-unit.html" class="flex items-center gap-3">
+          <svg class="w-10 h-8 flex-shrink-0" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M8 58L28 38L36 42L56 20C60 16 66 16 70 21L84 39L96 44L104 36L115 54L103 42L96 49L80 43L67 27C63 23 58 23 54 27L42 40L46 31L28 45L24 42L8 58Z" fill="#16624B"/>
+            <path d="M53 68L61 44L59 40L61 39L62 42L63 39L65 40L63 44L71 68H66L62 54L58 68H53Z" fill="#16A34A"/>
+          </svg>
+          <div class="leading-none">
+            <span class="block text-sm font-bold tracking-wider text-[#111827]">ANNAPURNA</span>
+            <span class="block text-[10px] font-medium tracking-[0.2em] text-[#6B7280] mt-0.5">ADVENTURE</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="p-4 space-y-6 text-sm" aria-label="Menu Utama Admin">
+        <div>
+          <p class="px-3 text-xs font-semibold uppercase tracking-wider text-[#6B7280] mb-2">Operasional</p>
+          <ul class="space-y-1">
+            <li>
+              <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#6B7280] hover:bg-[#E7F3EE] hover:text-[#16624B] font-medium">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                <span>Dashboard Ringkasan</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#6B7280] hover:bg-[#E7F3EE] hover:text-[#16624B] font-medium">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/></svg>
+                <span>Transaksi Penyewaan</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="px-3 text-xs font-semibold uppercase tracking-wider text-[#6B7280] mb-2">Katalog & Inventaris</p>
+          <ul class="space-y-1">
+            <li>
+              <a href="admin-katalog-unit.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#E7F3EE] text-[#16624B] font-semibold">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                <span>Produk & Unit Barang</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#6B7280] hover:bg-[#E7F3EE] hover:text-[#16624B] font-medium">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2"/></svg>
+                <span>Paket Penyewaan</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#6B7280] hover:bg-[#E7F3EE] hover:text-[#16624B] font-medium">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                <span>Manajemen Kategori</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="p-4 border-t border-[#E5E7EB]">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-[#16624B] text-white flex items-center justify-center font-semibold text-sm">RW</div>
+        <div>
+          <p class="text-sm font-semibold text-[#111827]">Rendi Widya</p>
+          <p class="text-xs text-[#6B7280]">Admin Operasional</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT (Kusale Add Product Inspired) -->
+  <div class="flex-1 flex flex-col min-w-0">
+    <!-- Top Header -->
+    <header class="h-16 bg-white border-b border-[#E5E7EB] px-6 flex items-center justify-between sticky top-0 z-10">
+      <div class="flex items-center gap-3">
+        <a href="admin-katalog-unit.html" class="p-2 rounded-lg border border-[#E5E7EB] text-[#6B7280] hover:text-[#111827] hover:bg-gray-50" aria-label="Kembali ke daftar produk">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+        </a>
+        <div>
+          <h1 class="text-lg font-bold text-[#111827]">Tambah Produk Rental Baru</h1>
+          <nav class="text-xs text-[#6B7280] flex items-center gap-1.5" aria-label="Breadcrumb">
+            <a href="admin-katalog-unit.html" class="hover:text-[#16624B]">Dashboard</a>
+            <span>›</span>
+            <a href="admin-katalog-unit.html" class="hover:text-[#16624B]">Produk & Unit</a>
+            <span>›</span>
+            <span class="text-[#16624B] font-semibold">Tambah Produk</span>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Action Buttons (Secondary + Primary) -->
+      <div class="flex items-center gap-3">
+        <a href="admin-katalog-unit.html" class="px-4 py-2 rounded-lg border border-[#E5E7EB] bg-white hover:bg-gray-50 text-[#111827] font-semibold text-sm transition">
+          Batal
+        </a>
+        <button type="submit" form="add-product-form" class="px-6 py-2 rounded-lg bg-[#16624B] hover:bg-[#0F4F3C] text-white font-semibold text-sm flex items-center gap-2 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#16624B]">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+          <span>Simpan Produk</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Form Content Grid (2 Columns on Desktop: Left 8 cols, Right 4 cols) -->
+    <main class="p-6 max-w-7xl w-full mx-auto">
+      <form id="add-product-form" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- LEFT COLUMN (General Info, Duration Pricing, Inventory & Variants) -->
+        <div class="lg:col-span-8 space-y-6">
+
+          <!-- Card 1: Informasi Umum -->
+          <div class="bg-white p-6 rounded-xl border border-[#E5E7EB] space-y-5">
+            <div class="border-b border-[#E5E7EB] pb-3">
+              <h2 class="text-base font-bold text-[#111827]">Informasi Umum Produk</h2>
+              <p class="text-xs text-[#6B7280] mt-0.5">Masukkan nama alat outdoor dan spesifikasi kelengkapan yang disewakan.</p>
+            </div>
+
+            <div class="space-y-4">
+              <div>
+                <label for="product-name" class="block text-sm font-semibold text-[#111827] mb-1.5">
+                  Nama Produk <span class="text-[#DC2626]">*</span>
+                </label>
+                <input id="product-name" type="text" value="Carrier Osprey Atmos AG 65 Liter" required class="w-full px-3.5 py-2.5 border border-[#E5E7EB] rounded-lg text-sm text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#16624B]" placeholder="Contoh: Tenda Dome Eiger 4P Double Layer" />
+              </div>
+
+              <div>
+                <label for="product-desc" class="block text-sm font-semibold text-[#111827] mb-1.5">
+                  Deskripsi & Kelengkapan Alat <span class="text-[#DC2626]">*</span>
+                </label>
+                <textarea id="product-desc" rows="4" class="w-full px-3.5 py-2.5 border border-[#E5E7EB] rounded-lg text-sm text-[#111827] resize-y focus:outline-none focus:ring-2 focus:ring-[#16624B]" placeholder="Jelaskan kapasitas, bahan, serta kelengkapan (misal: termasuk raincover, frame aluminium, pasak 10 pcs)...">Tas gunung berkapasitas 65 liter dengan teknologi Anti-Gravity suspension yang nyaman untuk pendakian multi-hari. Sudah termasuk raincover original bawaan. Cocok untuk ekspedisi 3-5 hari.</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Skema Harga Berdasarkan Durasi Sewa (FR-06, Section 16.2) -->
+          <div class="bg-white p-6 rounded-xl border border-[#E5E7EB] space-y-5">
+            <div class="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
+              <div>
+                <h2 class="text-base font-bold text-[#111827]">Harga Sewa Berdasarkan Durasi</h2>
+                <p class="text-xs text-[#6B7280] mt-0.5">Sesuai aturan ANNAPURNA Adventure, DP 50% dihitung otomatis dari harga durasi yang dipilih customer.</p>
+              </div>
+              <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-[#E7F3EE] text-[#16624B]">Wajib Diisi</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <!-- Permalam -->
+              <div class="p-4 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB]">
+                <label for="price-permalam" class="block text-xs font-bold uppercase tracking-wider text-[#16624B] mb-1">
+                  1. Durasi Permalam <span class="text-[#DC2626]">*</span>
+                </label>
+                <p class="text-[11px] text-[#6B7280] mb-3">Pengembalian esok hari (+1 hari)</p>
+                <div class="relative">
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-[#6B7280]">Rp</span>
+                  <input id="price-permalam" type="number" value="35000" class="w-full pl-9 pr-3 py-2 bg-white border border-[#E5E7EB] rounded-lg text-sm font-bold text-[#111827] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#16624B]" />
+                </div>
+              </div>
+
+              <!-- Perkegiatan I -->
+              <div class="p-4 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB]">
+                <label for="price-kegiatan1" class="block text-xs font-bold uppercase tracking-wider text-[#16624B] mb-1">
+                  2. Perkegiatan I <span class="text-[#DC2626]">*</span>
+                </label>
+                <p class="text-[11px] text-[#6B7280] mb-3">Sewa 3 Hari 3 Malam (+3 hari)</p>
+                <div class="relative">
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-[#6B7280]">Rp</span>
+                  <input id="price-kegiatan1" type="number" value="85000" class="w-full pl-9 pr-3 py-2 bg-white border border-[#E5E7EB] rounded-lg text-sm font-bold text-[#111827] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#16624B]" />
+                </div>
+              </div>
+
+              <!-- Perkegiatan II -->
+              <div class="p-4 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB]">
+                <label for="price-kegiatan2" class="block text-xs font-bold uppercase tracking-wider text-[#16624B] mb-1">
+                  3. Perkegiatan II <span class="text-[#DC2626]">*</span>
+                </label>
+                <p class="text-[11px] text-[#6B7280] mb-3">Sewa 5 Hari 5 Malam (+5 hari)</p>
+                <div class="relative">
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-[#6B7280]">Rp</span>
+                  <input id="price-kegiatan2" type="number" value="130000" class="w-full pl-9 pr-3 py-2 bg-white border border-[#E5E7EB] rounded-lg text-sm font-bold text-[#111827] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#16624B]" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Variasi & Registrasi Unit Inventaris Unik (FR-10, FR-11, OQ-05) -->
+          <div class="bg-white p-6 rounded-xl border border-[#E5E7EB] space-y-5">
+            <div class="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
+              <div>
+                <h2 class="text-base font-bold text-[#111827]">Variasi & Unit Inventaris Unik</h2>
+                <p class="text-xs text-[#6B7280] mt-0.5">Setiap produk <code class="text-[#16624B] font-semibold">rental_unit</code> wajib memiliki minimal 1 variasi dan kode unit fisik unik.</p>
+              </div>
+              <button type="button" class="px-3 py-1.5 rounded-lg border border-[#16624B] text-[#16624B] hover:bg-[#E7F3EE] text-xs font-semibold transition">
+                + Tambah Variasi
+              </button>
+            </div>
+
+            <!-- Variant Item 1 -->
+            <div class="p-4 rounded-xl border border-[#E5E7EB] space-y-4 bg-[#F9FAFB]/50">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-[#111827] mb-1">Nama Variasi <span class="text-[#DC2626]">*</span></label>
+                  <input type="text" value="Ukuran L - Hijau Forest" class="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-lg text-sm" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-[#111827] mb-1">Ukuran (Size)</label>
+                  <input type="text" value="L (65L)" class="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-lg text-sm" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-[#111827] mb-1">Warna Dominan</label>
+                  <input type="text" value="Hijau Forest" class="w-full px-3 py-2 bg-white border border-[#E5E7EB] rounded-lg text-sm" />
+                </div>
+              </div>
+
+              <!-- Daftar Kode Unit Unik dalam Variasi ini -->
+              <div>
+                <label class="block text-xs font-semibold text-[#6B7280] mb-2">Daftar Kode Inventaris Fisik (<code class="text-[#111827]">inventory_code</code>):</label>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-[#E5E7EB] text-xs font-semibold tabular-nums">
+                    <span class="w-2 h-2 rounded-full bg-[#16A34A]"></span>
+                    <span>CRR-001</span>
+                    <span class="text-[10px] text-[#16A34A] bg-green-50 px-1.5 py-0.5 rounded">Available</span>
+                  </span>
+                  <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-[#E5E7EB] text-xs font-semibold tabular-nums">
+                    <span class="w-2 h-2 rounded-full bg-[#16A34A]"></span>
+                    <span>CRR-002</span>
+                    <span class="text-[10px] text-[#16A34A] bg-green-50 px-1.5 py-0.5 rounded">Available</span>
+                  </span>
+                  <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-[#E5E7EB] text-xs font-semibold tabular-nums">
+                    <span class="w-2 h-2 rounded-full bg-[#D97706]"></span>
+                    <span>CRR-003</span>
+                    <span class="text-[10px] text-[#D97706] bg-amber-50 px-1.5 py-0.5 rounded">Maintenance</span>
+                  </span>
+                  <button type="button" class="px-3 py-1.5 rounded-lg border border-dashed border-[#16624B] text-[#16624B] hover:bg-[#E7F3EE] text-xs font-semibold">
+                    + Tambah Kode Unit
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN (Product Media, Category & Item Type) -->
+        <div class="lg:col-span-4 space-y-6">
+
+          <!-- Card 4: Galeri Media Produk (FR-53, FR-54) -->
+          <div class="bg-white p-6 rounded-xl border border-[#E5E7EB] space-y-4">
+            <div class="border-b border-[#E5E7EB] pb-3">
+              <h2 class="text-base font-bold text-[#111827]">Media Produk (Foto & Video)</h2>
+              <p class="text-xs text-[#6B7280] mt-0.5">Atur urutan tampil dan pilih 1 media utama (Cover). Disimpan di Supabase Storage.</p>
+            </div>
+
+            <!-- Uploaded Thumbnails Grid -->
+            <div class="grid grid-cols-3 gap-3">
+              <!-- Primary Media -->
+              <div class="relative group rounded-lg overflow-hidden border-2 border-[#16624B] aspect-square">
+                <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=240&q=80" alt="Carrier Tampak Depan" class="w-full h-full object-cover" />
+                <span class="absolute top-1.5 left-1.5 bg-[#16624B] text-white text-[10px] font-bold px-1.5 py-0.5 rounded">UTAMA #1</span>
+              </div>
+
+              <!-- Media #2 -->
+              <div class="relative group rounded-lg overflow-hidden border border-[#E5E7EB] aspect-square">
+                <img src="https://images.unsplash.com/photo-1622260614153-03223fb72052?auto=format&fit=crop&w=240&q=80" alt="Carrier Tampak Belakang" class="w-full h-full object-cover" />
+                <span class="absolute top-1.5 left-1.5 bg-gray-900/70 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">#2</span>
+              </div>
+
+              <!-- Media #3 (Video) -->
+              <div class="relative group rounded-lg overflow-hidden border border-[#E5E7EB] aspect-square bg-gray-900 flex items-center justify-center">
+                <img src="https://images.unsplash.com/photo-1501555088652-021faa106b9b?auto=format&fit=crop&w=240&q=80" alt="Video Review Carrier" class="w-full h-full object-cover opacity-70" />
+                <span class="absolute top-1.5 left-1.5 bg-gray-900/70 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">VIDEO #3</span>
+                <div class="w-8 h-8 rounded-full bg-white/90 text-[#16624B] flex items-center justify-center absolute">
+                  <svg class="w-4 h-4 translate-x-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dropzone Button -->
+            <div class="border-2 border-dashed border-[#E5E7EB] hover:border-[#16624B] rounded-xl p-5 text-center transition bg-[#F9FAFB]">
+              <svg class="w-8 h-8 text-[#16624B] mx-auto mb-2" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+              <p class="text-xs font-semibold text-[#111827]">Unggah Foto atau Video Baru</p>
+              <p class="text-[11px] text-[#6B7280] mt-0.5">Format WEBP, JPG, PNG, MP4 (Maks. 10MB)</p>
+              <button type="button" class="mt-3 px-4 py-1.5 rounded-lg bg-[#E7F3EE] text-[#16624B] font-semibold text-xs hover:bg-[#16624B] hover:text-white transition">
+                Pilih Berkas Media
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 5: Kategori & Klasifikasi Item Type (FR-44, OQ-03) -->
+          <div class="bg-white p-6 rounded-xl border border-[#E5E7EB] space-y-4">
+            <div class="border-b border-[#E5E7EB] pb-3">
+              <h2 class="text-base font-bold text-[#111827]">Kategori & Tipe Inventaris</h2>
+            </div>
+
+            <div>
+              <label for="cat-select" class="block text-sm font-semibold text-[#111827] mb-1.5">
+                Kategori Produk <span class="text-[#DC2626]">*</span>
+              </label>
+              <select id="cat-select" class="w-full px-3.5 py-2.5 border border-[#E5E7EB] rounded-lg text-sm text-[#111827] bg-white focus:outline-none focus:ring-2 focus:ring-[#16624B]">
+                <option value="perlengkapan-pribadi" selected>Perlengkapan Pribadi</option>
+                <option value="tenda">Tenda</option>
+                <option value="paket-camping">Paket Camping</option>
+                <option value="perlengkapan-tambahan">Perlengkapan Tambahan</option>
+                <option value="alat-masak">Alat Masak</option>
+                <option value="paket-barbeque">Paket Barbeque</option>
+              </select>
+            </div>
+
+            <fieldset class="space-y-2.5 pt-2">
+              <legend class="text-sm font-semibold text-[#111827]">Tipe Item (<code class="text-xs text-[#16624B]">item_type</code>) <span class="text-[#DC2626]">*</span></legend>
+
+              <label class="flex items-start gap-3 p-3 rounded-lg border-2 border-[#16624B] bg-[#E7F3EE]/40 cursor-pointer">
+                <input type="radio" name="item_type" value="rental_unit" checked class="mt-0.5 text-[#16624B] focus:ring-[#16624B]" />
+                <div class="text-xs">
+                  <span class="font-bold text-[#111827] block">Rental Unit (Wajib Kembali)</span>
+                  <span class="text-[#6B7280]">Dilacak per kode inventaris unik, wajib melewati proses Pengambilan & Pengembalian.</span>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-3 p-3 rounded-lg border border-[#E5E7EB] hover:bg-gray-50 cursor-pointer">
+                <input type="radio" name="item_type" value="consumable" class="mt-0.5 text-[#16624B] focus:ring-[#16624B]" />
+                <div class="text-xs">
+                  <span class="font-bold text-[#111827] block">Consumable (Stok Kuantitas)</span>
+                  <span class="text-[#6B7280]">Menggunakan jumlah stok massal (seperti gas kaleng atau matras massal).</span>
+                </div>
+              </label>
+            </fieldset>
+
+            <!-- OQ-03 Reusable Switch -->
+            <div class="p-3.5 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] flex items-center justify-between">
+              <div class="pr-2">
+                <p class="text-xs font-bold text-[#111827]">Stok Dikembalikan Saat Return (<code class="text-[#16624B]">is_reusable</code>)</p>
+                <p class="text-[11px] text-[#6B7280]">Matikan jika barang sekali pakai / habis pakai (OQ-03).</p>
+              </div>
+              <input type="checkbox" checked aria-label="Is Reusable" class="w-4 h-4 rounded text-[#16624B] focus:ring-[#16624B]" />
+            </div>
+
+            <!-- Status Aktif -->
+            <div class="p-3.5 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] flex items-center justify-between">
+              <div>
+                <p class="text-xs font-bold text-[#111827]">Status Aktif di Katalog</p>
+                <p class="text-[11px] text-[#6B7280]">Produk tampil dan bisa dipesan customer</p>
+              </div>
+              <button type="button" role="switch" aria-checked="true" aria-label="Status Aktif" class="w-11 h-6 bg-[#16624B] rounded-full relative inline-flex items-center">
+                <span class="w-4 h-4 bg-white rounded-full translate-x-6"></span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </form>
+    </main>
+  </div>
+
+</body>
+</html>
