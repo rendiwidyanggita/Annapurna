@@ -179,58 +179,72 @@ async function handleOrderStatusQuery(
 }
 
 /**
- * Call OpenRouter with 10s timeout and model fallback
+ * Default free models fallback chain in priority order
+ */
+const DEFAULT_FREE_MODELS = [
+  "nvidia/nemotron-3.5-lightning:free",
+  "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "google/gemma-4-31b-it:free",
+];
+
+/**
+ * Call OpenRouter with 10s timeout and native model fallback array
  */
 async function callOpenRouterAI(
   systemPrompt: string,
   userMessage: string
 ): Promise<string | null> {
   const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) return null;
+  if (!apiKey || apiKey === "sk-or-v1-...") return null;
 
-  const models = ["openai/gpt-4o-mini", "meta-llama/llama-3.3-70b-instruct"];
+  // Read models from env if configured, or use default 3 free models
+  const envModels = process.env.OPENROUTER_MODELS
+    ? process.env.OPENROUTER_MODELS.split(",").map((m) => m.trim()).filter(Boolean)
+    : process.env.OPENROUTER_MODEL
+    ? [process.env.OPENROUTER_MODEL.trim()]
+    : null;
 
-  for (const model of models) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10_000); // 10s strict timeout
+  const modelsToTry = envModels && envModels.length > 0 ? envModels : DEFAULT_FREE_MODELS;
 
-    try {
-      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "HTTP-Referer": "https://annapurna.adventure",
-          "X-Title": "ANNAPURNA Adventure Assistant",
-        },
-        body: JSON.stringify({
-          model,
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userMessage },
-          ],
-          temperature: 0.3,
-          max_tokens: 600,
-        }),
-        signal: controller.signal,
-      });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10_000); // 10s strict timeout
 
-      clearTimeout(timeoutId);
+  try {
+    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://annapurna.adventure",
+        "X-Title": "ANNAPURNA Adventure Assistant",
+      },
+      body: JSON.stringify({
+        models: modelsToTry, // OpenRouter handles server-side failover across this array
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userMessage },
+        ],
+        temperature: 0.3,
+        max_tokens: 1000,
+      }),
+      signal: controller.signal,
+    });
 
-      if (res.ok) {
-        const json = await res.json();
-        const reply = json.choices?.[0]?.message?.content?.trim();
-        if (reply) {
-          recordSuccess();
-          return reply;
-        }
-      } else {
-        console.warn(`[CHATBOT] Model ${model} returned HTTP ${res.status}`);
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      const json = await res.json();
+      const reply = json.choices?.[0]?.message?.content?.trim();
+      if (reply) {
+        recordSuccess();
+        return reply;
       }
-    } catch (err: unknown) {
-      clearTimeout(timeoutId);
-      console.warn(`[CHATBOT] Error or timeout with model ${model}:`, err);
+    } else {
+      console.warn(`[CHATBOT] OpenRouter returned HTTP ${res.status}`);
     }
+  } catch (err: unknown) {
+    clearTimeout(timeoutId);
+    console.warn(`[CHATBOT] Error or timeout during OpenRouter request:`, err);
   }
 
   recordFailure();
