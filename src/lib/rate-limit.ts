@@ -44,13 +44,14 @@ function getRedisClient(): Redis | null {
 // Rate Limiter Factory
 // ============================================================
 
-type RateLimiterKey = "auth" | "chatbot" | "checkout" | "payment";
+type RateLimiterKey = "auth" | "chatbot" | "checkout" | "payment" | "export";
 
 const LIMITS: Record<RateLimiterKey, { requests: number; window: `${number} s` | `${number} m` }> = {
   auth: { requests: 5, window: "1 m" },
   chatbot: { requests: 10, window: "1 m" },
   checkout: { requests: 5, window: "1 m" },
   payment: { requests: 5, window: "1 m" },
+  export: { requests: 5, window: "1 m" },
 };
 
 let limiters: Partial<Record<RateLimiterKey, Ratelimit>> | null = null;

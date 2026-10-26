@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUserProfile } from "@/lib/auth/profile";
 import { Navbar } from "@/components/layouts/navbar";
 import { Footer } from "@/components/layouts/footer";
+import { CustomerChatWidget } from "@/components/organisms/customer-chat-widget";
 
 /**
  * MainLayout — Shell layout for all customer-facing pages.
@@ -32,6 +33,7 @@ export default async function MainLayout({
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
+      <CustomerChatWidget />
     </div>
   );
 }

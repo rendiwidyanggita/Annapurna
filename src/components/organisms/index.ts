@@ -11,4 +11,5 @@ export { MediaUploader } from "./MediaUploader";
 export { TransactionStepper } from "./transaction-stepper";
 export type { TransactionStepperProps } from "./transaction-stepper";
 export { FeaturedPackages, FeaturedPackagesSkeleton } from "./featured-packages";
+export { CustomerChatWidget } from "./customer-chat-widget";
 
