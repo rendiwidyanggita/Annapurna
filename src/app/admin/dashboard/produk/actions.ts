@@ -14,6 +14,7 @@ import {
   replaceProductMedia,
   deleteProductMedia,
 } from "@/lib/storage";
+import { logActivity } from "@/lib/services/audit-log";
 
 export type ProductActionState = {
   error?: string;
@@ -27,13 +28,13 @@ export type ProductActionState = {
 async function checkAdminAuthorization() {
   const profileStatus = await getCurrentUserProfile();
   if (!profileStatus.isAuthenticated || !profileStatus.user) {
-    return { authorized: false, error: "Sesi telah berakhir. Silakan login kembali." };
+    return { authorized: false as const, error: "Sesi telah berakhir. Silakan login kembali." };
   }
   const roleName = profileStatus.user.role?.name;
   if (roleName !== "ADMIN" && roleName !== "OWNER") {
-    return { authorized: false, error: "Tidak memiliki hak akses untuk tindakan ini." };
+    return { authorized: false as const, error: "Tidak memiliki hak akses untuk tindakan ini." };
   }
-  return { authorized: true, user: profileStatus.user };
+  return { authorized: true as const, user: profileStatus.user };
 }
 
 /**
@@ -151,6 +152,15 @@ export async function createProduct(
           },
         });
       }
+      // Record audit log
+      await logActivity(tx, {
+        userId: authCheck.user.id,
+        action: "PRODUCT_CREATE",
+        entityName: "Product",
+        entityId: product.id,
+        newValue: product,
+        description: `Membuat produk: ${product.name}`,
+      });
 
       return product;
     });
@@ -346,6 +356,16 @@ export async function updateProduct(
           });
         }
       }
+
+      // Record audit log
+      await logActivity(tx, {
+        userId: authCheck.user.id,
+        action: "PRODUCT_UPDATE",
+        entityName: "Product",
+        entityId: productId,
+        oldValue: existingProduct,
+        description: `Memperbarui produk: ${name}`,
+      });
     });
 
     revalidatePath("/admin/dashboard/produk");
@@ -386,6 +406,15 @@ export async function toggleProductStatus(productId: string): Promise<ProductAct
       data: { isActive: !product.isActive },
     });
 
+    await logActivity(prisma, {
+      userId: authCheck.user.id,
+      action: "PRODUCT_TOGGLE_ACTIVE",
+      entityName: "Product",
+      entityId: productId,
+      oldValue: { isActive: product.isActive },
+      newValue: { isActive: updated.isActive },
+      description: `Ubah status aktif produk ${product.name} menjadi ${updated.isActive}`,
+    });
     revalidatePath("/admin/dashboard/produk");
     revalidatePath("/katalog");
 
@@ -468,6 +497,14 @@ export async function deleteProduct(
         deletedAt: new Date(),
         isActive: false,
       },
+    });
+
+    await logActivity(prisma, {
+      userId: authCheck.user.id,
+      action: "PRODUCT_DELETE",
+      entityName: "Product",
+      entityId: validated.data.id,
+      description: `Menghapus produk (soft delete): ${product.name}`,
     });
 
     revalidatePath("/admin/dashboard/produk");

@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/expire-bookings",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/purge-retention",
+      "schedule": "0 19 * * *"
     }
   ]
 }

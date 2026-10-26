@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserProfile } from "@/lib/auth/profile";
+import { logActivity } from "@/lib/services/audit-log";
 import {
   createCategorySchema,
   updateCategorySchema,
@@ -49,12 +50,21 @@ export async function createCategory(
       return { error: "Nama kategori sudah digunakan. Pilih nama yang berbeda." };
     }
 
-    await prisma.category.create({
+    const newCat = await prisma.category.create({
       data: {
         name: validated.data.name,
         description: validated.data.description || null,
         isActive: validated.data.isActive,
       },
+    });
+
+    await logActivity(prisma, {
+      userId: profileStatus.user.id,
+      action: "CATEGORY_CREATE",
+      entityName: "Category",
+      entityId: newCat.id,
+      newValue: newCat,
+      description: `Membuat kategori baru: ${newCat.name}`,
     });
 
     revalidatePath("/admin/dashboard/kategori");
@@ -107,13 +117,23 @@ export async function updateCategory(
       }
     }
 
-    await prisma.category.update({
+    const updatedCat = await prisma.category.update({
       where: { id: validated.data.id },
       data: {
         name: validated.data.name,
         description: validated.data.description || null,
         isActive: validated.data.isActive,
       },
+    });
+
+    await logActivity(prisma, {
+      userId: profileStatus.user.id,
+      action: "CATEGORY_UPDATE",
+      entityName: "Category",
+      entityId: updatedCat.id,
+      oldValue: existingCategory,
+      newValue: updatedCat,
+      description: `Memperbarui kategori: ${updatedCat.name}`,
     });
 
     revalidatePath("/admin/dashboard/kategori");
@@ -164,6 +184,15 @@ export async function deleteCategory(
     }
 
     await prisma.category.delete({ where: { id: validated.data.id } });
+
+    await logActivity(prisma, {
+      userId: profileStatus.user.id,
+      action: "CATEGORY_DELETE",
+      entityName: "Category",
+      entityId: validated.data.id,
+      oldValue: existingCategory,
+      description: `Menghapus kategori: ${existingCategory.name}`,
+    });
 
     revalidatePath("/admin/dashboard/kategori");
     return { success: `Kategori "${existingCategory.name}" berhasil dihapus` };

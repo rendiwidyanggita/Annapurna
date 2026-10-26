@@ -27,6 +27,10 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
+  // Deactivated user check (AA-96 / Security Patch)
+  if (!profileStatus.user.isActive) {
+    redirect("/login?error=Akun+Anda+telah+dinonaktifkan");
+  }
   const roleName: string = profileStatus.user.role?.name ?? "";
 
   // Not admin/owner → redirect to home
