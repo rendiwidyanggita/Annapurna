@@ -7,7 +7,7 @@ const KNOWLEDGE_BASE_ITEMS = [
     topic: "Jam Operasional & Alamat Toko",
     questionPattern: "jam buka|alamat|lokasi toko|buka jam berapa|operasional",
     answer:
-      "Toko ANNAPURNA Adventure buka setiap hari Senin - Minggu pukul 08:00 - 21:00 WIB. Alamat kami berlokasi di Jl. Raya Pendaki No. 12, Wonosobo, Jawa Tengah (dekat basecamp pendakian).",
+      "Toko Annapurna Outdoor Rent (Annapurna Adventure Shop) berlokasi di Jl. Kampus No.8-9, Dukuhbandong, Grendeng, Kec. Purwokerto Utara, Kabupaten Banyumas, Jawa Tengah 53122. Jam operasional kami buka setiap hari pukul 09:00 - 21:30 WIB.",
     isActive: true,
   },
   {
