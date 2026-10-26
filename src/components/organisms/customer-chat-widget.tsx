@@ -64,7 +64,7 @@ export function CustomerChatWidget() {
           id: "welcome-1",
           sender: "bot",
           message:
-            "Halo! Selamat datang di **ANNAPURNA Adventure**. Ada yang bisa saya bantu seputar rental peralatan camping, paket outdoor, atau status pesanan Anda?",
+            "Halo! Selamat datang di **Annapurna Outdoor Rent Purwokerto** 🏔️\nAda yang bisa kami bantu seputar rekomendasi tenda & alat camping, paket sewa hemat, atau cek status pesanan Anda?",
         },
       ]);
     }
@@ -139,7 +139,6 @@ export function CustomerChatWidget() {
       setIsLoading(false);
     }
   };
-
   const handleResetChat = () => {
     if (!confirm("Mulai percakapan baru? Riwayat sesi ini akan direset dari perangkat Anda.")) return;
     localStorage.removeItem("annapurna_chat_session_id");
@@ -149,28 +148,47 @@ export function CustomerChatWidget() {
         id: "welcome-1",
         sender: "bot",
         message:
-          "Halo! Selamat datang di **ANNAPURNA Adventure**. Ada yang bisa saya bantu seputar rental peralatan camping, paket outdoor, atau status pesanan Anda?",
+          "Halo! Selamat datang di **Annapurna Outdoor Rent Purwokerto** 🏔️\nAda yang bisa kami bantu seputar rekomendasi tenda & alat camping, paket sewa hemat, atau cek status pesanan Anda?",
       },
     ]);
   };
 
-  // Simple markdown renderer for bold and line breaks
+  // Structured markdown renderer for bold, italic, bullet points, and paragraphs
   const renderMessageContent = (text: string) => {
     return text.split("\n").map((line, i) => {
-      // Bold replacer
-      const parts = line.split(/(\*\*.*?\*\*)/g);
+      const trimmedLine = line.trim();
+      if (!trimmedLine) {
+        return <div key={i} className="h-1.5" />;
+      }
+
+      const isBullet = trimmedLine.startsWith("•") || trimmedLine.startsWith("-") || trimmedLine.startsWith("* ");
+      const displayContent = isBullet ? trimmedLine.replace(/^[•\-\*]\s*/, "") : line;
+
+      // Process bold and italic
+      const parts = displayContent.split(/(\*\*.*?\*\*|\*[^*]+?\*)/g);
+      const renderedParts = parts.map((part, j) => {
+        if (part.startsWith("**") && part.endsWith("**")) {
+          return <strong key={j} className="font-semibold">{part.slice(2, -2)}</strong>;
+        }
+        if (part.startsWith("*") && part.endsWith("*")) {
+          return <em key={j} className="text-gray-500 text-[10.5px] italic">{part.slice(1, -1)}</em>;
+        }
+        return part;
+      });
+
+      if (isBullet) {
+        return (
+          <div key={i} className="flex items-start gap-1.5 leading-relaxed my-0.5">
+            <span className="text-[#16624B] shrink-0 font-bold">•</span>
+            <div className="flex-1">{renderedParts}</div>
+          </div>
+        );
+      }
+
       return (
-        <span key={i} className="block leading-relaxed">
-          {parts.map((part, j) => {
-            if (part.startsWith("**") && part.endsWith("**")) {
-              return <strong key={j}>{part.slice(2, -2)}</strong>;
-            }
-            if (part.startsWith("*") && part.endsWith("*")) {
-              return <em key={j} className="text-gray-500 text-[10px]">{part.slice(1, -1)}</em>;
-            }
-            return part;
-          })}
-        </span>
+        <div key={i} className="leading-relaxed">
+          {renderedParts}
+        </div>
       );
     });
   };
