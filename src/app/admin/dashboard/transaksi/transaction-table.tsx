@@ -67,8 +67,11 @@ interface TransactionTableProps {
   metrics: TransactionMetrics;
   currentStatus: string;
   currentSearch: string;
+  currentStartDate?: string;
+  currentEndDate?: string;
+  currentProductId?: string;
+  availableProducts?: Array<{ id: string; name: string }>;
 }
-
 const STATUS_TABS = [
   { key: "ALL", label: "Semua Transaksi" },
   { key: "DP_Dibayar", label: "Siap Pickup" },
@@ -86,10 +89,17 @@ export function TransactionTable({
   metrics,
   currentStatus,
   currentSearch,
+  currentStartDate = "",
+  currentEndDate = "",
+  currentProductId = "",
+  availableProducts = [],
 }: TransactionTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchInput, setSearchInput] = useState(currentSearch);
+  const [startDateInput, setStartDateInput] = useState(currentStartDate);
+  const [endDateInput, setEndDateInput] = useState(currentEndDate);
+  const [productInput, setProductInput] = useState(currentProductId);
   const [isPending, startTransition] = useTransition();
 
   // Sync state if searchParams changes from outside (e.g. back navigation or reset)
@@ -134,8 +144,26 @@ export function TransactionTable({
     setSearchInput(val);
   };
 
+  const handleApplyFilter = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const params = new URLSearchParams(searchParams.toString());
+    if (startDateInput) params.set("startDate", startDateInput);
+    else params.delete("startDate");
+    if (endDateInput) params.set("endDate", endDateInput);
+    else params.delete("endDate");
+    if (productInput) params.set("productId", productInput);
+    else params.delete("productId");
+    params.set("page", "1");
+    startTransition(() => {
+      router.push(`/admin/dashboard/transaksi?${params.toString()}`);
+    });
+  };
+
   const handleReset = () => {
     setSearchInput("");
+    setStartDateInput("");
+    setEndDateInput("");
+    setProductInput("");
     const params = new URLSearchParams();
     startTransition(() => {
       router.push(`/admin/dashboard/transaksi?${params.toString()}`);
@@ -150,8 +178,13 @@ export function TransactionTable({
     });
   };
 
-  const isFiltered = Boolean(currentSearch.trim().length > 0 || (currentStatus && currentStatus !== "ALL"));
-
+  const isFiltered = Boolean(
+    currentSearch.trim().length > 0 ||
+    (currentStatus && currentStatus !== "ALL") ||
+    currentStartDate ||
+    currentEndDate ||
+    currentProductId
+  );
   return (
     <div className="space-y-6">
       {/* ── Summary KPI Strip (Archetype A) ── */}
@@ -220,14 +253,83 @@ export function TransactionTable({
       </div>
 
       {/* ── Filter Toolbar ── */}
-      <AdminFilterToolbar
-        searchValue={searchInput}
-        onSearchChange={handleSearchChange}
-        searchPlaceholder="Cari kode transaksi, nama penyewa, atau email…"
-        isFiltered={isFiltered}
-        onReset={handleReset}
-      />
+      <div className="space-y-3 bg-white p-4 rounded-xl border border-[#E5E7EB] shadow-2xs">
+        <AdminFilterToolbar
+          searchValue={searchInput}
+          onSearchChange={handleSearchChange}
+          searchPlaceholder="Cari kode transaksi, nama penyewa, atau email…"
+          isFiltered={isFiltered}
+          onReset={handleReset}
+        />
 
+        {/* Secondary Filter Row: Date Range & Product */}
+        <form
+          onSubmit={handleApplyFilter}
+          className="pt-3 border-t border-[#E5E7EB] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 items-end"
+        >
+          <div>
+            <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+              Tanggal Mulai (Dari)
+            </label>
+            <input
+              type="date"
+              value={startDateInput}
+              onChange={(e) => setStartDateInput(e.target.value)}
+              className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#16624B] tabular-nums"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+              Tanggal Akhir (Sampai)
+            </label>
+            <input
+              type="date"
+              value={endDateInput}
+              onChange={(e) => setEndDateInput(e.target.value)}
+              className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#16624B] tabular-nums"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+              Filter Berdasarkan Produk
+            </label>
+            <select
+              value={productInput}
+              onChange={(e) => setProductInput(e.target.value)}
+              className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#16624B] bg-white"
+            >
+              <option value="">Semua Produk</option>
+              {availableProducts.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="flex-1 h-8 text-xs bg-[#16624B] hover:bg-[#0F4F3C] text-white font-medium"
+            >
+              {isPending ? "Menyaring..." : "Terapkan Filter"}
+            </Button>
+            {isFiltered && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleReset}
+                className="h-8 text-xs text-gray-600 hover:text-gray-900 border-gray-300"
+              >
+                Reset
+              </Button>
+            )}
+          </div>
+        </form>
+      </div>
       {/* ── Table (Archetype A) ── */}
       <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">

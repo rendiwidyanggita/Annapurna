@@ -18,7 +18,7 @@ import {
 } from "@/lib/services/transaction-operations";
 import { maskIdentityNumber } from "@/lib/services/transaction-privacy";
 import { TransactionStatus, Prisma } from "@prisma/client";
-
+import { wibDayToUtcRange } from "@/lib/date-range";
 export interface ActionResponse<T = unknown> {
   success: boolean;
   data?: T;
@@ -35,11 +35,17 @@ export async function getTransactionsList({
   limit = 10,
   status = "ALL",
   search = "",
+  startDate = "",
+  endDate = "",
+  productId = "",
 }: {
   page?: number;
   limit?: number;
   status?: string;
   search?: string;
+  startDate?: string;
+  endDate?: string;
+  productId?: string;
 } = {}) {
   await requireRole(["admin", "owner"]);
 
@@ -52,6 +58,26 @@ export async function getTransactionsList({
     where.transactionStatus = status as TransactionStatus;
   }
 
+  if (startDate && endDate) {
+    try {
+      const range = wibDayToUtcRange(startDate);
+      const rangeEnd = wibDayToUtcRange(endDate);
+      where.createdAt = {
+        gte: range.startUtc,
+        lte: rangeEnd.endUtc,
+      };
+    } catch {
+      // ignore invalid dates
+    }
+  }
+
+  if (productId && productId.trim().length > 0) {
+    where.items = {
+      some: {
+        productId,
+      },
+    };
+  }
   if (search && search.trim().length > 0) {
     const trimmed = search.trim();
     where.OR = [
@@ -324,4 +350,15 @@ export async function revealGuaranteeIdAction(
       error: message,
     };
   }
+}
+
+/**
+ * Get product list for transaction filtering dropdown
+ */
+export async function getFilterProducts() {
+  return await prisma.product.findMany({
+    where: { deletedAt: null },
+    select: { id: true, name: true },
+    orderBy: { name: "asc" },
+  });
 }

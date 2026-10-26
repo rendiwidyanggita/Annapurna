@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ["pdfmake", "exceljs"],
   images: {
     // Allow SVG rendering via next/image (needed for logo favicon.svg)
     dangerouslyAllowSVG: true,

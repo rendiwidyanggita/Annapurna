@@ -19,11 +19,17 @@ import {
   Calendar03Icon,
   PlusSignIcon,
   EyeIcon,
+  DeliveryBox01Icon,
+  ArrowDown01Icon,
+  ArrowUp01Icon,
 } from "@hugeicons/core-free-icons";
 import { format } from "date-fns";
 import { id as localeId } from "date-fns/locale";
 import { TransactionStatus, UnitStatus, PaymentStatus } from "@prisma/client";
-
+import { ACTIVE_STATUSES } from "@/lib/constants";
+import { getRevenueSummary, getBookingTrendData } from "@/lib/services/report-service";
+import { BookingTrendChart } from "@/components/organisms/booking-trend-chart";
+import { wibDayToUtcRange, getWibYmd, formatWibYmd } from "@/lib/date-range";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
@@ -32,18 +38,24 @@ export const metadata = {
 
 export default async function AdminDashboardPage() {
   const today = new Date();
+  const todayWibYmd = getWibYmd(today);
+  const todayDateStr = formatWibYmd(todayWibYmd);
+  const todayUtcRange = wibDayToUtcRange(todayDateStr);
 
   // Parallel database queries to prevent waterfalls
   const [
     totalTransactions,
     activeTransactions,
-    settledPayments,
+    revenueSummary,
     rentedUnitsCount,
     availableUnitsCount,
     maintenanceUnitsCount,
     damagedUnitsCount,
     recentTransactions,
     lowStockConsumables,
+    todayPickups,
+    todayReturns,
+    bookingTrend,
   ] = await Promise.all([
     // 1. Total Transactions
     prisma.rentalTransaction.count(),
@@ -52,30 +64,13 @@ export default async function AdminDashboardPage() {
     prisma.rentalTransaction.count({
       where: {
         transactionStatus: {
-          in: [
-            TransactionStatus.DP_Dibayar,
-            TransactionStatus.Siap_Diambil,
-            TransactionStatus.Dikonfirmasi,
-            TransactionStatus.Sedang_Disewa,
-            TransactionStatus.Terlambat,
-          ],
+          in: ACTIVE_STATUSES,
         },
       },
     }),
 
-    // 3. Settled Payments (Midtrans)
-    prisma.payment.aggregate({
-      where: {
-        paymentStatus: {
-          in: [
-            PaymentStatus.DP_Paid,
-            PaymentStatus.Remaining_Paid,
-            PaymentStatus.Fully_Paid,
-          ],
-        },
-      },
-      _sum: { grossAmount: true },
-    }),
+    // 3. Centralized Net Revenue
+    getRevenueSummary({ preset: "30d" }),
 
     // 4. Units by physical status
     prisma.inventoryUnit.count({
@@ -123,9 +118,46 @@ export default async function AdminDashboardPage() {
         category: { select: { name: true } },
       },
     }),
+
+    // 7. Today Pickups (WIB)
+    prisma.rentalTransaction.findMany({
+      where: {
+        startDate: {
+          gte: todayUtcRange.startUtc,
+          lte: todayUtcRange.endUtc,
+        },
+        transactionStatus: { in: ACTIVE_STATUSES },
+      },
+      take: 6,
+      include: {
+        user: { select: { email: true, profile: { select: { fullName: true } } } },
+        items: true,
+      },
+      orderBy: { startDate: "asc" },
+    }),
+
+    // 8. Today Returns (WIB)
+    prisma.rentalTransaction.findMany({
+      where: {
+        endDate: {
+          gte: todayUtcRange.startUtc,
+          lte: todayUtcRange.endUtc,
+        },
+        transactionStatus: { in: ACTIVE_STATUSES },
+      },
+      take: 6,
+      include: {
+        user: { select: { email: true, profile: { select: { fullName: true } } } },
+        items: true,
+      },
+      orderBy: { endDate: "asc" },
+    }),
+
+    // 9. Booking Trend 7 Days
+    getBookingTrendData(7),
   ]);
 
-  const totalRevenue = settledPayments._sum.grossAmount ?? 0;
+  const totalRevenue = revenueSummary.netRevenue;
   const totalPhysicalUnits =
     availableUnitsCount +
     rentedUnitsCount +
@@ -328,6 +360,101 @@ export default async function AdminDashboardPage() {
                   )}
                 </tbody>
               </table>
+            </div>
+          </div>
+          {/* ── Tren Pemesanan Mingguan (AA-85 Zero-Dependency SVG Chart) ── */}
+          <div className="rounded-xl border border-[#E5E7EB] bg-white p-5 shadow-2xs space-y-4">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
+              <div className="flex items-center gap-2">
+                <HugeiconsIcon icon={Invoice01Icon} size={18} className="text-[#16624B]" />
+                <h2 className="text-sm font-bold text-gray-900">
+                  Tren Pemesanan Sewa (7 Hari Terakhir)
+                </h2>
+              </div>
+              <span className="text-xs text-gray-500 tabular-nums">
+                Basis Transaksi Selesai & Aktif
+              </span>
+            </div>
+            <BookingTrendChart data={bookingTrend} />
+          </div>
+
+          {/* ── Jadwal Hari Ini: Pickup vs Return (AA-85) ── */}
+          <div className="rounded-xl border border-[#E5E7EB] bg-white p-5 shadow-2xs space-y-4">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
+              <div className="flex items-center gap-2">
+                <HugeiconsIcon icon={DeliveryBox01Icon} size={18} className="text-[#16624B]" />
+                <h2 className="text-sm font-bold text-gray-900">
+                  Jadwal Serah Terima Hari Ini ({todayDateStr})
+                </h2>
+              </div>
+              <div className="flex items-center gap-2 text-xs">
+                <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold tabular-nums">
+                  {todayPickups.length} Ambil
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-semibold tabular-nums">
+                  {todayReturns.length} Kembali
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Pickup List */}
+              <div className="rounded-lg border border-blue-100 bg-blue-50/30 p-3.5 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-blue-800 flex items-center gap-1.5">
+                    <HugeiconsIcon icon={ArrowDown01Icon} size={14} className="text-blue-600" />
+                    Jadwal Ambil Hari Ini (Pickup)
+                  </span>
+                </div>
+                {todayPickups.length === 0 ? (
+                  <p className="text-xs text-gray-500 py-4 text-center">Tidak ada jadwal ambil hari ini.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {todayPickups.map((p) => (
+                      <div key={p.id} className="p-2.5 rounded-md bg-white border border-gray-200 text-xs flex items-center justify-between">
+                        <div>
+                          <span className="font-mono font-semibold text-gray-900">{p.transactionCode}</span>
+                          <p className="text-[11px] text-gray-600">{p.user.profile?.fullName || p.user.email}</p>
+                        </div>
+                        <Link href={`/admin/dashboard/transaksi/${p.id}/pickup`}>
+                          <Button size="sm" className="h-6 text-[10px] px-2 bg-blue-600 hover:bg-blue-700 text-white">
+                            Pickup
+                          </Button>
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Return List */}
+              <div className="rounded-lg border border-amber-100 bg-amber-50/30 p-3.5 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-amber-800 flex items-center gap-1.5">
+                    <HugeiconsIcon icon={ArrowUp01Icon} size={14} className="text-amber-600" />
+                    Jadwal Kembali Hari Ini (Return)
+                  </span>
+                </div>
+                {todayReturns.length === 0 ? (
+                  <p className="text-xs text-gray-500 py-4 text-center">Tidak ada jadwal kembali hari ini.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {todayReturns.map((r) => (
+                      <div key={r.id} className="p-2.5 rounded-md bg-white border border-gray-200 text-xs flex items-center justify-between">
+                        <div>
+                          <span className="font-mono font-semibold text-gray-900">{r.transactionCode}</span>
+                          <p className="text-[11px] text-gray-600">{r.user.profile?.fullName || r.user.email}</p>
+                        </div>
+                        <Link href={`/admin/dashboard/transaksi/${r.id}/return`}>
+                          <Button size="sm" className="h-6 text-[10px] px-2 bg-[#16624B] hover:bg-[#0F4F3C] text-white">
+                            Return
+                          </Button>
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 

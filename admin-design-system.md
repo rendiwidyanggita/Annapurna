@@ -20,7 +20,7 @@ Referensi Visual Ground Truth (HTML Prototypes):
 ---
 
 ## 2. Tipografi & Keterbacaan Data Numerik
-- **Font Family:** `Manrope` (weights: `400`, `500`, `600`, `700`).
+- **Font Family:** `GeistSans` (variable weight via `geist` package), fallback `Segoe UI`.
 - **Aturan Wajib `tabular-nums`:** Seluruh elemen yang menampilkan harga (`Rp`), nominal DP/pelunasan/denda, kuantitas stok, persentase, tanggal sewa, serta kode inventaris (`TND-001`, `TRX-...`) **WAJIB** menggunakan class `tabular-nums` (`font-variant-numeric: tabular-nums`).
 - **Kode Unik & ID:** Gunakan kombinasi `font-mono text-xs font-semibold tabular-nums` pada `inventory_code` dan `transaction_code` agar mudah dipindai mata saat proses *pickup/return*.
 - **Skala Teks Admin:**
