@@ -322,6 +322,7 @@ model RentalTransaction {
   @@index([userId])
   @@index([transactionStatus, paymentStatus])
   @@index([transactionStatus, startDate, endDate])
+  @@index([startDate, endDate])
   @@index([transactionCode])
   @@map("rental_transactions")
 }
@@ -365,6 +366,7 @@ model Payment {
   transaction RentalTransaction @relation(fields: [transactionId], references: [id])
 
   @@index([midtransOrderId, midtransTransactionId])
+  @@index([paidAt, paymentStatus])
   @@map("payments")
 }
 
@@ -444,6 +446,7 @@ model ChatSession {
   user     User?         @relation(fields: [userId], references: [id])
   messages ChatMessage[]
 
+  @@index([startedAt])
   @@map("chat_sessions")
 }
 
@@ -456,9 +459,10 @@ model ChatMessage {
   isOutOfScope    Boolean  @default(false) @map("is_out_of_scope")
   createdAt       DateTime @default(now()) @map("created_at")
 
-  chatSession   ChatSession           @relation(fields: [chatSessionId], references: [id])
+  chatSession   ChatSession           @relation(fields: [chatSessionId], references: [id], onDelete: Cascade)
   knowledgeBase ChatbotKnowledgeBase? @relation(fields: [knowledgeBaseId], references: [id])
 
+  @@index([createdAt])
   @@map("chat_messages")
 }
 
@@ -492,5 +496,8 @@ model ActivityLog {
 
   user User? @relation(fields: [userId], references: [id])
 
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([entityName, entityId])
   @@map("activity_logs")
 }

@@ -2,7 +2,7 @@
 
 @theme {
   /* ─── Typography ─── */
-  --font-sans: var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI",
+  --font-sans: var(--font-geist-sans), "Segoe UI", -apple-system, BlinkMacSystemFont,
     Roboto, sans-serif;
 
   /* Font size scale (Design.md: 12/14/16/18/24/32/40/48px) */

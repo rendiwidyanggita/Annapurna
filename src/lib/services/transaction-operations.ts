@@ -8,6 +8,7 @@ import {
 } from "@prisma/client";
 import { ConflictError, NotFoundError, ValidationError } from "@/lib/errors";
 import { ACTIVE_STATUSES } from "@/lib/constants";
+import { logActivity } from "@/lib/services/audit-log";
 import { differenceInCalendarDays } from "date-fns";
 import type {
   PickupInput,
@@ -499,6 +500,10 @@ export async function processCancellationTransaction(
       if (currentTx.payment_status === PaymentStatus.DP_Paid) {
         newPaymentStatus = PaymentStatus.Refunded;
         cancelNote = `[Dibatalkan Toko - Refund Penuh] ${reason}`;
+        await tx.payment.updateMany({
+          where: { transactionId },
+          data: { paymentStatus: PaymentStatus.Refunded },
+        });
       }
     } else {
       if (currentTx.payment_status === PaymentStatus.DP_Paid) {
@@ -551,16 +556,14 @@ export async function processCancellationTransaction(
     });
 
     // Record Activity Log
-    await tx.activityLog.create({
-      data: {
-        userId: actorUserId,
-        action: "TRANSACTION_CANCELLED",
-        entityName: "RentalTransaction",
-        entityId: transactionId,
-        oldValue: currentTx.transaction_status,
-        newValue: TransactionStatus.Dibatalkan,
-        description: `Transaksi dibatalkan oleh ${cancelledBy}. Catatan: ${cancelNote}.`,
-      },
+    await logActivity(tx, {
+      userId: actorUserId,
+      action: "TRANSACTION_CANCELLED",
+      entityName: "RentalTransaction",
+      entityId: transactionId,
+      oldValue: currentTx.transaction_status,
+      newValue: TransactionStatus.Dibatalkan,
+      description: `Transaksi dibatalkan oleh ${cancelledBy}. Catatan: ${cancelNote}.`,
     });
 
     return updatedTx;

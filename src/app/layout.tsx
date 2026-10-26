@@ -1,16 +1,9 @@
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
 import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 import { ReactQueryProvider } from "@/providers/query-provider";
 import "./globals.css";
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  variable: "--font-manrope",
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "ANNAPURNA Adventure — Penyewaan Alat Outdoor",
@@ -23,7 +16,7 @@ export default function RootLayout({
   children: ReactNode;
 }) {
   return (
-    <html lang="id" className={`${manrope.variable} h-full antialiased font-sans`}>
+    <html lang="id" className={`${GeistSans.variable} h-full antialiased font-sans`}>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ReactQueryProvider>
           {children}

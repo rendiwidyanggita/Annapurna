@@ -40,3 +40,26 @@ export function sanitizeTransactionForCustomer<T extends Record<string, unknown>
   };
   return safeFields as Omit<T, "guaranteeIdNumber" | "guaranteeNotes">;
 }
+
+/**
+ * Masks customer full name (e.g., "Budi Santoso" -> "B*** S******")
+ */
+export function maskCustomerName(name: string | null | undefined): string {
+  if (!name) return "-";
+  const parts = name.trim().split(/\s+/);
+  return parts
+    .map((p) => (p.length > 1 ? `${p[0]}${"*".repeat(p.length - 1)}` : p))
+    .join(" ");
+}
+
+/**
+ * Masks phone number (e.g., "081234567890" -> "0812••••7890")
+ */
+export function maskPhoneNumber(phone: string | null | undefined): string {
+  if (!phone) return "-";
+  const trimmed = phone.trim();
+  if (trimmed.length <= 6) return "••••••";
+  const start = trimmed.slice(0, 4);
+  const end = trimmed.slice(-4);
+  return `${start}••••${end}`;
+}
