@@ -65,10 +65,15 @@ export async function ProductTabs() {
   const popularProducts = popularRaw.map(transform);
 
   return (
-    <section aria-label="Produk Pilihan">
-      <h2 className="text-xl font-bold text-[var(--color-foreground)] mb-4">
-        Produk Pilihan
-      </h2>
+    <section aria-label="Pilihan Utama Pendaki">
+      <div className="mb-6">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight text-balance">
+          Pilihan Utama Pendaki
+        </h2>
+        <p className="text-xs sm:text-sm text-slate-600 mt-1.5 text-pretty">
+          Koleksi peralatan camping dan hiking yang paling sering disewa dan teruji di jalur pendakian
+        </p>
+      </div>
       <ProductTabsClient
         popularProducts={popularProducts}
         latestProducts={latestProducts}

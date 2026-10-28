@@ -15,45 +15,65 @@
   --text-4xl: 2.5rem;     /* 40px */
   --text-5xl: 3rem;       /* 48px */
 
-  /* ─── Brand Colors ─── */
-  --color-primary: #16624b;       /* Primary green — CTA, interactive */
-  --color-primary-hover: #0f4f3c; /* Darker green — hover state */
-  --color-primary-dark: #0b3e2f;  /* Deepest green — active state */
-  --color-primary-soft: #e7f3ee;  /* Soft green — background hint */
+  /* ─── Annapurna Pine Brand Scale (11-Step Tonal Scale) ─── */
+  --color-brand-50: #f0f7f4;
+  --color-brand-100: #dcede5;
+  --color-brand-200: #bdddd0;
+  --color-brand-300: #8ec4b0;
+  --color-brand-400: #5aa58d;
+  --color-brand-500: #33856d;
+  --color-brand-600: #16624b; /* Primary Signature Brand Color */
+  --color-brand-700: #0f4f3c;
+  --color-brand-800: #0b3e2f;
+  --color-brand-900: #072c21;
+  --color-brand-950: #031711;
 
-  /* ─── Neutrals & Surfaces ─── */
-  --color-background: #f9fafb;
+  /* Backward Compatibility Aliases */
+  --color-primary: var(--color-brand-600);
+  --color-primary-hover: var(--color-brand-700);
+  --color-primary-dark: var(--color-brand-800);
+  --color-primary-soft: var(--color-brand-50);
+
+  /* ─── Clean & Crisp Neutral Scale (Slate-Tinted Modern Neutrals) ─── */
+  --color-background: #f8fafc;        /* canvas (Slate-50) */
   --color-surface: #ffffff;
-  --color-foreground: #111827;
-  --color-muted: #6b7280;         /* Text secondary / neutral */
-  --color-border: #e5e7eb;
-  --color-border-soft: #f3f4f6;
+  --color-surface-subtle: #f1f5f9; /* Slate-100 */
+  --color-border-subtle: rgba(15, 23, 42, 0.04);
+  --color-border: #e2e8f0;         /* Slate-200 */
+  --color-border-strong: #cbd5e1;  /* Slate-300 */
+  --color-border-soft: #f1f5f9;
+  --color-text-muted: #94a3b8;     /* Slate-400 */
+  --color-muted: #64748b;          /* Slate-500 */
+  --color-foreground: #0f172a;     /* Slate-900 */
 
   /* ─── Semantic / Status Colors ─── */
-  --color-success: #16a34a;       /* Success badge — unit available */
-  --color-success-soft: #dcfce7;
-  --color-warning: #f59e0b;       /* Warning — unit reserved */
-  --color-warning-soft: #fef3c7;
-  --color-error: #dc2626;         /* Error / destructive */
-  --color-error-soft: #fee2e2;
-  --color-info: #2563eb;          /* Info — unit rented */
-  --color-info-soft: #dbeafe;
+  --color-success: #15803d;
+  --color-success-soft: #ecfdf5;
+  --color-success-border: #a7f3d0;
+  --color-warning: #b45309;
+  --color-warning-soft: #fffbeb;
+  --color-warning-border: #fde68a;
+  --color-error: #b91c1c;
+  --color-error-soft: #fef2f2;
+  --color-error-border: #fecaca;
+  --color-info: #1d4ed8;
+  --color-info-soft: #eff6ff;
+  --color-info-border: #bfdbfe;
 
   /* Unit status colors */
-  --color-unit-available: #16a34a;
-  --color-unit-reserved: #f59e0b;
-  --color-unit-rented: #2563eb;
-  --color-unit-returned: #6b7280;
-  --color-unit-maintenance: #ea580c;
-  --color-unit-damaged: #dc2626;
+  --color-unit-available: #15803d;
+  --color-unit-reserved: #b45309;
+  --color-unit-rented: #1d4ed8;
+  --color-unit-returned: #64748b;
+  --color-unit-maintenance: #b45309;
+  --color-unit-damaged: #b91c1c;
   --color-unit-lost: #7f1d1d;
 
-  /* ─── Shadows (Design.md two-level card system) ─── */
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.10),
-    0 2px 4px rgba(0, 0, 0, 0.06);
-  --shadow-modal: 0 8px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
-
+  /* ─── Multi-layer Box Shadow System ─── */
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+  --shadow-card-hover: 0 10px 25px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
+  --shadow-floating: 0 20px 40px -6px rgba(15, 23, 42, 0.12), 0 8px 16px -4px rgba(15, 23, 42, 0.06);
+  --shadow-modal: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
   /* ─── Border Radius ─── */
   --radius-sm: 6px;       /* inputs, small elements */
   --radius-md: 10px;      /* buttons */

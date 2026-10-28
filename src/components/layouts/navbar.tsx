@@ -32,8 +32,9 @@ export async function Navbar() {
     <header
       className={cn(
         "sticky top-0 z-50 w-full",
-        "bg-[var(--color-surface)]/90 backdrop-blur-md",
-        "border-b border-[var(--color-border)]",
+        "bg-white/80 backdrop-blur-md",
+        "border-b border-black/[0.04]",
+        "shadow-[0_1px_3px_rgba(0,0,0,0.02)]"
       )}
     >
       <div className="container-page h-16 flex items-center justify-between gap-4">
@@ -72,28 +73,28 @@ export async function Navbar() {
             <Link
               href={ROUTES.PROFILE}
               className={cn(
-                "flex items-center gap-2 px-3 py-1.5 rounded-[var(--radius-md)]",
-                "border border-[var(--color-border)]",
-                "hover:bg-[var(--color-border-soft)] transition-colors duration-150",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]",
+                "flex items-center gap-2 pl-1.5 pr-3 py-1 rounded-full",
+                "border border-slate-200",
+                "hover:bg-slate-50 transition-colors duration-150",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600",
               )}
               aria-label={`Profil ${displayName}`}
             >
               <div
                 className={cn(
                   "flex items-center justify-center w-6 h-6 rounded-full",
-                  "bg-[var(--color-primary-soft)]",
+                  "bg-brand-50 text-brand-600",
                 )}
               >
                 <HugeiconsIcon
                   icon={User02Icon}
                   size={14}
                   strokeWidth={1.5}
-                  color="var(--color-primary)"
+                  color="currentColor"
                 />
               </div>
               {displayName && (
-                <span className="text-xs font-medium text-[var(--color-foreground)] max-w-[100px] truncate">
+                <span className="text-xs font-medium text-slate-800 max-w-[100px] truncate">
                   {displayName}
                 </span>
               )}
@@ -104,10 +105,11 @@ export async function Navbar() {
               <Link
                 href={ROUTES.LOGIN}
                 className={cn(
-                  "px-3 py-1.5 rounded-[var(--radius-md)] text-sm font-medium",
-                  "text-[var(--color-muted)] hover:text-[var(--color-foreground)]",
-                  "hover:bg-[var(--color-border-soft)] transition-colors duration-150",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]",
+                  "min-h-[44px] flex items-center px-3.5 py-1.5 rounded-xl text-sm font-medium",
+                  "text-slate-600 hover:text-slate-900",
+                  "hover:bg-slate-100 transition-colors duration-150",
+                  "active:scale-[0.96]",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600",
                 )}
               >
                 Masuk
@@ -115,11 +117,11 @@ export async function Navbar() {
               <Link
                 href={ROUTES.REGISTER}
                 className={cn(
-                  "px-3 py-1.5 rounded-[var(--radius-md)] text-sm font-semibold",
-                  "bg-[var(--color-primary)] text-white",
-                  "hover:bg-[var(--color-primary-hover)] transition-colors duration-150",
-                  "shadow-[var(--shadow-card)]",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2",
+                  "min-h-[44px] flex items-center px-4 py-1.5 rounded-xl text-sm font-semibold",
+                  "bg-brand-600 text-white",
+                  "hover:bg-brand-700 transition-transform active:scale-[0.96] duration-150 ease-out",
+                  "shadow-sm",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2",
                 )}
               >
                 Daftar

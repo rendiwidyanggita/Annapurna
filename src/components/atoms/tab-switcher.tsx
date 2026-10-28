@@ -129,11 +129,11 @@ export function TabSwitcher({
             onClick={() => !isDisabled && onChange(tab.key)}
             onKeyDown={(e) => handleKeyDown(e, index)}
             className={cn(
-              // Base
-              "relative inline-flex items-center gap-2 font-medium transition-colors duration-150",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2",
+              // Base & Tactile feedback
+              "relative inline-flex items-center gap-2 font-medium",
+              "transition-[color,background-color,border-color] duration-150 active:scale-[0.97]",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2",
               "disabled:cursor-not-allowed disabled:opacity-40",
-
               // Size
               size === "sm" && "text-xs px-3 py-2",
               size === "md" && "text-sm px-4 py-2.5",
@@ -162,7 +162,7 @@ export function TabSwitcher({
             {tab.count !== undefined && (
               <span
                 className={cn(
-                  "inline-flex items-center justify-center rounded-full font-semibold leading-none",
+                  "inline-flex items-center justify-center rounded-full font-semibold leading-none tabular-nums",
                   size === "sm" && "text-[9px] px-1.5 py-0.5 min-w-[16px]",
                   size === "md" && "text-[10px] px-1.5 py-0.5 min-w-[18px]",
                   size === "lg" && "text-xs px-2 py-0.5 min-w-[20px]",

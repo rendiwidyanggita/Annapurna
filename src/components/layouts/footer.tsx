@@ -17,8 +17,8 @@ import { WhatsAppIcon, InstagramIcon, LocationIcon } from "@/components/atoms";
  */
 export function Footer() {
   return (
-    <footer className="w-full bg-[#0F4F3C] text-white">
-      <div className="container-page py-10 md:py-12">
+    <footer className="w-full bg-brand-800 text-white">
+      <div className="container-page py-12 md:py-16">
         {/* Main grid — 3 columns desktop */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
           {/* ── Column 1: Brand ── */}
@@ -36,22 +36,21 @@ export function Footer() {
                 <p className="text-xs text-white/60 leading-tight">Adventure</p>
               </div>
             </div>
-            <p className="text-sm text-white/70 leading-relaxed max-w-[220px]">
-              Penyewaan alat outdoor terpercaya di Purwokerto. Sewa mudah,
-              barang berkualitas, harga terjangkau.
+            <p className="text-sm text-white/70 leading-relaxed max-w-[260px] text-pretty">
+              Penyewaan alat outdoor terpercaya di Purwokerto (Basecamp Slamet). Sewa mudah, barang terawat, tarif transparan.
             </p>
           </div>
 
           {/* ── Column 2: Navigation ── */}
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-white/50 mb-4">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-white/50 mb-3">
               Navigasi
             </h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-1">
               <li>
                 <Link
                   href={ROUTES.CATALOG}
-                  className="text-sm text-white/80 hover:text-white transition-colors duration-150"
+                  className="min-h-[44px] flex items-center py-2 text-sm text-white/80 hover:text-white transition-colors duration-150"
                 >
                   Katalog Produk
                 </Link>
@@ -59,7 +58,7 @@ export function Footer() {
               <li>
                 <Link
                   href={ROUTES.PACKAGES}
-                  className="text-sm text-white/80 hover:text-white transition-colors duration-150"
+                  className="min-h-[44px] flex items-center py-2 text-sm text-white/80 hover:text-white transition-colors duration-150"
                 >
                   Paket Sewa
                 </Link>
@@ -67,7 +66,7 @@ export function Footer() {
               <li>
                 <Link
                   href={ROUTES.TERMS}
-                  className="text-sm text-white/80 hover:text-white transition-colors duration-150"
+                  className="min-h-[44px] flex items-center py-2 text-sm text-white/80 hover:text-white transition-colors duration-150"
                 >
                   Syarat &amp; Ketentuan
                 </Link>

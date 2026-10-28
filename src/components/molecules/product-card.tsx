@@ -68,68 +68,67 @@ export function ProductCard({
     <Link
       href={ROUTES.PRODUCT_DETAIL(slug)}
       className={cn(
-        // Layout
-        "group flex flex-col rounded-[var(--radius-lg)] overflow-hidden",
+        // Layout & Concentric Radius
+        "group flex flex-col rounded-2xl p-2.5 sm:p-3 overflow-hidden",
         // Background & border
-        "bg-[var(--color-surface)] border border-[var(--color-border)]",
-        // Shadow — two-level system from Design.md
-        "shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]",
-        // Transition
-        "transition-all duration-200 ease-out",
-        // Hover lift
-        "hover:-translate-y-0.5",
+        "bg-white border border-black/[0.04]",
+        // Shadow — multi-layer system
+        "shadow-[0_1px_3px_rgba(15,23,42,0.04)] hover:shadow-[0_10px_25px_-3px_rgba(15,23,42,0.08)]",
+        // Motion & tactile feedback (no transition-all)
+        "transition-[transform,box-shadow,border-color] duration-200 ease-out",
+        "hover:-translate-y-1 active:scale-[0.98]",
         className,
       )}
       aria-label={`Lihat detail ${name}`}
     >
-      {/* ── Image Container ── */}
-      <div className="relative w-full aspect-[4/3] overflow-hidden bg-[var(--color-border-soft)]">
+      {/* ── Image Container (1:1 aspect ratio with subtle black ring outline) ── */}
+      <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-slate-100 ring-1 ring-black/[0.06]">
         {imageUrl ? (
           <Image
             src={imageUrl}
             alt={name}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
           />
         ) : (
           // Placeholder when no image
-          <div className="absolute inset-0 flex items-center justify-center bg-[var(--color-primary-soft)]">
-            <span className="text-[var(--color-primary)] text-xs font-medium opacity-60">
+          <div className="absolute inset-0 flex items-center justify-center bg-brand-50">
+            <span className="text-brand-600 text-xs font-medium opacity-60">
               Foto belum tersedia
             </span>
           </div>
         )}
 
-        {/* Status badge — absolute top-right */}
-        <div className="absolute top-2 right-2">
+        {/* Status badge — absolute top-2.5 right-2.5 */}
+        <div className="absolute top-2.5 right-2.5 z-10">
           <StatusBadge variant={status} size="sm" dot />
         </div>
       </div>
 
       {/* ── Content ── */}
-      <div className="flex flex-col gap-1 p-3 flex-1">
+      <div className="flex flex-col gap-1 pt-3 px-1 pb-0.5 flex-1">
         {/* Category label */}
-        <span className="text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
           {category}
         </span>
 
-        {/* Product name — max 2 lines */}
-        <h3 className="text-sm font-semibold text-[var(--color-foreground)] leading-snug line-clamp-2 group-hover:text-[var(--color-primary)] transition-colors duration-150">
+        {/* Product name — text-balance */}
+        <h3 className="text-sm font-semibold text-slate-900 leading-snug line-clamp-2 text-balance group-hover:text-brand-600 transition-colors duration-150">
           {name}
         </h3>
 
         {/* Spacer pushes price to bottom */}
-        <div className="flex-1" />
+        <div className="flex-1 min-h-2" />
 
-        {/* Price */}
-        <div className="mt-2 pt-2 border-t border-[var(--color-border-soft)]">
-          <p className="text-[11px] text-[var(--color-muted)] leading-none mb-0.5">
+        {/* Price block */}
+        <div className="mt-1 pt-2 border-t border-slate-100">
+          <p className="text-[11px] text-slate-500 leading-none mb-1">
             Mulai dari
           </p>
-          <p className="text-sm font-bold text-[var(--color-primary)]">
+          <p className="text-sm sm:text-base font-bold text-brand-600 tabular-nums tracking-tight">
             {formatRupiah(pricePerNight)}
-            <span className="text-[11px] font-normal text-[var(--color-muted)] ml-0.5">
+            <span className="text-[11px] font-normal text-slate-500 ml-1">
               /malam
             </span>
           </p>

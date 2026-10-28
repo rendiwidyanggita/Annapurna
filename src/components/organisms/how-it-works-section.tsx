@@ -20,9 +20,9 @@ const STEPS = [
   },
   {
     step: 2,
-    title: "Bayar DP 50%",
+    title: "Bayar DP 30%",
     description:
-      "Konfirmasi booking dengan bayar DP 50% via QRIS atau transfer",
+      "Konfirmasi booking dengan bayar DP 30% via QRIS atau transfer bank",
     icon: CreditCardIcon,
   },
   {
@@ -56,16 +56,16 @@ const STEPS = [
 export function HowItWorksSection() {
   return (
     <section
-      className="w-full bg-[var(--color-primary-soft)] py-12 md:py-16"
+      className="w-full bg-brand-50 py-14 md:py-20 border-t border-brand-100/60"
       aria-label="Cara Sewa di ANNAPURNA"
     >
       <div className="container-page">
         {/* Section header */}
-        <div className="text-center mb-10">
-          <h2 className="text-xl md:text-2xl font-bold text-[var(--color-foreground)]">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight text-balance">
             Cara Sewa di ANNAPURNA
           </h2>
-          <p className="mt-2 text-sm text-[var(--color-muted)] max-w-md mx-auto">
+          <p className="mt-2.5 text-sm text-slate-600 max-w-md mx-auto text-pretty">
             Proses sewa mudah, transparan, dan bisa dilakukan dari mana saja
           </p>
         </div>

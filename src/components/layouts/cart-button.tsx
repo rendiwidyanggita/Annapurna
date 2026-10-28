@@ -18,10 +18,10 @@ export function CartButton({ className }: { className?: string }) {
     <Link
       href={ROUTES.CART}
       className={cn(
-        "relative flex items-center justify-center w-9 h-9 rounded-[var(--radius-md)]",
-        "text-[var(--color-muted)] hover:text-[var(--color-foreground)]",
-        "hover:bg-[var(--color-border-soft)] transition-colors duration-150",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]",
+        "relative flex items-center justify-center min-w-[44px] min-h-[44px] rounded-xl",
+        "text-slate-600 hover:text-slate-900",
+        "hover:bg-slate-100 transition-colors duration-150 active:scale-[0.96]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600",
         className
       )}
       aria-label={`Keranjang sewa (${itemCount} item)`}
@@ -33,7 +33,7 @@ export function CartButton({ className }: { className?: string }) {
         color="currentColor"
       />
       {itemCount > 0 && (
-        <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-emerald-700 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-[var(--color-surface)] shadow-xs animate-scale-in">
+        <span className="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 bg-brand-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white shadow-xs tabular-nums">
           {itemCount > 99 ? "99+" : itemCount}
         </span>
       )}

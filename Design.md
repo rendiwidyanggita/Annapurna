@@ -42,45 +42,76 @@ Desain harus terasa seperti platform rental outdoor yang rapi, terpercaya, dan m
 
 ## Colour Palette
 
-Palette mengikuti logo ANNAPURNA yang dominan hijau dan hitam.
+Palette mengikuti identitas logo ANNAPURNA Adventure yang berkarakter outdoor pine green, clean slate neutrals, dan berstandar WCAG AAA (≥ 7:1) / AA (≥ 4.5:1). Seluruh utility Tailwind menggunakan token `brand-*`, dilarang keras mencampur aduk utility arbitrer `emerald-*` atau heksadesimal ad-hoc.
 
-### Primary Colors
+### Annapurna Pine Brand Scale (11-Step Tonal Scale)
 
-| Token | Hex | Usage |
-|---|---|---|
-| Primary Green | `#16624B` | CTA utama, active state, highlight |
-| Dark Green | `#0F4F3C` | Hover button, dark brand section |
-| Deep Green | `#0B3E2F` | Background gelap terbatas |
-| Soft Green | `#E7F3EE` | Background lembut, badge, info card |
+Dikalibrasi dari warna signature `#16624B` (Forest Pine) untuk seluruh elemen brand outdoor:
 
-### Neutral Colors
+| Token Tailwind | CSS Variable | Hex Code | Peruntukan & Panduan Penggunaan |
+| --- | --- | --- | --- |
+| `brand-50` | `--color-brand-50` | `#F0F7F4` | Ultra-clean soft wash: background card lembut, banner info, background How It Works |
+| `brand-100` | `--color-brand-100` | `#DCEDE5` | Chip items, badge aktif, hover state container ringan |
+| `brand-200` | `--color-brand-200` | `#BDDDD0` | Border halus komponen brand, divider elemen aktif |
+| `brand-300` | `--color-brand-300` | `#8EC4B0` | Highlight teks pada dark hero, subtle accent |
+| `brand-400` | `--color-brand-400` | `#5AA58D` | Secondary icon accents, decorative subtle marks |
+| `brand-500` | `--color-brand-500` | `#33856D` | Fresh outdoor foliage accent, vibrant indicators |
+| `brand-600` | `--color-brand-600` | `#16624B` | **Primary Signature Brand Color**: Tombol CTA utama, logo brand, harga produk, active links |
+| `brand-700` | `--color-brand-700` | `#0F4F3C` | Hover button utama, pressed state, stroke aktif gelap |
+| `brand-800` | `--color-brand-800` | `#0B3E2F` | Deep forest surface: background Footer, dark card containers |
+| `brand-900` | `--color-brand-900` | `#072C21` | Deep spruce: dark banner scrim, dark header contrast |
+| `brand-950` | `--color-brand-950` | `#031711` | Near-black spruce: deep photo overlays, ambient shadow undertone |
 
-| Token | Hex | Usage |
-|---|---|---|
-| Text Primary | `#111827` | Judul dan teks utama |
-| Text Secondary | `#6B7280` | Deskripsi, meta text |
-| Border | `#E5E7EB` | Border card, input, table |
-| Background | `#F9FAFB` | Background halaman |
-| Surface | `#FFFFFF` | Card, modal, form |
+### Clean & Crisp Neutral Scale (Slate-Tinted Modern Neutrals)
 
-### Status Colors
+Menghindari tampilan kusam (*dirty gray*) dan memberikan kontras tajam:
 
-| Status | Hex | Usage |
-|---|---|---|
-| Success | `#16A34A` | Available, success state |
-| Warning | `#D97706` | Pending, maintenance |
-| Danger | `#DC2626` | Damaged, lost, failed |
-| Info | `#2563EB` | Rented, informational state |
-| Muted | `#6B7280` | Returned, inactive |
+| Token Tailwind | CSS Variable | Hex Code | Peruntukan & Panduan Penggunaan |
+| --- | --- | --- | --- |
+| `canvas` | `--color-background` | `#F8FAFC` | Background halaman utama (Slate-50, bersih dan cerah) |
+| `surface` | `--color-surface` | `#FFFFFF` | Latar belakang kartu produk, widget melayang, dialog modal |
+| `surface-subtle` | `--color-surface-subtle` | `#F1F5F9` | Table header background, card hover secondary, placeholder container |
+| `border-subtle` | `--color-border-subtle` | `rgba(15,23,42,0.04)` | Border kartu modern (dikombinasikan dengan layered shadow) |
+| `border-default` | `--color-border` | `#E2E8F0` | Border standar input form, separator, divider tabel |
+| `border-strong` | `--color-border-strong` | `#CBD5E1` | Active input border, focused tab outlines |
+| `text-muted` | `--color-text-muted` | `#94A3B8` | Placeholder, subtle timestamps, non-interactive icon strokes |
+| `text-secondary` | `--color-muted` | `#64748B` | Subtitle, deskripsi produk, helper text (kontras 5.8:1 pada background putih) |
+| `text-primary` | `--color-foreground` | `#0F172A` | Judul H1/H2/H3, nama produk, teks utama (Deep Slate Ink, tajam & elegan) |
 
-### Color Usage Ratio
+### Semantic Status Tokens
 
-```text
-70% neutral / white space
-20% gray / layout / border
-10% green / accent / status
+Status terisolasi jelas dari brand color hijau:
+
+| Status | Hex Text | Hex Background | Hex Border | Usage |
+| --- | --- | --- | --- | --- |
+| Success (`available`) | `#15803D` | `#ECFDF5` | `#A7F3D0` | Unit tersedia, transaksi berhasil, validasi sukses |
+| Warning (`reserved` / `maintenance`) | `#B45309` | `#FFFBEB` | `#FDE68A` | Unit ter-booking, pemeliharaan alat, batas waktu dekat |
+| Danger (`damaged` / `lost` / `late`) | `#B91C1C` | `#FEF2F2` | `#FECACA` | Unit rusak/hilang, denda keterlambatan, pembatalan |
+| Info (`rented`) | `#1D4ED8` | `#EFF6FF` | `#BFDBFE` | Unit sedang disewa, instruksi operasional, info status |
+
+### Multi-layer Box Shadow System
+
+Menggantikan border garis tebal konvensional dengan kedalaman alami:
+
+```css
+--shadow-card: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+--shadow-card-hover: 0 10px 25px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
+--shadow-floating: 0 20px 40px -6px rgba(15, 23, 42, 0.12), 0 8px 16px -4px rgba(15, 23, 42, 0.06);
+--shadow-modal: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
 ```
 
+### Color Usage Ratio & Anti-Patterns
+
+```text
+70% neutral / white space (Canvas #F8FAFC & Surface #FFFFFF)
+20% slate layout / soft cards / borders (Slate-100 s/d 300)
+10% signature pine brand accent & semantic status (#16624B & Statuses)
+```
+
+**Anti-patterns yang dilarang:**
+1. **Emerald Arbitrer:** Dilarang menggunakan utilitas Tailwind seperti `bg-emerald-500`, `text-emerald-600`. Wajib menggunakan `brand-*`.
+2. **Dirty Gray:** Dilarang menggunakan gray netral yang kusam atau kuning kecokelatan. Gunakan Slate Neutrals berkarakter modern.
+3. **Border Tebal Berlebihan:** Hindari border gelap solid. Gunakan `border-black/[0.04]` atau `border-border` dipadu dengan `shadow-card` / `shadow-floating`.
 ---
 
 ## Typography
@@ -134,21 +165,34 @@ fontFamily: {
 
 ## UI Component Rules
 
+### Prinsip Design Engineering
+
+1. **Concentric Border Radius (`outerRadius = innerRadius + padding`):** Menghindari radius acak. Contoh: Card `rounded-2xl` (16px) dengan padding 12px memuat thumbnail/badge `rounded-xl` atau `rounded-lg` (8px). Search widget `rounded-2xl md:rounded-3xl` (padding 16–20px) memuat inner input `rounded-xl` (12px).
+2. **Shadows Over Borders:** Ganti border solid tebal dengan border beropasitas rendah (`border-black/[0.04]` atau `border-border`) dipadu layered ambient shadow (`shadow-card`, `shadow-card-hover`, `shadow-floating`).
+3. **Tabular Numbers (`tabular-nums`):** Seluruh angka dinamis, harga sewa (`Rp XX.XXX`), hitung hari, dan badge counter wajib menggunakan `tabular-nums` untuk mencegah layout shift.
+4. **Text Balancing:** Judul heading (H1, H2, H3) menggunakan `text-balance tracking-tight`. Body text dan deskripsi menggunakan `text-pretty leading-relaxed`.
+5. **Image Outlines:** Gambar luar ruangan berlatar terang wajib diberi garis tepi murni hitam beropasitas rendah (`ring-1 ring-black/[0.06]`).
+6. **Tactile Feedback:** Seluruh tombol interaktif menggunakan `active:scale-[0.96] transition-transform duration-150 ease-out`. Kartu interaktif menggunakan `hover:-translate-y-1 active:scale-[0.98] transition-[transform,box-shadow,border-color] duration-200 ease-out`. Hindari `transition-all`.
+7. **Touch Target Size:** Target klik/sentuh minimum 44×44px (`min-h-[44px]`).
+
 ### Button
 
 Primary button:
 
 ```text
-Background: #16624B
+Background: #16624B (brand-600)
 Text: #FFFFFF
-Hover: #0F4F3C
-Radius: 10–12px
+Hover: #0F4F3C (brand-700)
+Radius: rounded-xl (12px)
+Height: 44–48px (min-h-[44px])
+Feedback: active:scale-[0.96] transition-transform duration-150 ease-out
 ```
 
 Digunakan untuk:
 
 * Booking Sekarang
 * Bayar DP
+* Cek Ketersediaan
 * Simpan
 * Konfirmasi
 * Checkout
@@ -157,56 +201,64 @@ Secondary button:
 
 ```text
 Background: #FFFFFF
-Border: #16624B
-Text: #16624B
-Hover Background: #E7F3EE
+Border: border-slate-200 (atau border-brand-600)
+Text: #16624B (brand-600)
+Hover Background: #F0F7F4 (brand-50)
+Radius: rounded-xl (12px)
+Height: 44–48px (min-h-[44px])
+Feedback: active:scale-[0.96] transition-transform duration-150 ease-out
 ```
 
 Digunakan untuk:
 
 * Lihat Detail
+* Lihat Paket
 * Filter
 * Kembali
 * Batal
 
-### Card
+### Card & Floating Widget
 
-Card digunakan untuk produk, paket, transaksi, laporan, dan dashboard.
-
+#### Product Card & Package Card
 Style:
 
 ```text
-Background: #FFFFFF
-Border: #E5E7EB
-Radius: 14–16px
-Shadow: subtle
-Padding: 16–24px
+Background: #FFFFFF (surface)
+Border: border-black/[0.04] (border-subtle)
+Radius: rounded-2xl (16px)
+Shadow: shadow-card hover:shadow-card-hover
+Image: aspect-square (Product) / aspect-[16/9] (Package), ring-1 ring-black/[0.06] rounded-xl
+Price: tabular-nums tracking-tight font-bold text-brand-600
+Transition: transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-1 active:scale-[0.98]
 ```
 
-Product card maksimal menampilkan:
+#### Rental Search Widget (Floating)
+Style:
 
-* Foto produk
-* Nama produk
-* Harga mulai dari
-* Durasi/harga singkat
-* Status ketersediaan
-* CTA detail/booking
+```text
+Layout: Melayang (-mt-12 md:-mt-16 z-20)
+Background: bg-white/95 backdrop-blur-md
+Border: border-black/[0.06]
+Radius: rounded-2xl md:rounded-3xl (padding 16–20px)
+Shadow: shadow-floating (0 20px 40px -6px rgba(15,23,42,0.12), 0 8px 16px -4px rgba(15,23,42,0.06))
+Inner Inputs: rounded-xl (12px), border-slate-200 focus:border-brand-600, h-12, tabular-nums
+CTA Button: bg-brand-600 hover:bg-brand-700 text-white rounded-xl h-12 px-6 active:scale-[0.96]
+```
 
 ### Badge / Status
 
-Status harus menggunakan warna dan teks, tidak boleh hanya warna.
+Status harus menggunakan kombinasi warna, teks, dan dot indikator (tidak boleh warna saja):
 
-| Status      | Style          |
-| ----------- | -------------- |
-| Available   | Green badge    |
-| Reserved    | Amber badge    |
-| Rented      | Blue badge     |
-| Returned    | Gray badge     |
-| Maintenance | Amber badge    |
-| Damaged     | Red badge      |
-| Lost        | Red/Dark badge |
-| Inactive    | Gray badge     |
-
+| Status      | Variant / Style                              |
+| ----------- | -------------------------------------------- |
+| Available   | Success: `#15803D`, bg `#ECFDF5`, border `#A7F3D0` |
+| Reserved    | Warning: `#B45309`, bg `#FFFBEB`, border `#FDE68A` |
+| Rented      | Info: `#1D4ED8`, bg `#EFF6FF`, border `#BFDBFE`    |
+| Returned    | Neutral: `#64748B`, bg `#F1F5F9`, border `#E2E8F0` |
+| Maintenance | Warning: `#B45309`, bg `#FFFBEB`, border `#FDE68A` |
+| Damaged     | Danger: `#B91C1C`, bg `#FEF2F2`, border `#FECACA`  |
+| Lost        | Danger: `#7F1D1D`, bg `#FEF2F2`, border `#FECACA`  |
+| Inactive    | Neutral: `#94A3B8`, bg `#F8FAFC`, border `#E2E8F0` |
 ### Rental Date Selector
 
 Komponen pemilihan tanggal sewa pada detail produk, detail paket, cart edit, dan checkout menggunakan tiga informasi yang saling terkait:

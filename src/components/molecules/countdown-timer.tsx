@@ -149,9 +149,10 @@ export function CountdownTimer({
           Selesaikan pembayaran sebelum waktu habis
         </p>
 
-        <div className="flex items-baseline gap-1">
+        <div className="flex items-baseline gap-1" suppressHydrationWarning>
           {/* MM */}
           <span
+            suppressHydrationWarning
             className={cn(
               "font-mono font-bold tabular-nums",
               isCritical
@@ -173,6 +174,7 @@ export function CountdownTimer({
           </span>
           {/* SS */}
           <span
+            suppressHydrationWarning
             className={cn(
               "font-mono font-bold tabular-nums",
               isCritical

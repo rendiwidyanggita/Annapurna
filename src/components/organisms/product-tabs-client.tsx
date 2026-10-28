@@ -85,10 +85,10 @@ export function ProductTabsClient({
       )}
 
       {/* CTA */}
-      <div className="mt-8 text-center">
+      <div className="mt-10 text-center">
         <Link
           href={ROUTES.CATALOG}
-          className="inline-flex items-center justify-center px-6 py-2.5 rounded-[var(--radius-md)] border border-[var(--color-primary)] text-sm font-semibold text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white transition-all duration-150"
+          className="inline-flex items-center justify-center h-12 px-7 rounded-xl border border-slate-200 hover:border-brand-600 text-sm font-semibold text-brand-600 hover:bg-brand-50 active:scale-[0.96] transition-[transform,background-color,border-color] duration-150 ease-out shadow-xs"
         >
           Lihat Semua Produk
         </Link>

@@ -86,12 +86,17 @@ export async function CategoryGrid() {
     <section aria-label="Kategori Perlengkapan">
       {/* Section header */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-[var(--color-foreground)]">
-          Jelajahi Kategori
-        </h2>
+        <div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight text-balance">
+            Jelajahi Kategori
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600 mt-1 text-pretty">
+            Peralatan pendakian berkualitas terbagi berdasarkan kebutuhanmu
+          </p>
+        </div>
         <Link
           href={ROUTES.CATALOG}
-          className="text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors duration-150"
+          className="text-sm font-semibold text-brand-600 hover:text-brand-700 inline-flex items-center gap-1 transition-colors duration-150"
         >
           Lihat Semua →
         </Link>
