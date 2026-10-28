@@ -161,16 +161,27 @@ export async function forgotPassword(formData: FormData): Promise<ActionState> {
 
   // Selalu kembalikan pesan sukses generik untuk menghindari
   // user enumeration (tidak membocorkan apakah email terdaftar atau tidak).
-  await supabase.auth.resetPasswordForEmail(result.data.email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/reset-password`,
+  const { error } = await supabase.auth.resetPasswordForEmail(result.data.email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/reset-password`,
   });
+
+  if (error) {
+    console.error("[forgotPassword Error]:", error.message, error);
+    if (error.code === "over_email_send_rate_limit" || error.status === 429) {
+      return {
+        error: "Terlalu sering meminta link reset. Harap tunggu 1-2 menit sebelum mencoba lagi.",
+      };
+    }
+    return {
+      error: "Gagal mengirim link reset password. Silakan coba lagi.",
+    };
+  }
 
   return {
     success:
-      "Jika email Anda terdaftar, link reset password akan segera dikirim. Silakan cek kotak masuk.",
+      "Jika email Anda terdaftar, link reset password akan segera dikirim. Silakan cek kotak masuk (atau folder Spam).",
   };
 }
-
 // ============================================================
 // Reset Password
 // ============================================================
@@ -185,18 +196,38 @@ export async function resetPassword(formData: FormData): Promise<ActionState> {
     return { error: result.error.errors[0].message };
   }
 
+  const code = formData.get("code") as string | null;
   const supabase = await createClient();
+
+  // Fallback: Jika user membuka link langsung dengan ?code=..., tukar code menjadi session
+  if (code) {
+    const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+    if (exchangeError) {
+      console.error("[resetPassword exchangeCode error]:", exchangeError.message);
+      return {
+        error: "Link reset password tidak valid atau telah kedaluwarsa. Silakan minta link baru.",
+      };
+    }
+  }
 
   const { error } = await supabase.auth.updateUser({
     password: result.data.password,
   });
 
   if (error) {
-    if (error.message.includes("expired") || error.message.includes("invalid")) {
-      return { error: "Link reset password telah kedaluwarsa. Minta link baru." };
+    console.error("[resetPassword updateUser error]:", error.message);
+    if (
+      error.message.includes("expired") ||
+      error.message.includes("invalid") ||
+      error.message.includes("Auth session missing")
+    ) {
+      return { error: "Sesi reset password telah kedaluwarsa atau tidak valid. Minta link baru." };
     }
     return { error: "Gagal mengubah password. Coba lagi." };
   }
+
+  // Bersihkan sesi reset password sementara
+  await supabase.auth.signOut();
 
   return { success: "Password berhasil diubah. Silakan login." };
 }
