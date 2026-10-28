@@ -198,16 +198,18 @@ export function InvoiceContent({ transaction: initialTransaction }: InvoiceConte
     }, POLL_INTERVAL_MS);
   }, [fetchLatestStatus, stopPolling, router]);
 
-  // Trigger polling when arriving from payment success redirect
+  // Check status on mount & trigger polling when arriving from payment redirect
   useEffect(() => {
     const paymentParam = searchParams.get("payment");
     if (paymentParam === "success" && isAwaitingPayment) {
       startPolling();
+    } else if (isAwaitingPayment) {
+      // Proactively check status once in case payment was completed
+      fetchLatestStatus();
     }
     return () => stopPolling();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   // ── Snap payment handler (Task 5) ──
   const handlePayDP = useCallback(async () => {
     setPaymentError(null);
@@ -525,27 +527,41 @@ export function InvoiceContent({ transaction: initialTransaction }: InvoiceConte
 
             {/* CTA based on status */}
             {isAwaitingPayment && (
-              <Button
-                onClick={handlePayDP}
-                disabled={isPaymentLoading}
-                className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white font-bold h-12 rounded-xl text-xs sm:text-sm shadow-md gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isPaymentLoading ? (
-                  <>
-                    <HugeiconsIcon
-                      icon={Loading01Icon}
-                      size={16}
-                      className="animate-spin"
-                    />
-                    Mempersiapkan Pembayaran...
-                  </>
-                ) : (
-                  <>
-                    <HugeiconsIcon icon={CheckmarkCircle01Icon} size={16} />
-                    Bayar DP Sekarang
-                  </>
-                )}
-              </Button>
+              <div className="space-y-2">
+                <Button
+                  onClick={handlePayDP}
+                  disabled={isPaymentLoading}
+                  className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white font-bold h-12 rounded-xl text-xs sm:text-sm shadow-md gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isPaymentLoading ? (
+                    <>
+                      <HugeiconsIcon
+                        icon={Loading01Icon}
+                        size={16}
+                        className="animate-spin"
+                      />
+                      Mempersiapkan Pembayaran...
+                    </>
+                  ) : (
+                    <>
+                      <HugeiconsIcon icon={CheckmarkCircle01Icon} size={16} />
+                      Bayar DP Sekarang
+                    </>
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={async () => {
+                    const stopped = await fetchLatestStatus();
+                    if (stopped) router.refresh();
+                  }}
+                  className="w-full text-xs h-10 border-slate-200 text-slate-700 hover:bg-slate-50 gap-1.5"
+                >
+                  <HugeiconsIcon icon={RefreshIcon} size={14} />
+                  Sudah Bayar? Cek Status
+                </Button>
+              </div>
             )}
 
             {isPaymentSuccess && (
