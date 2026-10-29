@@ -27,9 +27,9 @@ const TRUST_SIGNALS: readonly TrustSignal[] = [
     icon: Tag01Icon,
   },
   {
-    title: "Booking Cepat, DP 30%",
+    title: "Booking Cepat, DP 50%",
     description:
-      "Cukup bayar DP 30% via transfer bank atau QRIS, pelunasan sisa dapat dilakukan saat ambil di toko.",
+      "Cukup bayar DP 50% via transfer bank atau QRIS, pelunasan sisa dapat dilakukan saat ambil di toko.",
     icon: CreditCardIcon,
   },
   {

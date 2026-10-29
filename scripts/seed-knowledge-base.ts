@@ -21,7 +21,7 @@ const KNOWLEDGE_BASE_ITEMS = [
     topic: "Pembayaran DP & Pelunasan",
     questionPattern: "cara bayar|dp|down payment|pelunasan|midtrans|qris|transfer",
     answer:
-      "Untuk mengamankan booking unit sewa, Anda wajib membayar Down Payment (DP) sebesar 30% dari total sewa secara online via Midtrans (QRIS, VA Bank, GoPay) dalam waktu 60 menit. Sisa pelunasan dibayarkan langsung di kasir toko saat serah terima/pickup barang.",
+      "Untuk mengamankan booking unit sewa, Anda wajib membayar Down Payment (DP) sebesar 50% dari total sewa secara online via Midtrans (QRIS, VA Bank, GoPay) dalam waktu 60 menit. Sisa pelunasan dibayarkan langsung di kasir toko saat serah terima/pickup barang.",
     isActive: true,
   },
   {

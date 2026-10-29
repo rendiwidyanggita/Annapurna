@@ -26,7 +26,7 @@ export const metadata: Metadata = {
  * Sections (top to bottom):
  * 1. HeroSection          — full-width photo with gradient overlay, CTA
  * 2. RentalSearchWidget   — floating interactive search card (dates + scheme)
- * 3. TrustSignalsSection  — 4 key value pillars (clean gear, transparent rates, DP 30%, basecamp)
+ * 3. TrustSignalsSection  — 4 key value pillars (clean gear, transparent rates, DP 50%, basecamp)
  * 4. CategoryGrid         — 5 product categories with item counters
  * 5. ProductTabs          — Terlaris/Terbaru tabs from DB (wrapped in Suspense)
  * 6. FeaturedPackages     — Bundled rental packages in Asymmetric Bento Grid

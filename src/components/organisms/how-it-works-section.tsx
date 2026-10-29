@@ -20,9 +20,9 @@ const STEPS = [
   },
   {
     step: 2,
-    title: "Bayar DP 30%",
+    title: "Bayar DP 50%",
     description:
-      "Konfirmasi booking dengan bayar DP 30% via QRIS atau transfer bank",
+      "Konfirmasi booking dengan bayar DP 50% via QRIS atau transfer bank",
     icon: CreditCardIcon,
   },
   {
