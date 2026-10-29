@@ -41,10 +41,10 @@ function Calendar({
         caption_label: "text-sm font-bold text-neutral-900 capitalize pointer-events-none",
         nav: "flex items-center justify-between absolute inset-x-0 top-0 h-8 z-20 pointer-events-none",
         button_previous: cn(
-          "z-20 pointer-events-auto absolute left-0 top-0 h-8 w-8 inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-colors cursor-pointer disabled:opacity-30 disabled:pointer-events-none shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#16624B]"
+          "z-20 pointer-events-auto absolute left-0 top-0 h-8 w-8 inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 active:scale-[0.96] transition-all cursor-pointer disabled:opacity-30 disabled:pointer-events-none shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#16624B]"
         ),
         button_next: cn(
-          "z-20 pointer-events-auto absolute right-0 top-0 h-8 w-8 inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-colors cursor-pointer disabled:opacity-30 disabled:pointer-events-none shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#16624B]"
+          "z-20 pointer-events-auto absolute right-0 top-0 h-8 w-8 inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 active:scale-[0.96] transition-all cursor-pointer disabled:opacity-30 disabled:pointer-events-none shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#16624B]"
         ),
         month_grid: "w-full border-collapse table-fixed",
         weekdays: "border-b border-neutral-100",
@@ -55,7 +55,7 @@ function Calendar({
         day: cn(
           "p-0 text-center align-middle relative",
           // Today styling
-          "data-[today]:[&>button]:border data-[today]:[&>button]:border-[#16624B] data-[today]:[&>button]:text-[#16624B] data-[today]:[&>button]:font-bold",
+          "data-[today]:[&>button]:border data-[today]:[&>button]:border-[#16624B] data-[today]:[&>button]:text-[#16624B] data-[today]:[&>button]:bg-[#E7F3EE]/50 data-[today]:[&>button]:font-bold",
           // Selected date styling
           "data-[selected]:[&>button]:!bg-[#16624B] data-[selected]:[&>button]:!text-white data-[selected]:[&>button]:!border-transparent data-[selected]:[&>button]:!font-bold data-[selected]:[&>button]:shadow-xs",
           // Outside days styling
@@ -64,12 +64,12 @@ function Calendar({
           "data-[disabled]:[&>button]:!text-neutral-300 data-[disabled]:[&>button]:!opacity-30 data-[disabled]:[&>button]:!cursor-not-allowed data-[disabled]:[&>button]:hover:!bg-transparent data-[disabled]:[&>button]:pointer-events-none"
         ),
         day_button: cn(
-          "size-9 min-h-[36px] min-w-[36px] mx-auto flex items-center justify-center rounded-xl text-xs font-medium tabular-nums text-neutral-700 hover:bg-[#E7F3EE] hover:text-[#16624B] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#16624B]"
+          "size-9 min-h-[36px] min-w-[36px] mx-auto flex items-center justify-center rounded-xl text-xs font-medium tabular-nums text-neutral-700 hover:bg-[#E7F3EE] hover:text-[#16624B] active:scale-[0.96] transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#16624B]"
         ),
         selected:
           "[&>button]:!bg-[#16624B] [&>button]:!text-white [&>button]:!border-transparent [&>button]:!font-bold [&>button]:shadow-xs",
         today:
-          "[&>button]:border [&>button]:border-[#16624B] [&>button]:text-[#16624B] [&>button]:font-bold",
+          "[&>button]:border [&>button]:border-[#16624B] [&>button]:text-[#16624B] [&>button]:bg-[#E7F3EE]/50 [&>button]:font-bold",
         outside:
           "[&>button]:text-neutral-300 [&>button]:opacity-40 [&>button]:hover:bg-transparent",
         disabled:

@@ -54,6 +54,7 @@ export function DatePicker({
   };
 
   const handleClear = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     onChange("");
   };
@@ -67,7 +68,10 @@ export function DatePicker({
             variant="outline"
             disabled={disabled}
             className={cn(
-              "w-full h-8 px-2.5 py-1.5 justify-start text-left font-normal text-xs rounded-lg border border-gray-300 bg-white hover:bg-neutral-50 shadow-2xs focus-visible:ring-1 focus-visible:ring-[#16624B]",
+              "w-full h-8 px-2.5 py-1.5 justify-start text-left font-normal text-xs rounded-lg border border-gray-300 bg-white transition-all duration-150 shadow-2xs",
+              "hover:border-[#16624B] hover:bg-gray-50/60",
+              open && "border-[#16624B] ring-1 ring-[#16624B]/20 bg-gray-50/40",
+              "focus-visible:ring-1 focus-visible:ring-[#16624B] focus-visible:border-[#16624B]",
               !parsedDate && "text-gray-400",
               buttonClassName
             )}
@@ -75,9 +79,17 @@ export function DatePicker({
             <HugeiconsIcon
               icon={Calendar03Icon}
               size={14}
-              className="mr-2 text-gray-500 shrink-0"
+              className={cn(
+                "mr-2 shrink-0 transition-colors",
+                parsedDate || open ? "text-[#16624B]" : "text-gray-400"
+              )}
             />
-            <span className="truncate flex-1 tabular-nums">
+            <span
+              className={cn(
+                "truncate flex-1 tabular-nums",
+                parsedDate ? "font-medium text-gray-900" : "text-gray-400"
+              )}
+            >
               {parsedDate
                 ? format(parsedDate, "d MMM yyyy", { locale: localeId })
                 : placeholder}
@@ -91,22 +103,47 @@ export function DatePicker({
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
+                    e.stopPropagation();
                     onChange("");
                   }
                 }}
-                className="ml-1 p-0.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors"
+                className="ml-1 p-0.5 rounded-md text-gray-400 hover:text-rose-600 hover:bg-rose-50 active:scale-[0.92] transition-colors shrink-0"
+                title="Hapus tanggal"
               >
                 <HugeiconsIcon icon={Cancel01Icon} size={12} />
               </span>
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0 z-50 bg-white shadow-xl rounded-2xl border border-neutral-100" align="start">
+        <PopoverContent
+          className="w-auto p-0 z-50 bg-white shadow-xl rounded-2xl border border-slate-200/80 overflow-hidden"
+          align="start"
+          sideOffset={6}
+        >
           <Calendar
             mode="single"
             selected={parsedDate}
             onSelect={handleSelect}
+            defaultMonth={parsedDate || new Date()}
           />
+          <div className="flex items-center justify-between px-3.5 py-2.5 border-t border-slate-100 bg-slate-50/70 text-xs">
+            <button
+              type="button"
+              onClick={() => handleSelect(new Date())}
+              className="text-xs font-semibold text-[#16624B] hover:text-[#0F4F3C] hover:underline transition-colors active:scale-[0.96]"
+            >
+              Hari Ini
+            </button>
+            {parsedDate && (
+              <button
+                type="button"
+                onClick={() => handleSelect(undefined)}
+                className="text-xs font-medium text-slate-500 hover:text-rose-600 hover:underline transition-colors active:scale-[0.96]"
+              >
+                Hapus Pilihan
+              </button>
+            )}
+          </div>
         </PopoverContent>
       </Popover>
     </div>
