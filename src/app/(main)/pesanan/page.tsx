@@ -185,13 +185,13 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50/60 pb-20 pt-6 dark:bg-neutral-950">
+    <div className="min-h-screen bg-neutral-50/60 pb-20 pt-6">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center justify-between">
           <Link
             href={ROUTES.HOME}
-            className="inline-flex items-center gap-2 text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+            className="inline-flex items-center gap-2 text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
           >
             <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
             <span>Kembali ke Beranda</span>
@@ -199,7 +199,7 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
 
           <Link
             href={ROUTES.PROFILE}
-            className="inline-flex items-center gap-2 text-sm font-medium text-brand-600 transition-colors hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+            className="inline-flex items-center gap-2 text-sm font-medium text-brand-600 transition-colors hover:text-brand-700"
           >
             <span>Pengaturan Akun & Profil</span>
             <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
@@ -207,18 +207,18 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
         </div>
 
         {/* Page Header */}
-        <div className="relative overflow-hidden rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-xs dark:border-neutral-800 dark:bg-neutral-900 sm:p-8">
+        <div className="relative overflow-hidden rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-xs sm:p-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-3">
-                <div className="flex size-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700 border border-brand-200 dark:bg-brand-950/50 dark:text-brand-300 dark:border-brand-900/60">
+                <div className="flex size-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700 border border-brand-200">
                   <HugeiconsIcon icon={ShoppingBag01Icon} size={20} />
                 </div>
-                <h1 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white">
+                <h1 className="text-xl sm:text-2xl font-bold text-neutral-900">
                   Riwayat Pesanan Saya
                 </h1>
               </div>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400 pl-13">
+              <p className="text-sm text-neutral-500 pl-13">
                 Pantau status pembayaran DP, jadwal pengambilan perlengkapan, dan riwayat sewa alat outdoor Anda.
               </p>
             </div>
@@ -256,7 +256,7 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
                   className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-colors border ${
                     isActive
                       ? "bg-brand-600 text-white border-brand-600 shadow-xs"
-                      : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50 dark:bg-neutral-900 dark:text-neutral-300 dark:border-neutral-800 dark:hover:bg-neutral-800/60"
+                      : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"
                   }`}
                 >
                   <span>{tab.label}</span>
@@ -264,7 +264,7 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
                     className={`inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[10px] font-bold ${
                       isActive
                         ? "bg-white/20 text-white"
-                        : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+                        : "bg-neutral-100 text-neutral-600"
                     }`}
                   >
                     {count}
@@ -290,7 +290,7 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
                 name="search"
                 defaultValue={searchQuery}
                 placeholder="Cari kode transaksi atau nama produk..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-neutral-200 bg-white text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors dark:border-neutral-800 dark:bg-neutral-900 dark:text-white"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-neutral-200 bg-white text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
               />
             </div>
           </form>
@@ -298,16 +298,16 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
 
         {/* Order Cards List or Empty State */}
         {transactions.length === 0 ? (
-          <div className="rounded-2xl border border-neutral-200/80 bg-white p-12 text-center shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
-            <div className="flex size-16 mx-auto items-center justify-center rounded-2xl bg-neutral-100 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500 mb-4">
+          <div className="rounded-2xl border border-neutral-200/80 bg-white p-12 text-center shadow-xs">
+            <div className="flex size-16 mx-auto items-center justify-center rounded-2xl bg-neutral-100 text-neutral-400 mb-4">
               <HugeiconsIcon icon={ShoppingBag01Icon} size={32} />
             </div>
-            <h3 className="text-lg font-bold text-neutral-900 dark:text-white">
+            <h3 className="text-lg font-bold text-neutral-900">
               {searchQuery || currentTab !== "ALL"
                 ? "Tidak Ada Pesanan yang Cocok"
                 : "Belum Ada Riwayat Pesanan"}
             </h3>
-            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400 max-w-md mx-auto">
+            <p className="mt-1 text-sm text-neutral-500 max-w-md mx-auto">
               {searchQuery || currentTab !== "ALL"
                 ? "Coba ubah kata kunci pencarian atau pilih tab status transaksi yang berbeda."
                 : "Anda belum pernah menyewa perlengkapan outdoor di ANNAPURNA. Jelajahi katalog dan pesan peralatan camping untuk petualangan Anda sekarang!"}
@@ -316,7 +316,7 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
               {searchQuery || currentTab !== "ALL" ? (
                 <Link
                   href={ROUTES.ORDERS}
-                  className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 px-4 py-2 text-xs sm:text-sm font-semibold text-neutral-700 hover:bg-neutral-50 dark:border-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                  className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 px-4 py-2 text-xs sm:text-sm font-semibold text-neutral-700 hover:bg-neutral-50"
                 >
                   <span>Reset Filter</span>
                 </Link>
@@ -341,18 +341,18 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
               return (
                 <div
                   key={transaction.id}
-                  className="rounded-2xl border border-neutral-200/80 bg-white p-5 sm:p-6 shadow-xs hover:border-neutral-300 transition-all dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700"
+                  className="rounded-2xl border border-neutral-200/80 bg-white p-5 sm:p-6 shadow-xs hover:border-neutral-300 transition-all"
                 >
                   {/* Card Header: Code + Dates + Badges */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-100 pb-4 dark:border-neutral-800/80">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-100 pb-4">
                     <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                      <span className="font-mono text-xs font-bold tracking-tight text-brand-700 bg-brand-50 px-2.5 py-1 rounded-md border border-brand-200/60 dark:bg-brand-950/40 dark:text-brand-300 dark:border-brand-900/40">
+                      <span className="font-mono text-xs font-bold tracking-tight text-brand-700 bg-brand-50 px-2.5 py-1 rounded-md border border-brand-200/60">
                         {transaction.transactionCode}
                       </span>
-                      <span className="text-xs text-neutral-400 dark:text-neutral-500">
+                      <span className="text-xs text-neutral-400">
                         •
                       </span>
-                      <span className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1">
+                      <span className="text-xs text-neutral-500 flex items-center gap-1">
                         <HugeiconsIcon icon={Clock01Icon} size={13} />
                         Dipesan{" "}
                         {format(new Date(transaction.createdAt), "dd MMM yyyy, HH:mm", {
@@ -377,31 +377,34 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
                   <div className="py-4 grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Items List Preview */}
                     <div className="md:col-span-2 space-y-2">
-                      <div className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+                      <div className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
                         Alat yang Disewa ({transaction.items.length} Barang)
                       </div>
                       <div className="space-y-1.5">
                         {transaction.items.slice(0, 3).map((item) => (
                           <div
                             key={item.id}
-                            className="flex items-center justify-between text-xs py-1 px-2.5 rounded-lg bg-neutral-50 dark:bg-neutral-800/50"
+                            className="flex items-center justify-between text-xs py-1 px-2.5 rounded-lg bg-neutral-50"
                           >
-                            <span className="font-medium text-neutral-800 dark:text-neutral-200 truncate pr-2">
+                            <Link
+                              href={ROUTES.PRODUCT_DETAIL(item.productId)}
+                              className="font-medium text-neutral-800 hover:text-brand-700 hover:underline underline-offset-2 truncate pr-2"
+                            >
                               {item.productNameSnap}
                               {item.unitCodeSnap && (
                                 <span className="ml-1 text-[11px] font-mono text-neutral-400">
                                   ({item.unitCodeSnap})
                                 </span>
                               )}
-                            </span>
-                            <span className="shrink-0 text-neutral-500 dark:text-neutral-400">
+                            </Link>
+                            <span className="shrink-0 text-neutral-500">
                               {item.quantity} unit × Rp{" "}
                               {item.priceSnap.toLocaleString("id-ID")}
                             </span>
                           </div>
                         ))}
                         {transaction.items.length > 3 && (
-                          <p className="text-[11px] text-neutral-400 dark:text-neutral-500 pl-2">
+                          <p className="text-[11px] text-neutral-400 pl-2">
                             +{transaction.items.length - 3} item lainnya...
                           </p>
                         )}
@@ -409,12 +412,12 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
                     </div>
 
                     {/* Rental Period Info */}
-                    <div className="rounded-xl border border-neutral-100 bg-neutral-50/70 p-3.5 space-y-2 dark:border-neutral-800/60 dark:bg-neutral-800/40">
-                      <div className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 flex items-center gap-1.5">
+                    <div className="rounded-xl border border-neutral-100 bg-neutral-50/70 p-3.5 space-y-2">
+                      <div className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
                         <HugeiconsIcon icon={Calendar03Icon} size={13} />
                         <span>Periode Sewa</span>
                       </div>
-                      <div className="text-xs space-y-1 text-neutral-700 dark:text-neutral-300">
+                      <div className="text-xs space-y-1 text-neutral-700">
                         <div>
                           <span className="text-neutral-400">Ambil: </span>
                           <span className="font-semibold">
@@ -435,7 +438,7 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
                             )}
                           </span>
                         </div>
-                        <div className="text-[11px] font-medium text-brand-700 dark:text-brand-300 pt-0.5">
+                        <div className="text-[11px] font-medium text-brand-700 pt-0.5">
                           Durasi: {transaction.totalDurationDays} Hari
                         </div>
                       </div>
@@ -443,35 +446,35 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
                   </div>
 
                   {/* Card Footer: Financial Summary & Actions */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-neutral-100 pt-4 dark:border-neutral-800/80">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-neutral-100 pt-4">
                     <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-xs">
                       <div>
-                        <span className="text-neutral-400 dark:text-neutral-500">
+                        <span className="text-neutral-400">
                           Total Sewa:{" "}
                         </span>
-                        <span className="text-sm font-bold text-neutral-900 dark:text-white">
+                        <span className="text-sm font-bold text-neutral-900">
                           Rp {transaction.totalAmount.toLocaleString("id-ID")}
                         </span>
                       </div>
-                      <span className="text-neutral-300 dark:text-neutral-700 hidden sm:inline">
+                      <span className="text-neutral-300 hidden sm:inline">
                         |
                       </span>
                       <div>
-                        <span className="text-neutral-400 dark:text-neutral-500">
+                        <span className="text-neutral-400">
                           DP 50%:{" "}
                         </span>
-                        <span className="font-semibold text-brand-600 dark:text-brand-400">
+                        <span className="font-semibold text-brand-600">
                           Rp {transaction.dpAmount.toLocaleString("id-ID")}
                         </span>
                       </div>
-                      <span className="text-neutral-300 dark:text-neutral-700 hidden sm:inline">
+                      <span className="text-neutral-300 hidden sm:inline">
                         |
                       </span>
                       <div>
-                        <span className="text-neutral-400 dark:text-neutral-500">
+                        <span className="text-neutral-400">
                           Sisa Toko:{" "}
                         </span>
-                        <span className="font-semibold text-neutral-700 dark:text-neutral-300">
+                        <span className="font-semibold text-neutral-700">
                           Rp {transaction.remainingAmount.toLocaleString("id-ID")}
                         </span>
                       </div>
@@ -494,7 +497,7 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
                         asChild
                         variant="outline"
                         size="sm"
-                        className="border-neutral-200 text-neutral-700 hover:bg-neutral-50 dark:border-neutral-800 dark:text-neutral-300 text-xs font-semibold"
+                        className="border-neutral-300 text-neutral-900 hover:bg-neutral-100 text-xs font-bold"
                       >
                         <Link href={ROUTES.ORDER_DETAIL(transaction.id)}>
                           <HugeiconsIcon icon={Invoice01Icon} size={14} />
@@ -509,8 +512,8 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-neutral-200 pt-4 dark:border-neutral-800">
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+              <div className="flex items-center justify-between border-t border-neutral-200 pt-4">
+                <p className="text-xs text-neutral-500">
                   Menampilkan {(currentPage - 1) * PAGE_SIZE + 1} -{" "}
                   {Math.min(currentPage * PAGE_SIZE, totalCount)} dari {totalCount}{" "}
                   pesanan
@@ -525,12 +528,12 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
                           ? `&search=${encodeURIComponent(searchQuery)}`
                           : ""
                       }`}
-                      className="px-3 py-1.5 rounded-lg border border-neutral-200 text-xs font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-800 dark:text-neutral-300"
+                      className="px-3 py-1.5 rounded-lg border border-neutral-200 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
                     >
                       Sebelumnya
                     </Link>
                   ) : null}
-                  <span className="px-3 py-1.5 text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                  <span className="px-3 py-1.5 text-xs font-semibold text-neutral-700">
                     Halaman {currentPage} dari {totalPages}
                   </span>
                   {currentPage < totalPages ? (
@@ -542,7 +545,7 @@ export default async function PesananPage({ searchParams }: PesananPageProps) {
                           ? `&search=${encodeURIComponent(searchQuery)}`
                           : ""
                       }`}
-                      className="px-3 py-1.5 rounded-lg border border-neutral-200 text-xs font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-800 dark:text-neutral-300"
+                      className="px-3 py-1.5 rounded-lg border border-neutral-200 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
                     >
                       Selanjutnya
                     </Link>

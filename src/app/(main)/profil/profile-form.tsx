@@ -42,12 +42,12 @@ export function ProfileForm({ user, profile }: ProfileFormProps) {
       {state.error && (
         <div
           role="alert"
-          className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50/70 p-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/20 dark:text-red-400"
+          className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50/70 p-4 text-sm text-red-700"
         >
           <HugeiconsIcon
             icon={AlertCircleIcon}
             size={20}
-            className="shrink-0 text-red-600 dark:text-red-400 mt-0.5"
+            className="shrink-0 text-red-600 mt-0.5"
           />
           <div className="flex-1">
             <p className="font-semibold">{state.error}</p>
@@ -58,16 +58,16 @@ export function ProfileForm({ user, profile }: ProfileFormProps) {
       {state.success && (
         <div
           role="status"
-          className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 text-sm text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-950/20 dark:text-emerald-300"
+          className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 text-sm text-emerald-800"
         >
           <HugeiconsIcon
             icon={CheckmarkCircle02Icon}
             size={20}
-            className="shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5"
+            className="shrink-0 text-emerald-600 mt-0.5"
           />
           <div className="flex-1">
             <p className="font-semibold">{state.success}</p>
-            <p className="text-xs text-emerald-700/80 dark:text-emerald-400/80 mt-0.5">
+            <p className="text-xs text-emerald-700/80 mt-0.5">
               Perubahan identitas telah tersimpan ke sistem.
             </p>
           </div>
@@ -78,7 +78,7 @@ export function ProfileForm({ user, profile }: ProfileFormProps) {
       <div className="space-y-1.5">
         <label
           htmlFor="email"
-          className="block text-xs font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-400"
+          className="block text-xs font-semibold uppercase tracking-wider text-neutral-600"
         >
           Email Akun
         </label>
@@ -91,15 +91,15 @@ export function ProfileForm({ user, profile }: ProfileFormProps) {
             type="email"
             disabled
             value={user.email}
-            className="w-full rounded-xl border border-neutral-200 bg-neutral-100/70 py-2.5 pl-11 pr-24 text-sm text-neutral-600 cursor-not-allowed select-all dark:border-neutral-800 dark:bg-neutral-900/60 dark:text-neutral-400"
+            className="w-full rounded-xl border border-neutral-200 bg-neutral-100/70 py-2.5 pl-11 pr-24 text-sm text-neutral-600 cursor-not-allowed select-all"
           />
           <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-            <span className="inline-flex items-center rounded-md bg-neutral-200/70 px-2 py-0.5 text-xs font-medium text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 capitalize">
+            <span className="inline-flex items-center rounded-md bg-neutral-200/70 px-2 py-0.5 text-xs font-medium text-neutral-700 capitalize">
               {user.authProvider === "google" ? "Google" : "Email"}
             </span>
           </div>
         </div>
-        <p className="text-xs text-neutral-500 dark:text-neutral-400">
+        <p className="text-xs text-neutral-500">
           Email terikat dengan identitas autentikasi akun Anda dan tidak dapat diubah.
         </p>
       </div>
@@ -108,7 +108,7 @@ export function ProfileForm({ user, profile }: ProfileFormProps) {
       <div className="space-y-1.5">
         <label
           htmlFor="fullName"
-          className="block text-xs font-semibold uppercase tracking-wider text-neutral-700 dark:text-neutral-300"
+          className="block text-xs font-semibold uppercase tracking-wider text-neutral-700"
         >
           Nama Lengkap <span className="text-red-500">*</span>
         </label>
@@ -124,15 +124,15 @@ export function ProfileForm({ user, profile }: ProfileFormProps) {
             defaultValue={profile?.fullName ?? ""}
             placeholder="Sesuai KTP / SIM"
             disabled={isPending}
-            className="w-full rounded-xl border border-neutral-300 bg-white py-2.5 pl-11 pr-4 text-sm text-neutral-900 shadow-xs transition-colors placeholder:text-neutral-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:opacity-75 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:border-brand-400"
+            className="w-full rounded-xl border border-neutral-300 bg-white py-2.5 pl-11 pr-4 text-sm text-neutral-900 shadow-xs transition-colors placeholder:text-neutral-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:opacity-75"
           />
         </div>
         {state.fieldErrors?.fullName ? (
-          <p className="text-xs text-red-600 dark:text-red-400">
+          <p className="text-xs text-red-600">
             {state.fieldErrors.fullName[0]}
           </p>
         ) : (
-          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+          <p className="text-xs text-neutral-500">
             Nama resmi untuk penjaminan dan verifikasi penyewaan alat outdoor.
           </p>
         )}
@@ -142,7 +142,7 @@ export function ProfileForm({ user, profile }: ProfileFormProps) {
       <div className="space-y-1.5">
         <label
           htmlFor="phoneNumber"
-          className="block text-xs font-semibold uppercase tracking-wider text-neutral-700 dark:text-neutral-300"
+          className="block text-xs font-semibold uppercase tracking-wider text-neutral-700"
         >
           Nomor WhatsApp Aktif <span className="text-red-500">*</span>
         </label>
@@ -158,15 +158,15 @@ export function ProfileForm({ user, profile }: ProfileFormProps) {
             defaultValue={profile?.phoneNumber ?? ""}
             placeholder="081234567890 atau +6281234567890"
             disabled={isPending}
-            className="w-full rounded-xl border border-neutral-300 bg-white py-2.5 pl-11 pr-4 text-sm text-neutral-900 shadow-xs transition-colors placeholder:text-neutral-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:opacity-75 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:border-brand-400"
+            className="w-full rounded-xl border border-neutral-300 bg-white py-2.5 pl-11 pr-4 text-sm text-neutral-900 shadow-xs transition-colors placeholder:text-neutral-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:opacity-75"
           />
         </div>
         {state.fieldErrors?.phoneNumber ? (
-          <p className="text-xs text-red-600 dark:text-red-400">
+          <p className="text-xs text-red-600">
             {state.fieldErrors.phoneNumber[0]}
           </p>
         ) : (
-          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+          <p className="text-xs text-neutral-500">
             Digunakan untuk konfirmasi pesanan, bukti transfer, dan status sewa.
           </p>
         )}
@@ -176,7 +176,7 @@ export function ProfileForm({ user, profile }: ProfileFormProps) {
       <div className="space-y-1.5">
         <label
           htmlFor="address"
-          className="block text-xs font-semibold uppercase tracking-wider text-neutral-700 dark:text-neutral-300"
+          className="block text-xs font-semibold uppercase tracking-wider text-neutral-700"
         >
           Alamat Domisili Lengkap <span className="text-red-500">*</span>
         </label>
@@ -192,15 +192,15 @@ export function ProfileForm({ user, profile }: ProfileFormProps) {
             defaultValue={profile?.address ?? ""}
             placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan, kecamatan, kota/kabupaten..."
             disabled={isPending}
-            className="w-full rounded-xl border border-neutral-300 bg-white py-2.5 pl-11 pr-4 text-sm text-neutral-900 shadow-xs transition-colors placeholder:text-neutral-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:opacity-75 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:border-brand-400"
+            className="w-full rounded-xl border border-neutral-300 bg-white py-2.5 pl-11 pr-4 text-sm text-neutral-900 shadow-xs transition-colors placeholder:text-neutral-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:opacity-75"
           />
         </div>
         {state.fieldErrors?.address ? (
-          <p className="text-xs text-red-600 dark:text-red-400">
+          <p className="text-xs text-red-600">
             {state.fieldErrors.address[0]}
           </p>
         ) : (
-          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+          <p className="text-xs text-neutral-500">
             Alamat tempat tinggal saat ini untuk verifikasi kartu identitas penjamin.
           </p>
         )}
@@ -211,7 +211,7 @@ export function ProfileForm({ user, profile }: ProfileFormProps) {
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white shadow-xs transition-all hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70 dark:bg-brand-500 dark:hover:bg-brand-600"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white shadow-xs transition-all hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isPending ? (
             <>
