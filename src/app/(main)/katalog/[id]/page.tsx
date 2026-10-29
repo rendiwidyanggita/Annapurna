@@ -121,15 +121,25 @@ export default async function ProductDetailPage({
         </ol>
       </nav>
 
-      {/* Main Product Showcase: Left Gallery, Right Interactive Panel */}
+      {/* Main Product Showcase: Left Gallery + Description, Right Interactive Panel */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-        {/* Left Column: Gallery (6 cols) */}
-        <div className="lg:col-span-6 lg:sticky lg:top-24">
+        {/* Left Column: Gallery + Description (6 cols) */}
+        <div className="lg:col-span-6 space-y-6">
           <ProductGallery media={product.media} productName={product.name} />
+
+          <div className="pt-6 border-t border-[var(--color-border)] space-y-3">
+            <h2 className="text-base sm:text-lg font-bold text-[var(--color-primary)]">
+              Deskripsi & Spesifikasi Produk
+            </h2>
+            <div className="prose prose-sm max-w-none text-gray-700 bg-white p-5 sm:p-6 rounded-2xl border border-[var(--color-border)] shadow-xs leading-relaxed whitespace-pre-line">
+              {product.description ||
+                "Belum ada deskripsi lengkap untuk produk ini. Hubungi layanan admin via WhatsApp untuk menanyakan spesifikasi teknis lebih lanjut."}
+            </div>
+          </div>
         </div>
 
-        {/* Right Column: Summary & Interactive Selector (6 cols) */}
-        <div className="lg:col-span-6 space-y-6">
+        {/* Right Column: Summary & Interactive Selector (6 cols, sticky on desktop) */}
+        <div className="lg:col-span-6 lg:sticky lg:top-24 space-y-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Badge variant="secondary" className="text-xs">
@@ -191,16 +201,6 @@ export default async function ProductDetailPage({
         </div>
       </div>
 
-      {/* Description & Rental Policy Tab / Accordion */}
-      <div className="pt-8 border-t border-[var(--color-border)] space-y-6">
-        <h2 className="text-lg font-bold text-[var(--color-primary)]">
-          Deskripsi & Spesifikasi Produk
-        </h2>
-        <div className="prose prose-sm max-w-none text-gray-700 bg-white p-6 rounded-2xl border border-[var(--color-border)] shadow-xs leading-relaxed whitespace-pre-line">
-          {product.description ||
-            "Belum ada deskripsi lengkap untuk produk ini. Hubungi layanan admin via WhatsApp untuk menanyakan spesifikasi teknis lebih lanjut."}
-        </div>
-      </div>
     </div>
   );
 }
