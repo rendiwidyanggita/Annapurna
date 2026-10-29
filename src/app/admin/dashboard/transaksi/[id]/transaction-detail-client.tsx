@@ -35,6 +35,7 @@ import {
   Invoice01Icon,
   AlertCircleIcon,
   Loading01Icon,
+  PrinterIcon,
 } from "@hugeicons/core-free-icons";
 import { format } from "date-fns";
 import { id as localeId } from "date-fns/locale";
@@ -45,6 +46,7 @@ import {
   UnitStatus,
   PenaltyType,
 } from "@prisma/client";
+import { ThermalReceipt } from "@/components/molecules/thermal-receipt";
 
 interface TransactionDetailClientProps {
   transaction: {
@@ -151,6 +153,7 @@ export function TransactionDetailClient({
   const [cancelReason, setCancelReason] = useState("");
   const [cancelError, setCancelError] = useState<string | null>(null);
   const [isCancelling, startCancelTransition] = useTransition();
+  const [isReceiptDialogOpen, setIsReceiptDialogOpen] = useState(false);
 
   const handleRevealId = () => {
     if (isRevealed) {
@@ -238,6 +241,16 @@ export function TransactionDetailClient({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsReceiptDialogOpen(true)}
+            className="h-9 text-xs font-semibold gap-1.5 border-gray-300 text-gray-700 hover:bg-gray-50 shadow-2xs"
+          >
+            <HugeiconsIcon icon={PrinterIcon} size={15} />
+            <span>Cetak Struk / Invoice</span>
+          </Button>
+
           {isReadyPickup && (
             <Link href={`/admin/dashboard/transaksi/${transaction.id}/pickup`}>
               <Button size="sm" className="bg-blue-600 hover:bg-blue-700 h-9 text-xs font-semibold gap-1.5 shadow-2xs text-white">
@@ -314,6 +327,30 @@ export function TransactionDetailClient({
               </DialogContent>
             </Dialog>
           )}
+
+          {/* ── Dialog Cetak Struk POS ── */}
+          <Dialog open={isReceiptDialogOpen} onOpenChange={setIsReceiptDialogOpen}>
+            <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="text-base font-bold text-gray-900">
+                  Cetak Struk Kasir (POS Thermal)
+                </DialogTitle>
+                <DialogDescription className="text-xs text-gray-500">
+                  Pratinjau struk fisik untuk diserahkan ke pelanggan saat serah terima unit di kasir.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="py-2 flex justify-center bg-neutral-100 p-4 rounded-xl overflow-x-auto">
+                <ThermalReceipt
+                  transaction={{
+                    ...transaction,
+                    maskedGuaranteeId: isRevealed && rawGuaranteeId ? rawGuaranteeId : transaction.maskedGuaranteeId,
+                  }}
+                  adminName="Admin Annapurna"
+                  showPrintButton={true}
+                />
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 

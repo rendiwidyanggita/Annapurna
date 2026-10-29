@@ -70,6 +70,7 @@ export default async function PesananDetailPage({ params }: PesananDetailPagePro
     notes: transaction.notes ?? null,
     items: transaction.items.map((item) => ({
       id: item.id,
+      productId: item.productId,
       productNameSnap: item.productNameSnap,
       unitCodeSnap: item.unitCodeSnap ?? null,
       priceSnap: item.priceSnap,

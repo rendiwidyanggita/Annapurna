@@ -135,3 +135,42 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ─── Thermal Receipt Print Styles ─── */
+@media print {
+  /* Hide ambient page layouts and dialog chrome */
+  header,
+  nav,
+  aside,
+  footer,
+  button,
+  .no-print,
+  [data-slot="dialog-close"],
+  [role="dialog"] > button {
+    display: none !important;
+  }
+
+  body,
+  html {
+    background: #fff !important;
+    color: #000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Make thermal receipt print crisp and centered */
+  .thermal-receipt {
+    width: 100% !important;
+    max-width: 80mm !important;
+    margin: 0 auto !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 2mm !important;
+    font-size: 10pt !important;
+  }
+
+  @page {
+    margin: 0;
+    size: auto;
+  }
+}

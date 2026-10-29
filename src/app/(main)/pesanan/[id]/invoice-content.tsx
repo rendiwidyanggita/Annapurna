@@ -16,13 +16,23 @@ import {
   Calendar03Icon,
   ShoppingBag01Icon,
   RefreshIcon,
+  PrinterIcon,
 } from "@hugeicons/core-free-icons";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ThermalReceipt } from "@/components/molecules/thermal-receipt";
 
 import { Button } from "@/components/ui/button";
 import { CountdownTimer, PaymentSuccessBanner } from "@/components/molecules/countdown-timer";
 import { TransactionStepper } from "@/components/organisms/transaction-stepper";
 import { cn } from "@/lib/utils";
 import { TransactionStatus, PaymentStatus } from "@prisma/client";
+import { ROUTES } from "@/config/routes";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types (mirrors server-side query shape)
@@ -30,6 +40,7 @@ import { TransactionStatus, PaymentStatus } from "@prisma/client";
 
 interface TransactionItem {
   id: string;
+  productId: string;
   productNameSnap: string;
   unitCodeSnap: string | null;
   priceSnap: number;
@@ -129,7 +140,7 @@ export function InvoiceContent({ transaction: initialTransaction }: InvoiceConte
   const [isPaymentLoading, setIsPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [codeCopied, setCodeCopied] = useState(false);
-
+  const [isReceiptOpen, setIsReceiptOpen] = useState(false);
   // Polling state — used after payment to catch webhook-driven status update
   const [isPolling, setIsPolling] = useState(false);
   const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -332,13 +343,46 @@ export function InvoiceContent({ transaction: initialTransaction }: InvoiceConte
               </div>
             </div>
           </div>
-          <div className="text-xs text-[var(--color-muted)]">
-            Dibuat{" "}
-            {format(new Date(transaction.createdAt), "dd MMM yyyy, HH:mm", {
-              locale: localeId,
-            })}
+          <div className="flex items-center gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setIsReceiptOpen(true)}
+              className="h-8 text-xs font-semibold gap-1.5 border-[var(--color-border)] text-[var(--color-foreground)] hover:bg-neutral-50 shadow-2xs"
+            >
+              <HugeiconsIcon icon={PrinterIcon} size={14} />
+              <span>Cetak Struk / Invoice</span>
+            </Button>
+            <div className="text-xs text-[var(--color-muted)] text-right">
+              Dibuat{" "}
+              {format(new Date(transaction.createdAt), "dd MMM yyyy, HH:mm", {
+                locale: localeId,
+              })}
+            </div>
           </div>
         </div>
+
+        {/* ── Dialog Cetak Struk POS ── */}
+        <Dialog open={isReceiptOpen} onOpenChange={setIsReceiptOpen}>
+          <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-base font-bold text-gray-900">
+                Struk Sewa & Bukti Booking
+              </DialogTitle>
+              <DialogDescription className="text-xs text-gray-500">
+                Simpan atau cetak struk ini untuk ditunjukkan saat pengambilan barang di kasir toko.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-2 flex justify-center bg-neutral-100 p-4 rounded-xl overflow-x-auto">
+              <ThermalReceipt
+                transaction={transaction}
+                adminName="Kasir Toko"
+                showPrintButton={true}
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* ── TransactionStepper (AA-76) ── */}
         <TransactionStepper currentStatus={transaction.transactionStatus} />
@@ -449,9 +493,12 @@ export function InvoiceContent({ transaction: initialTransaction }: InvoiceConte
                     className="py-3 flex items-center justify-between gap-4"
                   >
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-[var(--color-foreground)] truncate">
+                      <Link
+                        href={ROUTES.PRODUCT_DETAIL(item.productId)}
+                        className="text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] hover:underline underline-offset-2 truncate inline-block max-w-full"
+                      >
                         {item.productNameSnap}
-                      </p>
+                      </Link>
                       {item.unitCodeSnap && (
                         <p className="text-[11px] text-[var(--color-muted)] mt-0.5 font-mono">
                           Unit: {item.unitCodeSnap}
@@ -572,7 +619,7 @@ export function InvoiceContent({ transaction: initialTransaction }: InvoiceConte
                 <Button
                   variant="outline"
                   onClick={() => router.refresh()}
-                  className="w-full text-xs h-10 border-neutral-300 gap-1.5"
+                  className="w-full text-xs h-10 border-slate-300 text-slate-700 hover:bg-slate-100 hover:border-slate-400 active:scale-[0.99] transition-colors gap-1.5"
                 >
                   <HugeiconsIcon icon={RefreshIcon} size={14} />
                   Perbarui Status
