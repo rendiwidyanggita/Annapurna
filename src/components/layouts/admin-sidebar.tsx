@@ -149,16 +149,18 @@ export function AdminSidebarContent({
     <div className={cn("flex h-full w-full flex-col bg-white select-none", className)}>
       {/* ── Brand Header (h-16, border bottom) ── */}
       <div className="flex h-16 items-center justify-between px-5 border-b border-[#E5E7EB] shrink-0">
-        <Link href={ROUTES.ADMIN.DASHBOARD} className="flex items-center gap-2.5">
-          <Image
-            src="/images/favicon.svg"
-            alt="ANNAPURNA"
-            width={28}
-            height={28}
-            className="shrink-0"
-          />
+        <Link href={ROUTES.ADMIN.DASHBOARD} className="flex items-center gap-3">
+          <div className="size-9 rounded-lg bg-white border border-slate-200/80 shadow-xs flex items-center justify-center p-0.5 overflow-hidden shrink-0">
+            <Image
+              src="/images/favicon.png"
+              alt="ANNAPURNA"
+              width={34}
+              height={34}
+              className="w-full h-full object-contain"
+            />
+          </div>
           <div className="min-w-0">
-            <span className="font-bold text-base tracking-wide text-[#16624B] leading-none block">
+            <span className="font-extrabold text-base tracking-wide text-[#16624B] leading-none block">
               ANNAPURNA
             </span>
             <span className="text-[10px] text-[#6B7280] font-medium leading-none block mt-0.5">

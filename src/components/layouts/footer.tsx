@@ -23,17 +23,19 @@ export function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
           {/* ── Column 1: Brand ── */}
           <div>
-            <div className="flex items-center gap-2.5 mb-3">
-              <Image
-                src="/images/favicon.svg"
-                alt="ANNAPURNA Adventure"
-                width={36}
-                height={36}
-                className="brightness-0 invert"
-              />
+            <div className="flex items-center gap-3 mb-3">
+              <div className="size-12 sm:size-14 rounded-2xl bg-white p-1.5 shadow-md shrink-0 border border-white/20 flex items-center justify-center overflow-hidden">
+                <Image
+                  src="/images/favicon.png"
+                  alt="ANNAPURNA Adventure"
+                  width={48}
+                  height={48}
+                  className="w-full h-full object-contain"
+                />
+              </div>
               <div>
-                <p className="font-bold text-base leading-tight">ANNAPURNA</p>
-                <p className="text-xs text-white/60 leading-tight">Adventure</p>
+                <p className="font-extrabold text-base sm:text-lg leading-tight tracking-tight">ANNAPURNA</p>
+                <p className="text-xs text-white/70 leading-tight font-medium uppercase tracking-wider">Adventure</p>
               </div>
             </div>
             <p className="text-sm text-white/70 leading-relaxed max-w-[260px] text-pretty">

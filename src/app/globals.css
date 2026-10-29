@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+:root {
+  color-scheme: light;
+}
+
 @theme {
   /* ─── Typography ─── */
   --font-sans: var(--font-geist-sans), "Segoe UI", -apple-system, BlinkMacSystemFont,

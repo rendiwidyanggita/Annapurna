@@ -41,20 +41,22 @@ export async function Navbar() {
         {/* ── Logo ── */}
         <Link
           href={ROUTES.HOME}
-          className="flex items-center gap-2.5 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] rounded-[var(--radius-sm)]"
+          className="flex items-center gap-3 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] rounded-xl"
           aria-label="ANNAPURNA Adventure — Kembali ke Beranda"
         >
-          <Image
-            src="/images/favicon.svg"
-            alt="Logo ANNAPURNA Adventure"
-            width={36}
-            height={36}
-            className="rounded-[var(--radius-sm)]"
-            priority
-          />
-          <span className="hidden sm:block font-bold text-base text-[var(--color-primary)] tracking-tight leading-none">
+          <div className="size-11 sm:size-12 rounded-xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-center p-1 overflow-hidden shrink-0">
+            <Image
+              src="/images/favicon.png"
+              alt="Logo ANNAPURNA Adventure"
+              width={44}
+              height={44}
+              className="w-full h-full object-contain"
+              priority
+            />
+          </div>
+          <span className="hidden sm:block font-extrabold text-base sm:text-lg text-[var(--color-primary)] tracking-tight leading-none">
             ANNAPURNA
-            <span className="block text-[10px] font-medium text-[var(--color-muted)] tracking-wide">
+            <span className="block text-[10px] font-semibold text-[var(--color-muted)] tracking-wider mt-0.5 uppercase">
               Adventure
             </span>
           </span>
