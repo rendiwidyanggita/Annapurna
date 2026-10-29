@@ -69,15 +69,15 @@ export default async function TermsManagementPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900">
               Manajemen Syarat & Ketentuan (S&K)
             </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200/80 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/40">
+            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200/80">
               <HugeiconsIcon icon={Shield01Icon} size={12} />
               Owner Only
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+          <p className="text-xs sm:text-sm text-neutral-500 mt-1">
             Atur regulasi sewa alat outdoor, batas waktu booking, mekanisme denda, dan jaminan KTP/SIM pelanggan.
           </p>
         </div>
@@ -94,19 +94,19 @@ export default async function TermsManagementPage() {
       </div>
 
       {/* ── Active Version Highlight Banner ── */}
-      <div className="relative overflow-hidden rounded-2xl border border-brand-200/80 bg-gradient-to-r from-brand-50/70 via-white to-emerald-50/40 p-5 sm:p-6 shadow-xs dark:border-brand-900/60 dark:from-brand-950/40 dark:via-neutral-900 dark:to-emerald-950/20">
+      <div className="relative overflow-hidden rounded-2xl border border-brand-200/80 bg-gradient-to-r from-brand-50/70 via-white to-emerald-50/40 p-5 sm:p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200">
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-800">
                 <HugeiconsIcon icon={CheckmarkCircle01Icon} size={12} />
                 Versi Aktif Publik
               </span>
-              <span className="text-sm font-mono font-bold text-neutral-900 dark:text-white">
+              <span className="text-sm font-mono font-bold text-neutral-900">
                 {activeVersion ? activeVersion.version : "Belum Ada Versi Aktif"}
               </span>
             </div>
-            <p className="text-xs text-neutral-600 dark:text-neutral-400 max-w-2xl line-clamp-2">
+            <p className="text-xs text-neutral-600 max-w-2xl line-clamp-2">
               {activeVersion
                 ? activeVersion.content.slice(0, 200) + "..."
                 : "Belum ada versi S&K yang diset aktif. Pelanggan saat ini melihat teks fallback sistem."}
@@ -130,7 +130,7 @@ export default async function TermsManagementPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-xs font-semibold border-brand-200 hover:bg-brand-50 text-brand-700 dark:border-brand-900 dark:text-brand-300"
+                  className="text-xs font-semibold border-brand-200 hover:bg-brand-50 text-brand-700"
                 >
                   Edit Versi Aktif
                 </Button>
@@ -175,7 +175,7 @@ export default async function TermsManagementPage() {
       {/* ── Version History Table ── */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-bold text-neutral-900 dark:text-white">
+          <h2 className="text-base font-bold text-neutral-900">
             Daftar & Riwayat Versi Syarat Ketentuan
           </h2>
         </div>

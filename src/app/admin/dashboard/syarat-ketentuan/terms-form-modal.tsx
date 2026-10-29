@@ -140,7 +140,7 @@ function TermsFormContent({
         </p>
       </div>
 
-      <div className="flex items-center justify-between rounded-lg border p-3.5 bg-neutral-50/50 dark:bg-neutral-900/50">
+      <div className="flex items-center justify-between rounded-lg border p-3.5 bg-neutral-50/50">
         <div className="space-y-0.5">
           <Label htmlFor="terms-active" className="text-sm font-semibold cursor-pointer">
             Jadikan Versi Aktif

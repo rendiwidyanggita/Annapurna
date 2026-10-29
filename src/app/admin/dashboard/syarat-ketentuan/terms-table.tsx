@@ -24,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { TermsFormModal } from "./terms-form-modal";
 import { TermsPreviewModal } from "./terms-preview-modal";
 import { activateTermsVersion } from "./actions";
@@ -135,20 +136,20 @@ export function TermsTable({ terms, addTermsButton }: TermsTableProps) {
       </div>
 
       {/* Table Card */}
-      <div className="rounded-xl border border-neutral-200/80 bg-white shadow-xs dark:border-neutral-800 dark:bg-neutral-900 overflow-hidden">
+      <div className="rounded-xl border border-neutral-200/80 bg-white shadow-xs overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow className="bg-neutral-50/70 hover:bg-neutral-50/70 dark:bg-neutral-800/40 dark:hover:bg-neutral-800/40">
-              <TableHead className="w-[120px] font-semibold text-xs">Versi</TableHead>
-              <TableHead className="w-[110px] font-semibold text-xs">Status</TableHead>
-              <TableHead className="font-semibold text-xs">Isi Ringkas</TableHead>
-              <TableHead className="w-[130px] font-semibold text-xs text-center">
+            <TableRow className="bg-neutral-50/70 hover:bg-neutral-50/70 border-b border-neutral-200/80">
+              <TableHead className="py-3 px-4 w-[120px] font-semibold text-xs text-neutral-700">Versi</TableHead>
+              <TableHead className="py-3 px-4 w-[110px] font-semibold text-xs text-neutral-700">Status</TableHead>
+              <TableHead className="py-3 px-4 font-semibold text-xs text-neutral-700">Isi Ringkas</TableHead>
+              <TableHead className="py-3 px-4 w-[130px] font-semibold text-xs text-center text-neutral-700">
                 Transaksi Terkait
               </TableHead>
-              <TableHead className="w-[160px] font-semibold text-xs">
+              <TableHead className="py-3 px-4 w-[160px] font-semibold text-xs text-neutral-700">
                 Tanggal Dibuat
               </TableHead>
-              <TableHead className="w-[160px] font-semibold text-xs text-right">
+              <TableHead className="py-3 px-4 w-[160px] font-semibold text-xs text-right text-neutral-700">
                 Aksi
               </TableHead>
             </TableRow>
@@ -166,7 +167,7 @@ export function TermsTable({ terms, addTermsButton }: TermsTableProps) {
                       size={24}
                       className="text-neutral-400"
                     />
-                    <p className="font-medium text-neutral-700 dark:text-neutral-300">
+                    <p className="font-medium text-neutral-700">
                       {search ? "Versi tidak ditemukan" : "Belum ada data Syarat & Ketentuan"}
                     </p>
                     <p className="text-[11px] text-neutral-400">
@@ -188,15 +189,16 @@ export function TermsTable({ terms, addTermsButton }: TermsTableProps) {
                 return (
                   <TableRow
                     key={item.id}
-                    className={`text-xs ${
+                    className={cn(
+                      "text-xs transition-colors group cursor-default",
                       item.isActive
-                        ? "bg-brand-50/30 dark:bg-brand-950/20"
-                        : ""
-                    }`}
+                        ? "bg-brand-50/30 hover:bg-brand-50/70"
+                        : "hover:bg-gray-50/80"
+                    )}
                   >
-                    <TableCell className="font-mono font-bold text-neutral-900 dark:text-white">
+                    <TableCell className="py-3 px-4 font-mono font-bold text-neutral-900 group-hover:text-brand-700 transition-colors">
                       <div className="flex items-center gap-1.5">
-                        <span>{item.version}</span>
+                        <span className="tabular-nums">{item.version}</span>
                         {item.isActive && (
                           <span
                             className="size-1.5 rounded-full bg-emerald-500 animate-pulse"
@@ -206,7 +208,7 @@ export function TermsTable({ terms, addTermsButton }: TermsTableProps) {
                       </div>
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell className="py-3 px-4">
                       {item.isActive ? (
                         <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-50 text-[10px] font-bold">
                           Aktif
@@ -214,15 +216,15 @@ export function TermsTable({ terms, addTermsButton }: TermsTableProps) {
                       ) : (
                         <Badge
                           variant="secondary"
-                          className="bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400 text-[10px]"
+                          className="bg-neutral-100 text-neutral-600 text-[10px]"
                         >
                           Arsip
                         </Badge>
                       )}
                     </TableCell>
 
-                    <TableCell className="max-w-[340px]">
-                      <p className="text-neutral-700 dark:text-neutral-300 truncate font-mono text-[11px]">
+                    <TableCell className="py-3 px-4 max-w-[340px]">
+                      <p className="text-neutral-700 truncate font-mono text-[11px] group-hover:text-neutral-900 transition-colors">
                         {firstLine}
                       </p>
                       <p className="text-[11px] text-muted-foreground truncate">
@@ -230,13 +232,13 @@ export function TermsTable({ terms, addTermsButton }: TermsTableProps) {
                       </p>
                     </TableCell>
 
-                    <TableCell className="text-center">
-                      <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-md bg-neutral-100 dark:bg-neutral-800 font-medium text-[11px] text-neutral-700 dark:text-neutral-300">
+                    <TableCell className="py-3 px-4 text-center">
+                      <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-md bg-neutral-100 font-medium text-[11px] text-neutral-700 tabular-nums">
                         {item.transactionCount} order
                       </span>
                     </TableCell>
 
-                    <TableCell className="text-muted-foreground text-[11px]">
+                    <TableCell className="py-3 px-4 text-muted-foreground text-[11px] tabular-nums">
                       <div>
                         {format(new Date(item.createdAt), "dd MMM yyyy, HH:mm", {
                           locale: localeId,
@@ -244,27 +246,27 @@ export function TermsTable({ terms, addTermsButton }: TermsTableProps) {
                       </div>
                     </TableCell>
 
-                    <TableCell className="text-right">
+                    <TableCell className="py-3 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 px-2 text-neutral-600 hover:text-neutral-900 dark:text-neutral-400"
+                          className="h-8 w-8 p-0 text-neutral-500 hover:text-brand-700 hover:bg-brand-50 rounded-lg active:scale-[0.96] transition-all"
                           onClick={() => setPreviewTerms(item)}
                           title="Lihat Pratinjau Teks Lengkap"
                         >
-                          <HugeiconsIcon icon={ViewIcon} size={14} />
+                          <HugeiconsIcon icon={ViewIcon} size={15} />
                           <span className="sr-only">Pratinjau</span>
                         </Button>
 
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 px-2 text-neutral-600 hover:text-neutral-900 dark:text-neutral-400"
+                          className="h-8 w-8 p-0 text-neutral-500 hover:text-amber-700 hover:bg-amber-50 rounded-lg active:scale-[0.96] transition-all"
                           onClick={() => setEditingTerms(item)}
                           title="Edit Versi Ini"
                         >
-                          <HugeiconsIcon icon={Edit02Icon} size={14} />
+                          <HugeiconsIcon icon={Edit02Icon} size={15} />
                           <span className="sr-only">Edit</span>
                         </Button>
 
@@ -272,13 +274,13 @@ export function TermsTable({ terms, addTermsButton }: TermsTableProps) {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="h-7 px-2 text-[10px] font-semibold text-emerald-700 border-emerald-200 hover:bg-emerald-50 dark:text-emerald-400 dark:border-emerald-900"
+                            className="h-7 px-2.5 text-[11px] font-semibold text-emerald-700 border-emerald-300 hover:bg-emerald-50 hover:border-emerald-400 active:scale-[0.96] transition-all rounded-lg shadow-2xs"
                             onClick={() => handleActivate(item.id, item.version)}
                             disabled={isPending}
                           >
                             <HugeiconsIcon
                               icon={CheckmarkCircle01Icon}
-                              size={12}
+                              size={13}
                               className="mr-1"
                             />
                             <span>Aktifkan</span>
