@@ -50,7 +50,7 @@ export function DurationPricingCards({
     {
       id: "perkegiatan1" as const,
       title: "Perkegiatan I",
-      duration: "3 Hari 2 Malam",
+      duration: "3 Hari 3 Malam",
       price: pricePerkegiatan1,
       badge: savingsK1 ? `Hemat ${savingsK1}%` : "Populer",
       badgeColor: "bg-amber-100 text-amber-800 border-amber-200",
@@ -60,7 +60,7 @@ export function DurationPricingCards({
     {
       id: "perkegiatan2" as const,
       title: "Perkegiatan II",
-      duration: "5 Hari 4 Malam",
+      duration: "5 Hari 5 Malam",
       price: pricePerkegiatan2,
       badge: savingsK2 ? `Hemat ${savingsK2}%` : "Ekspedisi",
       badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",

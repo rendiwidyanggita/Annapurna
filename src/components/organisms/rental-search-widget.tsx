@@ -146,10 +146,10 @@ export function RentalSearchWidget({ className }: RentalSearchWidgetProps) {
                   Permalam — 1 Hari (1 Malam)
                 </SelectItem>
                 <SelectItem value="perkegiatan_1" className="py-2.5 rounded-lg text-sm">
-                  Perkegiatan I — 2 Hari (Weekend Ringkas)
+                  Perkegiatan I — 3 Hari (3H3M)
                 </SelectItem>
                 <SelectItem value="perkegiatan_2" className="py-2.5 rounded-lg text-sm">
-                  Perkegiatan II — 3 Hari (Pendakian Penuh)
+                  Perkegiatan II — 5 Hari (5H5M)
                 </SelectItem>
               </SelectContent>
             </Select>

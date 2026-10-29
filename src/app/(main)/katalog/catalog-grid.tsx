@@ -138,7 +138,7 @@ export function CatalogGrid({ products, viewMode }: CatalogGridProps) {
                     <div className="h-6 w-px bg-gray-200" />
                     <div>
                       <span className="text-[10px] text-[var(--color-muted)] block">
-                        Perkegiatan I (3H2M)
+                        Perkegiatan I (3H3M)
                       </span>
                       <span className="font-semibold text-gray-700">
                         {formatRupiah(product.pricePerkegiatan1)}
