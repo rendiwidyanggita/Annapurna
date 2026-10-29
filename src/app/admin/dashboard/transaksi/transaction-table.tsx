@@ -4,6 +4,7 @@ import { useState, useEffect, useTransition } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   TransactionStatusBadge,
   PaymentStatusBadge,
@@ -271,11 +272,10 @@ export function TransactionTable({
             <label className="block text-[11px] font-semibold text-gray-600 mb-1">
               Tanggal Mulai (Dari)
             </label>
-            <input
-              type="date"
+            <DatePicker
               value={startDateInput}
-              onChange={(e) => setStartDateInput(e.target.value)}
-              className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#16624B] tabular-nums"
+              onChange={setStartDateInput}
+              placeholder="Pilih tanggal mulai"
             />
           </div>
 
@@ -283,11 +283,10 @@ export function TransactionTable({
             <label className="block text-[11px] font-semibold text-gray-600 mb-1">
               Tanggal Akhir (Sampai)
             </label>
-            <input
-              type="date"
+            <DatePicker
               value={endDateInput}
-              onChange={(e) => setEndDateInput(e.target.value)}
-              className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#16624B] tabular-nums"
+              onChange={setEndDateInput}
+              placeholder="Pilih tanggal akhir"
             />
           </div>
 

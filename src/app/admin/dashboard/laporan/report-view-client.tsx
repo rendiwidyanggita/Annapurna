@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 import { AdminKpiCard } from "@/components/molecules/admin-kpi-card";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -209,22 +210,20 @@ export function ReportViewClient({
               <label className="block text-[11px] font-semibold text-gray-600 mb-1">
                 Tanggal Dari
               </label>
-              <input
-                type="date"
+              <DatePicker
                 value={startInput}
-                onChange={(e) => setStartInput(e.target.value)}
-                className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#16624B] tabular-nums"
+                onChange={setStartInput}
+                placeholder="Pilih tanggal dari"
               />
             </div>
             <div>
               <label className="block text-[11px] font-semibold text-gray-600 mb-1">
                 Tanggal Sampai
               </label>
-              <input
-                type="date"
+              <DatePicker
                 value={endInput}
-                onChange={(e) => setEndInput(e.target.value)}
-                className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#16624B] tabular-nums"
+                onChange={setEndInput}
+                placeholder="Pilih tanggal sampai"
               />
             </div>
           </>

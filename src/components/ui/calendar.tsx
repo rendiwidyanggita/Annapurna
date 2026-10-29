@@ -37,13 +37,14 @@ function Calendar({
         months: "relative flex flex-col gap-4",
         month: "relative flex flex-col gap-3 w-full",
         month_caption:
-          "flex items-center justify-center h-8 text-sm font-bold text-neutral-800",
-        caption_label: "text-sm font-bold text-neutral-900 capitalize",
+          "relative flex items-center justify-center h-8 text-sm font-bold text-neutral-800 pointer-events-none",
+        caption_label: "text-sm font-bold text-neutral-900 capitalize pointer-events-none",
+        nav: "flex items-center justify-between absolute inset-x-0 top-0 h-8 z-20 pointer-events-none",
         button_previous: cn(
-          "absolute left-0 top-0 h-8 w-8 inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-colors cursor-pointer disabled:opacity-30 disabled:pointer-events-none shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#16624B]"
+          "z-20 pointer-events-auto absolute left-0 top-0 h-8 w-8 inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-colors cursor-pointer disabled:opacity-30 disabled:pointer-events-none shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#16624B]"
         ),
         button_next: cn(
-          "absolute right-0 top-0 h-8 w-8 inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-colors cursor-pointer disabled:opacity-30 disabled:pointer-events-none shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#16624B]"
+          "z-20 pointer-events-auto absolute right-0 top-0 h-8 w-8 inline-flex items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-colors cursor-pointer disabled:opacity-30 disabled:pointer-events-none shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#16624B]"
         ),
         month_grid: "w-full border-collapse table-fixed",
         weekdays: "border-b border-neutral-100",
@@ -84,7 +85,7 @@ function Calendar({
                 icon={ArrowLeft01Icon}
                 size={16}
                 aria-hidden="true"
-                className={cn("size-4 text-neutral-700", className)}
+                className={cn("size-4 text-neutral-700 pointer-events-none", className)}
                 {...props}
               />
             );
@@ -96,7 +97,7 @@ function Calendar({
                 icon={ArrowRight01Icon}
                 size={16}
                 aria-hidden="true"
-                className={cn("size-4 text-neutral-700", className)}
+                className={cn("size-4 text-neutral-700 pointer-events-none", className)}
                 {...props}
               />
             );

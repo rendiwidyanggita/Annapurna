@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -24,7 +25,20 @@ interface ProductGalleryProps {
 export function ProductGallery({ media, productName }: ProductGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
+  const [mounted, setMounted] = useState<boolean>(false);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isLightboxOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isLightboxOpen]);
   const total = media.length;
 
   const handlePrev = useCallback(() => {
@@ -135,13 +149,13 @@ export function ProductGallery({ media, productName }: ProductGalleryProps) {
         </div>
       )}
 
-      {/* ── Shopee-Style Lightbox Modal Popup ── */}
-      {isLightboxOpen && (
+      {/* ── Shopee-Style Lightbox Modal Popup (Portaled to body to escape sticky stacking) ── */}
+      {mounted && isLightboxOpen && createPortal(
         <div
           role="dialog"
           aria-modal="true"
           aria-label={`Galeri foto ${productName}`}
-          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 transition-all animate-fade-in"
+          className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 transition-all animate-fade-in"
           onClick={(e) => {
             // Close when clicking directly on the backdrop outside the card
             if (e.target === e.currentTarget) {
@@ -260,7 +274,8 @@ export function ProductGallery({ media, productName }: ProductGalleryProps) {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
