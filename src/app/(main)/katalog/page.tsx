@@ -27,7 +27,10 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const resolved = await searchParams;
 
   const searchQuery = resolved.q?.trim() || "";
-  const categoryId = resolved.kategori?.trim() || "";
+  const rawKategori = resolved.kategori?.trim() || "";
+  const categoryFilters = rawKategori
+    ? rawKategori.split(",").map((s) => s.trim()).filter(Boolean)
+    : [];
   const itemType = resolved.tipe?.trim() as ItemType | undefined;
   const minPrice = resolved.minPrice ? parseInt(resolved.minPrice, 10) : undefined;
   const maxPrice = resolved.maxPrice ? parseInt(resolved.maxPrice, 10) : undefined;
@@ -48,21 +51,37 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
     ];
   }
 
-  if (categoryId) {
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(categoryId);
-    if (isUuid) {
-      where.categoryId = categoryId;
+  if (categoryFilters.length > 0) {
+    const isUuid = (val: string) =>
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
+    const slugMap: Record<string, string> = {
+      tenda: "Tenda",
+      carrier: "Carrier",
+      "sleeping-gear": "Sleeping",
+      "alat-masak": "Cooking",
+    };
+
+    const categoryConditions: Prisma.ProductWhereInput[] = categoryFilters.map((term) => {
+      if (isUuid(term)) {
+        return { categoryId: term };
+      }
+      const queryName = slugMap[term.toLowerCase()] || term;
+      return {
+        category: {
+          name: { contains: queryName, mode: "insensitive" },
+        },
+      };
+    });
+
+    if (categoryConditions.length === 1) {
+      Object.assign(where, categoryConditions[0]);
     } else {
-      const slugMap: Record<string, string> = {
-        tenda: "Tenda",
-        carrier: "Carrier",
-        "sleeping-gear": "Sleeping",
-        "alat-masak": "Cooking",
-      };
-      const queryName = slugMap[categoryId.toLowerCase()] || categoryId;
-      where.category = {
-        name: { contains: queryName, mode: "insensitive" },
-      };
+      const existingAnd = Array.isArray(where.AND)
+        ? where.AND
+        : where.AND
+        ? [where.AND]
+        : [];
+      where.AND = [...existingAnd, { OR: categoryConditions }];
     }
   }
 

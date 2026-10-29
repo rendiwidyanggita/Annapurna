@@ -20,13 +20,6 @@ import {
 } from "@hugeicons/core-free-icons";
 import { CategoryFormModal } from "./category-form-modal";
 import { DeleteCategoryDialog } from "./delete-category-dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export interface CategoryItem {
   id: string;
@@ -97,16 +90,15 @@ export function CategoryTable({
         segmentedSwitcher={
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold text-[#6B7280]">Status:</span>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="h-9 w-36 text-xs bg-[#F9FAFB] border-gray-200">
-                <SelectValue placeholder="Semua Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Semua Status</SelectItem>
-                <SelectItem value="active">Kategori Aktif</SelectItem>
-                <SelectItem value="inactive">Kategori Nonaktif</SelectItem>
-              </SelectContent>
-            </Select>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="h-9 px-3 rounded-lg border border-gray-200 bg-[#F9FAFB] text-xs font-medium text-gray-800 focus:outline-none focus:border-[#16624B]"
+            >
+              <option value="all">Semua Status</option>
+              <option value="active">Kategori Aktif</option>
+              <option value="inactive">Kategori Nonaktif</option>
+            </select>
           </div>
         }
       />

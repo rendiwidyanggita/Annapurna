@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useTransition, useMemo } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,12 +14,30 @@ export interface CategoryOption {
   productCount: number;
 }
 
+function isCategorySelected(cat: CategoryOption, selectedQuery: string): boolean {
+  if (!selectedQuery) return false;
+  const q = selectedQuery.toLowerCase().trim();
+  const name = cat.name.toLowerCase().trim();
+  if (cat.id === selectedQuery || name === q) return true;
+  const slug = name.replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  if (slug === q) return true;
+  const aliasMap: Record<string, string[]> = {
+    tenda: ["tenda", "tenda & shelter"],
+    carrier: ["carrier", "carrier & tas", "tas"],
+    "sleeping-gear": ["sleeping", "sleeping gear"],
+    "alat-masak": ["cooking", "alat masak", "cooking & dining"],
+    shoes: ["shoes", "sepatu"],
+  };
+  const aliases = aliasMap[q];
+  if (aliases && aliases.some((a) => name.includes(a))) return true;
+  return false;
+}
+
 interface CatalogSidebarProps {
   categories: CategoryOption[];
   className?: string;
   onFilterApplied?: () => void;
 }
-
 export function CatalogSidebar({
   categories,
   className = "",
@@ -30,11 +48,58 @@ export function CatalogSidebar({
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-  const selectedCategory = searchParams.get("kategori") || "";
+  const rawCategoryParam = searchParams.get("kategori") || "";
+  const selectedCategories = useMemo(() => {
+    if (!rawCategoryParam) return [];
+    return rawCategoryParam
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }, [rawCategoryParam]);
+
   const selectedType = searchParams.get("tipe") || "";
   const currentMinPrice = searchParams.get("minPrice") || "";
   const currentMaxPrice = searchParams.get("maxPrice") || "";
 
+  function toggleCategory(catId: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    let updated: string[];
+
+    // Check if category is currently selected (by ID or alias/slug)
+    const matchedIdx = selectedCategories.findIndex((sc) => {
+      const target = categories.find((c) => c.id === catId);
+      return sc === catId || (target && isCategorySelected(target, sc));
+    });
+
+    if (matchedIdx >= 0) {
+      updated = selectedCategories.filter((_, idx) => idx !== matchedIdx);
+    } else {
+      updated = [...selectedCategories, catId];
+    }
+
+    if (updated.length > 0) {
+      params.set("kategori", updated.join(","));
+    } else {
+      params.delete("kategori");
+    }
+    params.delete("page");
+
+    startTransition(() => {
+      router.push(`${pathname}?${params.toString()}`);
+      if (onFilterApplied) onFilterApplied();
+    });
+  }
+
+  function selectAllCategories() {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("kategori");
+    params.delete("page");
+
+    startTransition(() => {
+      router.push(`${pathname}?${params.toString()}`);
+      if (onFilterApplied) onFilterApplied();
+    });
+  }
   function handleFilterChange(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());
     if (value) {
@@ -79,9 +144,8 @@ export function CatalogSidebar({
   }
 
   const hasActiveFilters = Boolean(
-    selectedCategory || selectedType || currentMinPrice || currentMaxPrice
+    selectedCategories.length > 0 || selectedType || currentMinPrice || currentMaxPrice
   );
-
   return (
     <aside className={`space-y-6 ${className}`}>
       <div className="flex items-center justify-between pb-3 border-b border-[var(--color-border)]">
@@ -111,38 +175,40 @@ export function CatalogSidebar({
           <label className="flex items-center justify-between text-sm cursor-pointer hover:text-[var(--color-primary)] transition-colors">
             <span className="flex items-center gap-2">
               <input
-                type="radio"
-                name="kategori"
-                checked={!selectedCategory}
-                onChange={() => handleFilterChange("kategori", "")}
-                className="accent-[var(--color-primary)]"
+                type="checkbox"
+                checked={selectedCategories.length === 0}
+                onChange={selectAllCategories}
+                className="h-4 w-4 rounded accent-[var(--color-primary)] cursor-pointer"
               />
               Semua Kategori
             </span>
           </label>
-          {categories.map((cat) => (
-            <label
-              key={cat.id}
-              className="flex items-center justify-between text-sm cursor-pointer hover:text-[var(--color-primary)] transition-colors"
-            >
-              <span className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  name="kategori"
-                  checked={selectedCategory === cat.id}
-                  onChange={() => handleFilterChange("kategori", cat.id)}
-                  className="accent-[var(--color-primary)]"
-                />
-                {cat.name}
-              </span>
-              <span className="text-xs text-[var(--color-muted)] bg-[var(--color-surface)] px-1.5 py-0.5 rounded">
-                {cat.productCount}
-              </span>
-            </label>
-          ))}
+          {categories.map((cat) => {
+            const isChecked = selectedCategories.some(
+              (sc) => sc === cat.id || isCategorySelected(cat, sc)
+            );
+            return (
+              <label
+                key={cat.id}
+                className="flex items-center justify-between text-sm cursor-pointer hover:text-[var(--color-primary)] transition-colors"
+              >
+                <span className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => toggleCategory(cat.id)}
+                    className="h-4 w-4 rounded accent-[var(--color-primary)] cursor-pointer"
+                  />
+                  {cat.name}
+                </span>
+                <span className="text-xs text-[var(--color-muted)] bg-[var(--color-surface)] px-1.5 py-0.5 rounded">
+                  {cat.productCount}
+                </span>
+              </label>
+            );
+          })}
         </div>
       </div>
-
       {/* Tipe Item Filter */}
       <div className="space-y-3 pt-4 border-t border-[var(--color-border-soft)]">
         <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--color-muted)]">

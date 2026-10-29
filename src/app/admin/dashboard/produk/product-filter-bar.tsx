@@ -3,13 +3,6 @@
 import { useState, useEffect, useTransition } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { AdminFilterToolbar } from "@/components/molecules/admin-filter-toolbar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 interface CategoryOption {
   id: string;
@@ -117,22 +110,18 @@ export function ProductFilterBar({
         <label className="block text-[11px] font-semibold text-[#6B7280] mb-1">
           Kategori Produk
         </label>
-        <Select
+        <select
           value={currentCategory}
-          onValueChange={(val) => updateFilter("kategori", val)}
+          onChange={(e) => updateFilter("kategori", e.target.value)}
+          className="w-full h-9 px-3 rounded-lg border border-gray-200 bg-[#F9FAFB] text-xs font-medium text-gray-800 focus:outline-none focus:border-[#16624B]"
         >
-          <SelectTrigger className="h-9 text-xs bg-[#F9FAFB] border-gray-200">
-            <SelectValue placeholder="Semua Kategori" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Semua Kategori</SelectItem>
-            {categories.map((c) => (
-              <SelectItem key={c.id} value={c.id}>
-                {c.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <option value="all">Semua Kategori</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* ── Item Type Filter ── */}
@@ -140,19 +129,15 @@ export function ProductFilterBar({
         <label className="block text-[11px] font-semibold text-[#6B7280] mb-1">
           Tipe Inventaris
         </label>
-        <Select
+        <select
           value={currentType}
-          onValueChange={(val) => updateFilter("tipe", val)}
+          onChange={(e) => updateFilter("tipe", e.target.value)}
+          className="w-full h-9 px-3 rounded-lg border border-gray-200 bg-[#F9FAFB] text-xs font-medium text-gray-800 focus:outline-none focus:border-[#16624B]"
         >
-          <SelectTrigger className="h-9 text-xs bg-[#F9FAFB] border-gray-200">
-            <SelectValue placeholder="Semua Tipe" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Semua Tipe</SelectItem>
-            <SelectItem value="rental_unit">Rental Unit (Wajib Balik)</SelectItem>
-            <SelectItem value="consumable">Consumable (Habis Pakai)</SelectItem>
-          </SelectContent>
-        </Select>
+          <option value="all">Semua Tipe</option>
+          <option value="rental_unit">Rental Unit (Wajib Balik)</option>
+          <option value="consumable">Consumable (Habis Pakai)</option>
+        </select>
       </div>
 
       {/* ── Status Filter ── */}
@@ -160,19 +145,15 @@ export function ProductFilterBar({
         <label className="block text-[11px] font-semibold text-[#6B7280] mb-1">
           Status Katalog
         </label>
-        <Select
+        <select
           value={currentStatus}
-          onValueChange={(val) => updateFilter("status", val)}
+          onChange={(e) => updateFilter("status", e.target.value)}
+          className="w-full h-9 px-3 rounded-lg border border-gray-200 bg-[#F9FAFB] text-xs font-medium text-gray-800 focus:outline-none focus:border-[#16624B]"
         >
-          <SelectTrigger className="h-9 text-xs bg-[#F9FAFB] border-gray-200">
-            <SelectValue placeholder="Semua Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Semua Status</SelectItem>
-            <SelectItem value="active">Aktif (Tampil di Toko)</SelectItem>
-            <SelectItem value="inactive">Nonaktif</SelectItem>
-          </SelectContent>
-        </Select>
+          <option value="all">Semua Status</option>
+          <option value="active">Aktif (Tampil di Toko)</option>
+          <option value="inactive">Nonaktif</option>
+        </select>
       </div>
     </AdminFilterToolbar>
   );
