@@ -3,6 +3,7 @@ import { requireRole } from "@/lib/auth/require-role";
 import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/services/audit-log";
 import {
+  getRevenueSummary,
   getRentalTransactionReport,
   getDpReport,
   getRemainingPaymentReport,
@@ -75,10 +76,58 @@ export async function GET(request: NextRequest) {
       color: { argb: "FFFFFFFF" },
     };
 
-    if (type === "transactions") {
+    if (type === "revenue") {
+      const data = await getRevenueSummary(filter);
+      sheet.columns = [
+        { header: "Komponen Finansial", key: "item", width: 30 },
+        { header: "Keterangan", key: "desc", width: 45 },
+        { header: "Volume / Transaksi", key: "count", width: 22 },
+        { header: "Nominal (Rp)", key: "amount", width: 22 },
+      ];
+
+      const rows = [
+        {
+          item: "Down Payment (DP Online)",
+          desc: "Penerimaan DP online via Midtrans",
+          count: `${data.paymentCount} transaksi`,
+          amount: data.grossInflows,
+        },
+        {
+          item: "Pelunasan Kasir Toko",
+          desc: "Sisa tagihan sewa diterima di toko (Cash/QRIS)",
+          count: `${data.remainingCount} transaksi`,
+          amount: data.cashierRemaining,
+        },
+        {
+          item: "Denda & Klaim Kerusakan",
+          desc: "Penerimaan denda telat/rusak/hilang",
+          count: `${data.penaltyCount} klaim`,
+          amount: data.totalPenalties,
+        },
+        {
+          item: "Pengembalian Dana (Refund)",
+          desc: "Pengembalian dana pembatalan sewa",
+          count: `${data.refundCount} transaksi`,
+          amount: -data.totalRefunded,
+        },
+        {
+          item: "TOTAL PENDAPATAN BERSIH",
+          desc: "Net revenue operasional rental",
+          count: "-",
+          amount: data.netRevenue,
+        },
+      ];
+
+      for (const r of rows) {
+        const addedRow = sheet.addRow(r);
+        addedRow.getCell("amount").numFmt = '"Rp"#,##0';
+        if (r.item === "TOTAL PENDAPATAN BERSIH") {
+          addedRow.font = { bold: true };
+        }
+      }
+    } else if (type === "transactions") {
       const data = await getRentalTransactionReport(filter);
       sheet.columns = [
-        { header: "Kode Transaksi", key: "code", width: 20 },
         { header: "Penyewa", key: "customer", width: 25 },
         { header: "Email", key: "email", width: 25 },
         { header: "No. Telepon", key: "phone", width: 18 },

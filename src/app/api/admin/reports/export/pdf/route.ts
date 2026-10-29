@@ -53,17 +53,55 @@ export async function GET(request: NextRequest) {
     let tableRows: string[][] = [];
     let summaryText = "";
 
-    if (type === "transactions") {
+    if (type === "revenue") {
+      docTitle = "LAPORAN RINGKASAN FINANSIAL & PENDAPATAN";
+      const data = await getRevenueSummary(filter);
+      summaryText = `Periode: ${data.dateRange.startDateStr} s/d ${data.dateRange.endDateStr} | Net Revenue: Rp ${data.netRevenue.toLocaleString("id-ID")}`;
+      tableHeaders = ["Komponen Finansial", "Keterangan", "Total Transaksi / Item", "Nominal (Rp)"];
+      tableRows = [
+        [
+          "Down Payment (DP Online)",
+          "Pembayaran DP 50% terverifikasi Midtrans",
+          `${data.paymentCount} pembayaran`,
+          data.grossInflows.toLocaleString("id-ID"),
+        ],
+        [
+          "Pelunasan Kasir Toko",
+          "Sisa tagihan sewa diterima di toko (Cash/QRIS)",
+          `${data.remainingCount} transaksi`,
+          data.cashierRemaining.toLocaleString("id-ID"),
+        ],
+        [
+          "Denda & Klaim Kerusakan",
+          "Penerimaan denda telat/rusak/hilang",
+          `${data.penaltyCount} klaim`,
+          data.totalPenalties.toLocaleString("id-ID"),
+        ],
+        [
+          "Pengembalian Dana (Refund)",
+          "Pengembalian dana pembatalan sewa",
+          `${data.refundCount} transaksi`,
+          `(${data.totalRefunded.toLocaleString("id-ID")})`,
+        ],
+        [
+          "TOTAL PENDAPATAN BERSIH",
+          "Net revenue operasional rental",
+          "-",
+          `Rp ${data.netRevenue.toLocaleString("id-ID")}`,
+        ],
+      ];
+    } else if (type === "transactions") {
       docTitle = "LAPORAN TRANSAKSI PENYEWAAN";
       const data = await getRentalTransactionReport(filter);
       summaryText = `Periode: ${data.dateRange.startDateStr} s/d ${data.dateRange.endDateStr} | Total: ${data.summary.totalTransactions} Transaksi | Gross: Rp ${data.summary.totalGrossAmount.toLocaleString("id-ID")}`;
-      tableHeaders = ["Kode Transaksi", "Penyewa", "Jadwal", "Durasi", "Status", "Total (Rp)"];
+      tableHeaders = ["Kode Transaksi", "Penyewa", "Jadwal", "Durasi", "Status Sewa", "Status Bayar", "Total (Rp)"];
       tableRows = data.transactions.map((tx) => [
         tx.transactionCode,
         tx.user.profile?.fullName || tx.user.email,
         `${new Date(tx.startDate).toLocaleDateString("id-ID")} - ${new Date(tx.endDate).toLocaleDateString("id-ID")}`,
         `${tx.totalDurationDays} hari`,
         tx.transactionStatus,
+        tx.paymentStatus,
         tx.totalAmount.toLocaleString("id-ID"),
       ]);
     } else if (type === "dp") {
@@ -179,13 +217,27 @@ export async function GET(request: NextRequest) {
                 fontSize: 8,
                 margin: [3, 4, 3, 4],
               })),
-              ...tableRows.map((row) =>
-                row.map((cell) => ({
-                  text: cell,
-                  fontSize: 8,
-                  margin: [3, 3, 3, 3],
-                }))
-              ),
+              ...(tableRows.length === 0
+                ? [
+                    [
+                      {
+                        text: "Tidak ada data pada periode ini",
+                        colSpan: tableHeaders.length,
+                        alignment: "center",
+                        italics: true,
+                        color: "#6B7280",
+                        margin: [0, 8, 0, 8],
+                      },
+                      ...Array(Math.max(0, tableHeaders.length - 1)).fill({ text: "" }),
+                    ],
+                  ]
+                : tableRows.map((row) =>
+                    row.map((cell) => ({
+                      text: cell,
+                      fontSize: 8,
+                      margin: [3, 3, 3, 3],
+                    }))
+                  )),
             ],
           },
           layout: {

@@ -20,6 +20,7 @@ import {
   AlertCircleIcon,
   CheckmarkCircle01Icon,
   EyeIcon,
+  Download01Icon,
 } from "@hugeicons/core-free-icons";
 import { format } from "date-fns";
 import { id as localeId } from "date-fns/locale";
@@ -326,6 +327,21 @@ export function TransactionTable({
                 Reset
               </Button>
             )}
+            <a
+              href={`/api/admin/reports/export/pdf?type=transactions${startDateInput ? `&startDate=${startDateInput}` : ""}${endDateInput ? `&endDate=${endDateInput}` : ""}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                type="button"
+                variant="outline"
+                className="h-8 text-xs border-gray-300 text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-semibold flex items-center gap-1.5"
+                title="Unduh Laporan Transaksi Sewa (PDF)"
+              >
+                <HugeiconsIcon icon={Download01Icon} size={14} className="text-rose-600" />
+                <span>PDF</span>
+              </Button>
+            </a>
           </div>
         </form>
       </div>
