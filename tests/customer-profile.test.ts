@@ -1,77 +1,76 @@
-import test from "node:test";
-import assert from "node:assert/strict";
+import { describe, it, expect } from "bun:test";
 import { completeProfileSchema } from "../src/schemas/profile";
 
-test("Customer Profile Test Suite", async (t) => {
-  await t.test("Validasi Schema: data profil valid diterima", () => {
+describe("Customer Profile Test Suite", () => {
+  it("Validasi Schema: data profil valid diterima", () => {
     const validData = {
       fullName: "Budi Santoso",
       phoneNumber: "081234567890",
       address: "Jl. Merapi No. 12, Sleman, Yogyakarta",
     };
     const result = completeProfileSchema.safeParse(validData);
-    assert.equal(result.success, true);
+    expect(result.success).toBe(true);
   });
 
-  await t.test("Validasi Schema: format nomor WhatsApp internasional (+62)", () => {
+  it("Validasi Schema: format nomor WhatsApp internasional (+62)", () => {
     const validData = {
       fullName: "Budi Santoso",
       phoneNumber: "+6281234567890",
       address: "Jl. Merapi No. 12, Sleman, Yogyakarta",
     };
     const result = completeProfileSchema.safeParse(validData);
-    assert.equal(result.success, true);
+    expect(result.success).toBe(true);
   });
 
-  await t.test("Validasi Schema: nama lengkap terlalu pendek (<3 karakter)", () => {
+  it("Validasi Schema: nama lengkap terlalu pendek (<3 karakter)", () => {
     const invalidData = {
       fullName: "Jo",
       phoneNumber: "081234567890",
       address: "Jl. Merapi No. 12, Sleman, Yogyakarta",
     };
     const result = completeProfileSchema.safeParse(invalidData);
-    assert.equal(result.success, false);
+    expect(result.success).toBe(false);
     if (!result.success) {
-      assert.ok(result.error.flatten().fieldErrors.fullName);
+      expect(result.error.flatten().fieldErrors.fullName).toBeDefined();
     }
   });
 
-  await t.test("Validasi Schema: nomor WhatsApp tidak valid", () => {
+  it("Validasi Schema: nomor WhatsApp tidak valid", () => {
     const invalidData = {
       fullName: "Budi Santoso",
       phoneNumber: "123456",
       address: "Jl. Merapi No. 12, Sleman, Yogyakarta",
     };
     const result = completeProfileSchema.safeParse(invalidData);
-    assert.equal(result.success, false);
+    expect(result.success).toBe(false);
     if (!result.success) {
-      assert.ok(result.error.flatten().fieldErrors.phoneNumber);
+      expect(result.error.flatten().fieldErrors.phoneNumber).toBeDefined();
     }
   });
 
-  await t.test("Validasi Schema: alamat terlalu pendek (<10 karakter)", () => {
+  it("Validasi Schema: alamat terlalu pendek (<10 karakter)", () => {
     const invalidData = {
       fullName: "Budi Santoso",
       phoneNumber: "081234567890",
       address: "Jl. A",
     };
     const result = completeProfileSchema.safeParse(invalidData);
-    assert.equal(result.success, false);
+    expect(result.success).toBe(false);
     if (!result.success) {
-      assert.ok(result.error.flatten().fieldErrors.address);
+      expect(result.error.flatten().fieldErrors.address).toBeDefined();
     }
   });
 
-  await t.test("Validasi Schema: alamat terlalu panjang (>500 karakter)", () => {
+  it("Validasi Schema: alamat terlalu panjang (>500 karakter)", () => {
     const invalidData = {
       fullName: "Budi Santoso",
       phoneNumber: "081234567890",
       address: "A".repeat(501),
     };
     const result = completeProfileSchema.safeParse(invalidData);
-    assert.equal(result.success, false);
+    expect(result.success).toBe(false);
     if (!result.success) {
-      assert.ok(result.error.flatten().fieldErrors.address);
+      expect(result.error.flatten().fieldErrors.address).toBeDefined();
     }
   });
 });

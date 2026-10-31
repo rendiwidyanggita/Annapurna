@@ -159,15 +159,14 @@ annapurna-rent/
 ## 🚀 Panduan Memulai (Getting Started)
 
 ### 1. Prasyarat
-- [Node.js](https://nodejs.org/) versi 18.18+ (atau 20+)
-- Package manager: `npm` (atau `pnpm` / `bun`)
+- [Bun](https://bun.sh/) versi 1.1+ (runtime & package manager)
 - Akun [Supabase](https://supabase.com/) & [Midtrans Sandbox](https://dashboard.sandbox.midtrans.com/)
 
 ### 2. Kloning Repositori & Instal Dependensi
 ```bash
 git clone https://github.com/rendiwidyanggita/Annapurna-rent.git
 cd Annapurna-rent
-npm install
+bun install
 ```
 
 ### 3. Konfigurasi Environment Variables
@@ -180,18 +179,18 @@ cp .env.example .env.local
 Jalankan sinkronisasi skema ke database PostgreSQL Supabase:
 ```bash
 # Generate Prisma Client
-npm run db:generate
+bun run db:generate
 
 # Push schema ke database
-npm run db:push
+bun run db:push
 
 # (Opsional) Buka Prisma Studio untuk inspeksi data visual
-npm run db:studio
+bun run db:studio
 ```
 
 ### 5. Jalankan Server Pengembangan
 ```bash
-npm run dev
+bun run dev
 ```
 Buka [http://localhost:3000](http://localhost:3000) pada browser Anda.
 

@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "tsx --test tests/**/*.test.ts",
+    "test": "bun test",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
@@ -14,7 +14,7 @@
     "db:seed": "prisma db seed"
   },
   "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "seed": "bun prisma/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/bun": "latest",
     "@types/node": "^20",
     "@types/pdfmake": "^0.3.3",
     "@types/react": "^19",
@@ -60,7 +61,6 @@
     "eslint-config-next": "16.3.1",
     "prisma": "^6.3.0",
     "tailwindcss": "^4",
-    "tsx": "^4.19.3",
     "typescript": "^5"
   },
   "allowScripts": {

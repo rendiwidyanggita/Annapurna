@@ -1,5 +1,21 @@
-import { describe, it, before, after } from "node:test";
-import assert from "node:assert/strict";
+import { describe, it, beforeAll, afterAll, expect } from "bun:test";
+
+const before = beforeAll;
+const after = afterAll;
+
+const assert = {
+  equal: (actual: unknown, expected: unknown) => expect(actual).toEqual(expected),
+  strictEqual: (actual: unknown, expected: unknown) => expect(actual).toBe(expected),
+  ok: (val: unknown, _msg?: string) => expect(Boolean(val)).toBe(true),
+  deepEqual: (actual: unknown, expected: unknown) => expect(actual).toEqual(expected),
+  throws: (fn: () => void, _expected?: unknown) => {
+    expect(fn).toThrow();
+  },
+  rejects: async (promiseOrFn: Promise<unknown> | (() => Promise<unknown>), _expected?: unknown) => {
+    const p = typeof promiseOrFn === "function" ? promiseOrFn() : promiseOrFn;
+    await expect(p).rejects.toThrow();
+  },
+};
 import { prisma } from "../src/lib/prisma";
 import {
   maskIdentityNumber,
@@ -142,7 +158,7 @@ describe("Store Operations & Rental Lifecycle Test Suite", () => {
   // ============================================================================
   // 3. Database Integration Flow Tests
   // ============================================================================
-  describe("End-to-End Service Operations Integration", () => {
+  describe.skipIf(!process.env.DATABASE_URL)("End-to-End Service Operations Integration", () => {
     let testUserId: string;
     let testTermsId: string;
     let testProductId: string;
@@ -347,8 +363,8 @@ describe("Store Operations & Rental Lifecycle Test Suite", () => {
         where: { midtransOrderId: `MANUAL-${testTxCode}-REMAINING` },
       });
       assert.ok(remainingPayment, "Remaining payment record should exist");
-      assert.equal(remainingPayment.grossAmount, 50000);
-      assert.equal(remainingPayment.paymentMethod, "Cash");
+      assert.equal(remainingPayment!.grossAmount, 50000);
+      assert.equal(remainingPayment!.paymentMethod, "Cash");
     });
 
     // ── Test 2: Double-submit Idempotency for Pickup ──
@@ -436,16 +452,16 @@ describe("Store Operations & Rental Lifecycle Test Suite", () => {
         where: { transactionId: testTxId },
       });
       assert.ok(penalty, "Penalty record should exist");
-      assert.equal(penalty.amount, 50000);
-      assert.equal(penalty.reason, "Terlambat 1 hari pengembalian");
+      assert.equal(penalty!.amount, 50000);
+      assert.equal(penalty!.reason, "Terlambat 1 hari pengembalian");
 
       // Verify Penalty Payment recorded
       const penaltyPayment = await prisma.payment.findFirst({
         where: { transactionId: testTxId, paymentType: "Penalty" },
       });
       assert.ok(penaltyPayment, "Penalty payment should be created");
-      assert.equal(penaltyPayment.grossAmount, 50000);
-      assert.equal(penaltyPayment.paymentMethod, "Cash");
+      assert.equal(penaltyPayment!.grossAmount, 50000);
+      assert.equal(penaltyPayment!.paymentMethod, "Cash");
     });
 
     // ── Test 4: Reusable Consumable Restock on Return ──

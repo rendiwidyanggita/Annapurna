@@ -1,5 +1,21 @@
-import { describe, it, before, after } from "node:test";
-import assert from "node:assert/strict";
+import { describe, it, beforeAll, afterAll, expect } from "bun:test";
+
+const before = beforeAll;
+const after = afterAll;
+
+const assert = {
+  equal: (actual: unknown, expected: unknown) => expect(actual).toEqual(expected),
+  strictEqual: (actual: unknown, expected: unknown) => expect(actual).toBe(expected),
+  ok: (val: unknown, _msg?: string) => expect(Boolean(val)).toBe(true),
+  deepEqual: (actual: unknown, expected: unknown) => expect(actual).toEqual(expected),
+  throws: (fn: () => void, _expected?: unknown) => {
+    expect(fn).toThrow();
+  },
+  rejects: async (promiseOrFn: Promise<unknown> | (() => Promise<unknown>), _expected?: unknown) => {
+    const p = typeof promiseOrFn === "function" ? promiseOrFn() : promiseOrFn;
+    await expect(p).rejects.toThrow();
+  },
+};
 import { prisma } from "../src/lib/prisma";
 import { logActivity } from "../src/lib/services/audit-log";
 import {
@@ -13,7 +29,7 @@ import {
 import { processChatbotMessage } from "../src/lib/services/chatbot-service";
 import { PERMISSION_MATRIX } from "../src/lib/permissions";
 
-describe("Sprint 3: Governance, Reports & AI Assistant Test Suite", () => {
+describe.skipIf(!process.env.DATABASE_URL)("Sprint 3: Governance, Reports & AI Assistant Test Suite", () => {
   let testUserId: string;
   let testOwnerId: string;
   let testOtherUserId: string;
@@ -218,9 +234,9 @@ describe("Sprint 3: Governance, Reports & AI Assistant Test Suite", () => {
         (m) => m.feature === "Manajemen Pengguna & Role"
       );
       assert.ok(userMgmt);
-      assert.strictEqual(userMgmt.customer, false);
-      assert.strictEqual(userMgmt.admin, false);
-      assert.strictEqual(userMgmt.owner, true);
+      assert.strictEqual(userMgmt!.customer, false);
+      assert.strictEqual(userMgmt!.admin, false);
+      assert.strictEqual(userMgmt!.owner, true);
     });
   });
 

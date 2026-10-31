@@ -208,7 +208,8 @@ export async function deleteProductMedia(
         await fs.unlink(localFilePath);
       } catch (err: unknown) {
         // If file already deleted or not found, ignore error
-        if ((err as NodeJS.ErrnoException).code !== "ENOENT") {
+        const isEnoent = Boolean(err && typeof err === "object" && "code" in err && err.code === "ENOENT");
+        if (!isEnoent) {
           console.warn(`[STORAGE WARNING] Gagal menghapus file lokal (${localFilePath}):`, err);
         }
       }
