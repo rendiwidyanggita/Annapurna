@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { differenceInSeconds } from "date-fns";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -43,15 +43,18 @@ export function CountdownTimer({
   }, [expiryDate]);
 
   const [timeLeft, setTimeLeft] = useState<number>(calculateTimeLeft);
-  const [hasExpired, setHasExpired] = useState<boolean>(false);
-  const [hasTriggered, setHasTriggered] = useState<boolean>(false);
+  const hasTriggeredRef = useRef(false);
+
+  // Derive expired status during render — no separate state needed
+  const hasExpired = timeLeft === 0;
 
   useEffect(() => {
-    // Immediately recalculate on mount (handles hydration mismatch)
-    const initial = calculateTimeLeft();
-    setTimeLeft(initial);
-    if (initial === 0) {
-      setHasExpired(true);
+    // If already expired at mount, fire callback and skip interval
+    if (calculateTimeLeft() === 0) {
+      if (!hasTriggeredRef.current) {
+        hasTriggeredRef.current = true;
+        onExpire?.();
+      }
       return;
     }
 
@@ -59,16 +62,15 @@ export function CountdownTimer({
       const remaining = calculateTimeLeft();
       setTimeLeft(remaining);
 
-      if (remaining === 0 && !hasTriggered) {
-        setHasExpired(true);
-        setHasTriggered(true);
+      if (remaining === 0 && !hasTriggeredRef.current) {
+        hasTriggeredRef.current = true;
         clearInterval(interval);
         onExpire?.();
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [calculateTimeLeft, onExpire, hasTriggered]);
+  }, [calculateTimeLeft, onExpire]);
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
